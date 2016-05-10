@@ -5,13 +5,12 @@ import { ADD_PLAYER, REMOVE_PLAYER } from '../actions/actions';
 
 import playerId from '../playerId';
 
-const initialStatePlayerList = {
-}
+const initialStatePlayerList = [];
 
 function playerList(state = initialStatePlayerList, action) {
     switch (action.type) {
         case ADD_PLAYER:
-            return state;
+            return state.concat(action.player);
         case REMOVE_PLAYER:
             return state;
         default:
