@@ -7,10 +7,9 @@ class Player extends React.Component {
     render() {
         return (
             <div className='player'>
-                <h2>Player name</h2>
-                <p>AVG 0.234</p>
-                <p>2 for 4</p>
-                <p>In Hole, On Deck, At Bat</p>
+                <h3>{this.props.playerObj.n}</h3>
+                <p>{this.props.playerObj.p}</p>
+                <p>{this.props.playerObj.t}</p>
             </div>
         );
     }
