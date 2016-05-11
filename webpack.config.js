@@ -1,7 +1,11 @@
 module.exports = {
-    entry: ['./src/components/index.js'],
+    entry: {
+        bundle: './src/components/index.js', 
+        event: './src/bg/eventPage.js'
+    },
     output: {
-        filename: './src/dist/bundle.js'
+        path: './src/dist',
+        filename: '[name].js'
     },
     module: {
         loaders: [

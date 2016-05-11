@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { update } from '../actions/actions';
+import { update, initializing } from '../actions/actions';
 
 // components
 import PlayersContainer from './PlayersContainer';
@@ -20,21 +20,7 @@ class App extends React.Component {
      */
     componentDidMount() {
         console.log('--chrome', chrome);
-        chrome.alarms.create('update', {periodInMinutes: 1});
-        chrome.alarms.onAlarm.addListener(() => {
-            console.log('chrome alarm fired off');
-            chrome.storage.sync.get('value', function(val) {
-                console.log(val.value);
-                if (val.value === 'undefined') {
-                    chrome.storage.sync.set({'value': 0});
-                } else {
-                    chrome.storage.sync.set({'value': +val.value + 1});
-                }
-                //console.log(val);
-            });
-        });
-        //let currentInterval = setInterval(this.props.update, 5000);
-        //this.setState({ interval: currentInterval });
+        this.props.initialize();
     }
     render() {
         return (
@@ -66,6 +52,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         update: () => {
             dispatch(update());
+        },
+        initialize: () => {
+            dispatch(initializing());
         }
     }
 }

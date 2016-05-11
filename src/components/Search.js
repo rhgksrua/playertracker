@@ -26,7 +26,7 @@ class Search extends React.Component {
                     shouldItemRender={this.matchStateToTerm}
                     getItemValue={(item) => item.n}
                     onSelect={this.onSelectAddPlayer}
-                    onChange={(event, value) => console.log(event, value)}
+                    onChange={(event, value) => { return 0; }}
                     renderItem={(item, isHighlighted) => (
                         <div
                             style={isHighlighted ? styles.highlightedItem : styles.item}

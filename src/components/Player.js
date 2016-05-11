@@ -10,6 +10,9 @@ class Player extends React.Component {
                 <h3>{this.props.playerObj.n}</h3>
                 <p>{this.props.playerObj.p}</p>
                 <p>{this.props.playerObj.t}</p>
+                {this.props.playerObj.time &&
+                <p>{this.props.playerObj.time}</p>
+                }
             </div>
         );
     }
