@@ -3,7 +3,8 @@ import xml2js from 'xml2js';
 import promise from 'es6-promise';
 promise.polyfill();
 import fetch from 'isomorphic-fetch';
-import { zerofill } from '../lib/utils';
+import { zerofill, getYearMonthDate } from '../lib/utils';
+import PlayerList from './PlayerList';
 
 //const SCORE_BOARD_JSON_URL = getTodayScoreBoardUrl();
 const API_DOMAIN = 'http://gd2.mlb.com/';
@@ -17,38 +18,44 @@ chrome.alarms.onAlarm.addListener(function(){
     //chrome.storage.sync.get('players', update);
 });
 
-function getYearMonthDate() {
-    return {
-        date: zerofill(moment().date()),
-        month: zerofill(moment().month() + 1),
-        year: moment().year()
-    };
-}
-
 /**
  * getTodayScoreBoard
  *
  * @returns {}
  */
 function getTodayScoreBoardUrl() {
+    // need to set current time to ET.
     let today = getYearMonthDate();
     return `${API_BASE}year_${today.year}/month_${today.month}/day_${today.date}/master_scoreboard.json`;
 }
 
 function update(players) {
-    let playerList = players.players;
-    setGameTime(playerList);
+
+    let playerList = new PlayerList(players.players);
+    //let playerList = players.players;
+    fetchGameData(playerList);
 }
 
-function setGameTime(players) {
-    const parseString = xml2js.parseString;
+/**
+ * setGameTime
+ * 
+ *
+ * @param players
+ * @returns {undefined}
+ */
+function fetchGameData(playerList) {
+    // for XML use parseString from xml2js
+    //const parseString = xml2js.parseString;
+    //const options = {};
     const options = {};
-    fetch(getTodayScoreBoardUrl(), options)
+    let url = getTodayScoreBoardUrl();
+    fetch(url, options)
         .then(data => {
             return data.json();
         })
         .then(data => {
-            parseGameTime(data, players);
+            //parseGameTime(data, players);
+            playerList.parseGameData(data);
             return data;
         })
         .catch(err => {
