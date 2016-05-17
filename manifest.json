@@ -23,6 +23,7 @@
     "permissions": [
         "notifications",
         "storage",
-        "alarms"
+        "alarms",
+        "http://gd2.mlb.com/"
     ]
 }

@@ -81,12 +81,13 @@
 	chrome.storage.sync.get('players', update);
 
 	chrome.alarms.onAlarm.addListener(function () {
-	    console.log('chrome alarm fired off');
 	    //chrome.storage.sync.get('players', update);
 	});
 
 	/**
 	 * getTodayScoreBoard
+	 * Five hours into tomorrow (ET) is still 'today', since the longest game ever played was 8 hours
+	 * and 25 minutes and latest games are usually played around 9 pm (ET).
 	 *
 	 * @returns {}
 	 */
@@ -97,6 +98,12 @@
 	}
 
 	function update(players) {
+	    //console.log('----- PLayers', players);
+	    // If players.players is undefined, nothing is stored in storage.sync. Need to exit
+	    // and do nothing
+	    if (!players.players) {
+	        return;
+	    }
 
 	    var playerList = new _PlayerList2.default(players.players);
 	    //let playerList = players.players;
@@ -119,8 +126,16 @@
 	    (0, _isomorphicFetch2.default)(url, options).then(function (data) {
 	        return data.json();
 	    }).then(function (data) {
-	        //parseGameTime(data, players);
 	        playerList.parseGameData(data);
+	        chrome.storage.sync.get('players', function (players) {
+	            console.log('storage players', players);
+	            console.log('playerList. array', playerList.getPlayersArr());
+	            var newPlayerList = Object.assign({}, players, { players: playerList.getPlayersArr() });
+	            console.log('newplayerlist', newPlayerList);
+	            chrome.storage.sync.set({ 'players': newPlayerList }, function () {
+	                console.log('updated player time');
+	            });
+	        });
 	        return data;
 	    }).catch(function (err) {
 	        console.warn(err);
@@ -552,7 +567,7 @@
 /* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
+	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
 	 * @overview es6-promise - a tiny implementation of Promises/A+.
 	 * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
 	 * @license   Licensed under MIT license
@@ -28559,7 +28574,9 @@
 	}
 
 	function getYearMonthDate() {
-	    var now = (0, _moment2.default)();
+	    var offset = arguments.length <= 0 || arguments[0] === undefined ? 5 : arguments[0];
+
+	    var now = (0, _moment2.default)().subtract(offset, 'hours');
 	    return {
 	        date: zerofill(now.date()),
 	        month: zerofill(now.month() + 1),
@@ -28585,6 +28602,10 @@
 
 	var _momentTimezone2 = _interopRequireDefault(_momentTimezone);
 
+	var _isomorphicFetch = __webpack_require__(189);
+
+	var _isomorphicFetch2 = _interopRequireDefault(_isomorphicFetch);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -28602,24 +28623,30 @@
 
 	        this.players = players.players;
 	        this.gameTimeSet = players.gameTimeSet;
+	        this.buffer = {};
 	    }
 
 	    _createClass(PlayerList, [{
 	        key: 'setGameTime',
-	        value: function setGameTime(data) {
-	            this.data = data;
-	            console.log('in PL this players', this.players);
+	        value: function setGameTime() {
+	            var _this = this;
+
 	            var newPlayers = this.players.map(function (player) {
 	                // player.t is team name.  Need to look for team name abbr in data.data.games[0]
-	                //console.log(data.data.games);
-	                var games = data.data.games.game;
+	                var games = _this.data.data.games.game;
 	                var gamesLen = games.length;
 	                for (var i = 0; i < gamesLen; i++) {
 	                    var currentGame = games[i];
 	                    if (currentGame['home_name_abbrev'] === player.t || currentGame['away_name_abbrev'] === player.t) {
+	                        // player game is finished
+	                        if (currentGame.status.status === 'Final') {
+	                            player.time = 'Final';
+	                            break;
+	                        }
 
-	                        //console.log('game found', currentGame.time);
-	                        player.time = currentGame.time;
+	                        // game not finished or in progress
+	                        player.timeDate = currentGame.time_date;
+	                        //player.url = currentGame.game_data_directory;
 	                        break;
 	                    }
 	                }
@@ -28636,12 +28663,14 @@
 	        key: 'parseGameData',
 	        value: function parseGameData(data) {
 	            if (!data) {}
-	            this.setGameTime(data);
+	            this.data = data;
+	            this.setGameTime();
 	            this.updateIfNecessary(data);
 	        }
 	        /**
 	         * updateIfNecessary
-	         * checks current time and updates if game started
+	         * If there are at least one player playing at current time,
+	         * update starts until all games are finished for the day.
 	         *
 	         * @returns {undefined}
 	         */
@@ -28649,32 +28678,132 @@
 	    }, {
 	        key: 'updateIfNecessary',
 	        value: function updateIfNecessary() {
-	            var _this = this;
+	            var _this2 = this;
 
 	            var data = arguments.length <= 0 || arguments[0] === undefined ? this.data : arguments[0];
 
-	            console.log('check time and begin update if necessary');
 	            var currentTime = (0, _momentTimezone2.default)();
 	            console.log(this.players);
 	            var updatedList = this.players.map(function (player) {
-	                if (_this.shouldUpdate(player.time)) {
-	                    console.log('player status should be updated');
+	                if (_this2.shouldUpdate(player.timeDate)) {
+	                    console.log('player status should be updated', player.n);
+	                    _this2.updatePlayerStats();
 	                } else {
-	                    console.log('game has not started yet');
+	                    console.log('game has not started yet', player.n);
 	                }
 	                return player;
 	            });
 	            this.players = updatedList;
 	        }
+	        /**
+	         * shouldUpdate
+	         * The base ti
+	         *
+	         * @returns {undefined}
+	         */
+
 	    }, {
 	        key: 'shouldUpdate',
 	        value: function shouldUpdate(time) {
 	            // Time when data is being parsed
-	            var currentTime = (0, _momentTimezone2.default)().tz('America/New_York');
+	            var currentTime = (0, _momentTimezone2.default)();
 	            // Time when the game starts
-	            var convertedTime = (0, _momentTimezone2.default)(time + ' pm', 'HH:mm a');
+	            console.log(time);
+	            var gameTime = (0, _momentTimezone2.default)(time + ' pm', 'YYYY/MM/DD HH:mm a').tz('America/New_York');
 
-	            return currentTime.isAfter(convertedTime);
+	            console.log(currentTime.format(), gameTime.format());
+	            console.log(currentTime.isAfter(gameTime));
+
+	            //return currentTime.isAfter(gameTime);
+	            return true;
+	        }
+	    }, {
+	        key: 'updatePlayerStats',
+	        value: function updatePlayerStats() {
+	            var _this3 = this;
+
+	            //this.fetchDataBasedOnTeam(player);
+	            console.log(this.data);
+	            var allGames = this.data.data.games.game;
+	            var updatedPlayers = this.players.map(function (player) {
+	                for (var i = 0, len = allGames.length; i < len; i++) {
+	                    var currentGame = allGames[i];
+	                    if (currentGame.away_name_abbrev === player.t || currentGame.home_name_abbrev === player.t) {
+	                        player.lastOrder = player.order;
+	                        player.order = _this3.getCurrentOrder(player.p, currentGame);
+	                        player.lastUpdated = (0, _momentTimezone2.default)().format();
+	                        break;
+	                    }
+	                    player.lastOrder = player.order;
+	                    player.order = 'dugout';
+	                    player.lastUpdated = (0, _momentTimezone2.default)().format();
+	                }
+	                _this3.sendNotificationIfNecessary(player);
+	                return player;
+	            });
+	            this.players = updatedPlayers;
+	        }
+	    }, {
+	        key: 'getCurrentOrder',
+	        value: function getCurrentOrder(id, game) {
+	            if (game.status.status === 'Final' || game.status.status === 'Game Over') {
+	                return 'Final';
+	            }
+	            return 'dugout';
+	        }
+	    }, {
+	        key: 'sendNotificationIfNecessary',
+	        value: function sendNotificationIfNecessary(player) {
+	            console.log('---order', player.n, player.order, player.lastUpdated);
+	            if (player.order === 'Final' || player.lastOrder === player.order) {
+	                console.log('--- no notification b/c same or game ended');
+	            } else {
+	                console.log('--- show noti since order changed');
+	            }
+	        }
+	    }, {
+	        key: 'getPlayersArr',
+	        value: function getPlayersArr() {
+	            return this.players;
+	        }
+	    }, {
+	        key: 'fetchDataBasedOnTeam',
+	        value: function fetchDataBasedOnTeam(player) {
+
+	            var options = {};
+	            if (!player.url) {
+	                return;
+	            }
+	            var url = 'http://gd2.mlb.com' + player.url + '/plays.json';
+	            (0, _isomorphicFetch2.default)(url, options).then(function (data) {
+	                return data.json();
+	            })
+	            // cannot use arrow func because 'this' cannot be changed
+	            .then(function (data) {
+	                //this.buffer[`${player.t}${}`] = data;
+	                return data;
+	            }.bind(this)).then(function (data) {
+	                var outs = data.data.game.o;
+	                var status = data.data.game.status;
+	                if (status === 'Game Over' || status === 'Final') {
+	                    return data;
+	                }
+	                var comingUp = data.data.game.players;
+	                console.log('PLAYER: ', player.n, player.p);
+	                if (comingUp.batter.pid === player.p) {
+	                    console.log('AT BAT');
+	                }
+	                if (comingUp.deck.pid === player.p) {
+	                    console.log('ON DECK');
+	                }
+	                if (comingUp.hole.pid === player.p) {
+	                    console.log('IN HOLE');
+	                }
+	                console.log('---- done');
+	                return data;
+	            }).catch(function (err) {
+	                console.warn(err);
+	            });
 	        }
 	    }]);
 

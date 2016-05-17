@@ -14,12 +14,13 @@ chrome.alarms.create('update', {periodInMinutes: 1});
 chrome.storage.sync.get('players', update);
 
 chrome.alarms.onAlarm.addListener(function(){
-    console.log('chrome alarm fired off');
     //chrome.storage.sync.get('players', update);
 });
 
 /**
  * getTodayScoreBoard
+ * Five hours into tomorrow (ET) is still 'today', since the longest game ever played was 8 hours
+ * and 25 minutes and latest games are usually played around 9 pm (ET).
  *
  * @returns {}
  */
@@ -30,6 +31,12 @@ function getTodayScoreBoardUrl() {
 }
 
 function update(players) {
+    //console.log('----- PLayers', players);
+    // If players.players is undefined, nothing is stored in storage.sync. Need to exit
+    // and do nothing
+    if (!players.players) {
+        return;
+    }
 
     let playerList = new PlayerList(players.players);
     //let playerList = players.players;
@@ -54,9 +61,19 @@ function fetchGameData(playerList) {
             return data.json();
         })
         .then(data => {
-            //parseGameTime(data, players);
             playerList.parseGameData(data);
-            return data;
+            chrome.storage.sync.get('players', players => {
+                console.log('storage players', players);
+                console.log('playerList. array', playerList.getPlayersArr());
+                let newPlayerList = Object.assign({}, players, {players: playerList.getPlayersArr()});
+                console.log('newplayerlist', newPlayerList);
+                chrome.storage.sync.set({'players': newPlayerList}, function() {
+                    console.log('updated player time');
+                });
+
+
+            });
+            return data
         })
         .catch(err => {
             console.warn(err);

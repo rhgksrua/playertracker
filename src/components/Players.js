@@ -7,6 +7,7 @@ class Players extends React.Component {
         super(props);
     }
     render() {
+        console.log('in players', this.props.playerList);
         let playerList = this.props.playerList.players.map((playerObj) => {
             return (
                 <Player key={playerObj.p} playerObj={playerObj} />

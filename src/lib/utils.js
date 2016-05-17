@@ -5,8 +5,8 @@ export function zerofill(val) {
 }
 
 
-export function getYearMonthDate() {
-    let now = moment();
+export function getYearMonthDate(offset = 5) {
+    let now = moment().subtract(offset, 'hours');
     return {
         date: zerofill(now.date()),
         month: zerofill(now.month() + 1),

@@ -21542,13 +21542,21 @@
 	    switch (action.type) {
 	        case _actions.INITIALIZE:
 	            console.log('action val', action.val);
-	            return action.val;
-	        case _actions.ADD_PLAYER:
-	            var newState = Object.assign({}, state, { players: state.players.concat(action.player) });
-	            chrome.storage.sync.set({ 'players': newState });
+	            if (!action.val) return state;
+	            var newState = Object.assign({}, state, { players: action.val.players });
 	            return newState;
+	        case _actions.ADD_PLAYER:
+	            var addState = Object.assign({}, state, { players: state.players.concat(action.player) });
+	            chrome.storage.sync.set({ 'players': addState });
+	            return addState;
 	        case _actions.REMOVE_PLAYER:
-	            return state;
+	            var filteredPlayers = state.players.filter(function (player) {
+	                console.log(player.p, action.playerId);
+	                return player.p !== action.playerId;
+	            });
+	            var removedState = Object.assign({}, state, { players: filteredPlayers });
+	            chrome.storage.sync.set({ 'players': removedState });
+	            return removedState;
 	        default:
 	            return state;
 	    }
@@ -35984,7 +35992,7 @@
 	    _createClass(App, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
-	            console.log('--chrome', chrome);
+	            //console.log('--chrome', chrome);
 	            this.props.initialize();
 	        }
 	    }, {
@@ -36126,6 +36134,7 @@
 	    _createClass(Players, [{
 	        key: 'render',
 	        value: function render() {
+	            console.log('in players', this.props.playerList);
 	            var playerList = this.props.playerList.players.map(function (playerObj) {
 	                return _react2.default.createElement(_Player2.default, { key: playerObj.p, playerObj: playerObj });
 	            });
@@ -36158,6 +36167,10 @@
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(159);
+
+	var _actions = __webpack_require__(184);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -36200,7 +36213,25 @@
 	                this.props.playerObj.time && _react2.default.createElement(
 	                    'p',
 	                    null,
+	                    'Time ',
 	                    this.props.playerObj.time
+	                ),
+	                this.props.playerObj.order && _react2.default.createElement(
+	                    'p',
+	                    null,
+	                    'Order ',
+	                    this.props.playerObj.order
+	                ),
+	                this.props.playerObj.lastUpdated && _react2.default.createElement(
+	                    'p',
+	                    null,
+	                    'Last Updated ',
+	                    this.props.playerObj.lastUpdated
+	                ),
+	                _react2.default.createElement(
+	                    'button',
+	                    { onClick: this.props.removePlayerById.bind(this, this.props.playerObj.p) },
+	                    'Remove'
 	                )
 	            );
 	        }
@@ -36209,7 +36240,19 @@
 	    return Player;
 	}(_react2.default.Component);
 
-	exports.default = Player;
+	var mapStateToProps = function mapStateToProps(state, ownProps) {
+	    return ownProps;
+	};
+
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	    return {
+	        removePlayerById: function removePlayerById(playerId) {
+	            dispatch((0, _actions.removePlayer)(playerId));
+	        }
+	    };
+	};
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Player);
 
 /***/ },
 /* 362 */
@@ -36294,7 +36337,9 @@
 	                            {
 	                                style: isHighlighted ? _autocomplete.styles.highlightedItem : _autocomplete.styles.item,
 	                                key: item.p },
-	                            item.n
+	                            item.n,
+	                            ' ',
+	                            item.t
 	                        );
 	                    },
 	                    renderMenu: function renderMenu(items, value, style) {

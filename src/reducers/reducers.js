@@ -28,13 +28,21 @@ function playerList(state = initialStatePlayerList, action) {
     switch (action.type) {
         case INITIALIZE:
             console.log('action val', action.val);
-            return action.val;
-        case ADD_PLAYER:
-            const newState = Object.assign({}, state, {players: state.players.concat(action.player)});
-            chrome.storage.sync.set({'players': newState});
+            if (!action.val) return state;
+            let newState = Object.assign({}, state, {players: action.val.players});
             return newState;
+        case ADD_PLAYER:
+            let addState = Object.assign({}, state, {players: state.players.concat(action.player)});
+            chrome.storage.sync.set({'players': addState});
+            return addState;
         case REMOVE_PLAYER:
-            return state;
+            let filteredPlayers = state.players.filter(player => {
+                console.log(player.p, action.playerId);
+                return player.p !== action.playerId;
+            });
+            let removedState = Object.assign({}, state, {players: filteredPlayers});
+            chrome.storage.sync.set({'players': removedState});
+            return removedState;
         default:
             return state;
     }

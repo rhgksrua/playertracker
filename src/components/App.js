@@ -19,7 +19,7 @@ class App extends React.Component {
      * @returns {undefined}
      */
     componentDidMount() {
-        console.log('--chrome', chrome);
+        //console.log('--chrome', chrome);
         this.props.initialize();
     }
     render() {

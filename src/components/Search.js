@@ -31,7 +31,7 @@ class Search extends React.Component {
                         <div
                             style={isHighlighted ? styles.highlightedItem : styles.item}
                             key={item.p}>
-                            {item.n}
+                            {item.n} {item.t}
                         </div>
                     )}
                     renderMenu={(items, value, style) => (
@@ -72,7 +72,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         addPlayerObj: (playerObj) => {
             dispatch(addPlayer(playerObj));
         }
-    }
+    };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Search);
