@@ -14,7 +14,7 @@ chrome.alarms.create('update', {periodInMinutes: 1});
 chrome.storage.sync.get('players', update);
 
 chrome.alarms.onAlarm.addListener(function(){
-    //chrome.storage.sync.get('players', update);
+    chrome.storage.sync.get('players', update);
 });
 
 /**
@@ -63,21 +63,30 @@ function fetchGameData(playerList) {
         .then(data => {
             playerList.parseGameData(data);
             chrome.storage.sync.get('players', players => {
-                console.log('storage players', players);
-                console.log('playerList. array', playerList.getPlayersArr());
+                //console.log('storage players', players);
+                //console.log('playerList. array', playerList.getPlayersArr());
                 let newPlayerList = Object.assign({}, players, {players: playerList.getPlayersArr()});
-                console.log('newplayerlist', newPlayerList);
+                //console.log('newplayerlist', newPlayerList);
                 chrome.storage.sync.set({'players': newPlayerList}, function() {
                     console.log('updated player time');
                 });
 
-
+                // notify user
+                notifyUser(playerList.getNotification());
             });
             return data
         })
         .catch(err => {
             console.warn(err);
         });
+}
+
+function notifyUser(notification) {
+    console.log('----------------------- noti --------------------------');
+    notification.forEach(player => {
+        console.log('--- noti info', player.n, player.order);
+    });
+    console.log('----------------------- END --------------------------');
 }
 
 function parseGameTime(data, players) {
@@ -87,7 +96,7 @@ function parseGameTime(data, players) {
     // Assume all time are pm
     // moment format "YYYY-MM-DD HH:mm a"
     // need to pass 'pm' at the end of time.
-    console.log(data, players);
+    //console.log(data, players);
     let updatedPlayerList = players.players.map(player => {
         // player.t is team name.  Need to look for team name abbr in data.data.games[0]
         //console.log(data.data.games);
@@ -110,7 +119,7 @@ function parseGameTime(data, players) {
     let newPlayerList = Object.assign({}, players, {players: updatedPlayerList});
     //console.log('newplayerlist', newPlayerList);
     chrome.storage.sync.set({'players': newPlayerList}, function() {
-        console.log('updated player time');
+        //console.log('updated player time');
     });
 }
 

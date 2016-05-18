@@ -12,7 +12,7 @@ class PlayerList {
     constructor(players) {
         this.players = players.players;
         this.gameTimeSet = players.gameTimeSet;
-        this.buffer = {};
+        this.notification = [];
     }
     setGameTime() {
         let newPlayers = this.players.map(player => {
@@ -57,18 +57,18 @@ class PlayerList {
      * @returns {undefined}
      */
     updateIfNecessary(data = this.data) {
-        let currentTime = moment();
-        console.log(this.players);
-        let updatedList = this.players.map(player => {
-            if(this.shouldUpdate(player.timeDate)) {
-                console.log('player status should be updated', player.n);
-                this.updatePlayerStats();
-            } else {
-                console.log('game has not started yet', player.n);
-            }
-            return player;
-        });
-        this.players = updatedList;
+        //let currentTime = moment();
+        //console.log(this.players);
+        //let updatedList = this.players.map(player => {
+        if(this.shouldUpdate()) {
+            //console.log('player status should be updated', player.n);
+            this.updatePlayerStats();
+        } else {
+            console.log('game has not started yet', player.n);
+        }
+        //return player;
+        //});
+        //this.players = updatedList;
     }
     /**
      * shouldUpdate
@@ -77,25 +77,30 @@ class PlayerList {
      * @returns {undefined}
      */
     shouldUpdate(time) {
+        return true;
         // Time when data is being parsed
-        let currentTime = moment();
+        //let currentTime = moment();
         // Time when the game starts
-        console.log(time);
-        let gameTime =  moment(`${time} pm`, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
+        //console.log(time);
+        //let gameTime =  moment(`${time} pm`, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
 
-        console.log(currentTime.format(), gameTime.format());
-        console.log(currentTime.isAfter(gameTime));
+        //console.log(currentTime.format(), gameTime.format());
+        //console.log(currentTime.isAfter(gameTime));
 
         //return currentTime.isAfter(gameTime);
-        return true;
+        //return true;
     }
     updatePlayerStats() {
         //this.fetchDataBasedOnTeam(player);
-        console.log(this.data);
+        //console.log(this.data);
+        console.log('why twice', this.players);
         let allGames = this.data.data.games.game;
         let updatedPlayers = this.players.map(player => {
             for (let i = 0, len = allGames.length; i < len; i++) {
                 let currentGame = allGames[i];
+                if (currentGame.status.status !== 'In Progress') {
+                    continue;
+                }
                 if (currentGame.away_name_abbrev === player.t ||
                     currentGame.home_name_abbrev === player.t) {
                     player.lastOrder = player.order;
@@ -103,31 +108,63 @@ class PlayerList {
                     player.lastUpdated = moment().format();
                     break;
                 }
-                player.lastOrder = player.order;
-                player.order = 'dugout';
-                player.lastUpdated = moment().format();
+                //player.lastOrder = player.order;
+                //player.order = 'dugout';
+                //player.lastUpdated = moment().format();
             }
-            this.sendNotificationIfNecessary(player);
+            if (player.order === undefined || player.order === 'Dugout') {
+                player.order = 'Dugout';
+            }
+            this.setNotificationIfNecessary(player);
             return player;
 
         });
         this.players = updatedPlayers;
     }
     getCurrentOrder(id, game) {
+        console.log('--current game batter', game.batter.id, id, game.batter.id === id);
+        console.log('--current game deck', game.ondeck.id, id, game.ondeck.id === id);
+        console.log('--current game hole', game.inhole.id, id, game.inhole.id === id);
         if (game.status.status === 'Final' ||
             game.status.status === 'Game Over') {
             return 'Final';
+        } else if (game.batter.id === id) {
+            return 'At Bat';
+        } else if (game.inhole.id === id) {
+            return 'In Hole';
+        } else if (game.ondeck.id === id) {
+            return 'On Deck';
         }
         return 'dugout';
-
     }
-    sendNotificationIfNecessary(player) {
-        console.log('---order', player.n, player.order, player.lastUpdated);
+    /**
+     * setNotificationIfNecessary
+     * Pushes all the notification that need to be activated in to this.noti(Array)
+     *
+     * @returns {undefined}
+     */
+    setNotificationIfNecessary(player) {
+        console.log('---order', player.n, player.order, player.lastOrder);
         if (player.order === 'Final' || player.lastOrder === player.order) {
             console.log('--- no notification b/c same or game ended');
-        } else {
-            console.log('--- show noti since order changed');
+            return;
         }
+        //console.log('--- show noti since order changed');
+        console.log('pushing', player.n, player.p);
+        this.notification = this.notification.concat(player);
+    }
+
+    /**
+     * notification
+     * getter
+     *
+     * @returns {undefined}
+     */
+    getNotification() {
+        if (!this.notification) {
+            return [];
+        }
+        return this.notification;
     }
 
     getPlayersArr() {
@@ -157,7 +194,7 @@ class PlayerList {
                     return data;
                 }
                 let comingUp = data.data.game.players;
-                console.log('PLAYER: ', player.n, player.p);
+                //console.log('PLAYER: ', player.n, player.p);
                 if (comingUp.batter.pid === player.p) {
                     console.log('AT BAT');
                 }

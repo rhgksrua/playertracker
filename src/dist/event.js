@@ -81,7 +81,7 @@
 	chrome.storage.sync.get('players', update);
 
 	chrome.alarms.onAlarm.addListener(function () {
-	    //chrome.storage.sync.get('players', update);
+	    chrome.storage.sync.get('players', update);
 	});
 
 	/**
@@ -128,18 +128,29 @@
 	    }).then(function (data) {
 	        playerList.parseGameData(data);
 	        chrome.storage.sync.get('players', function (players) {
-	            console.log('storage players', players);
-	            console.log('playerList. array', playerList.getPlayersArr());
+	            //console.log('storage players', players);
+	            //console.log('playerList. array', playerList.getPlayersArr());
 	            var newPlayerList = Object.assign({}, players, { players: playerList.getPlayersArr() });
-	            console.log('newplayerlist', newPlayerList);
+	            //console.log('newplayerlist', newPlayerList);
 	            chrome.storage.sync.set({ 'players': newPlayerList }, function () {
 	                console.log('updated player time');
 	            });
+
+	            // notify user
+	            notifyUser(playerList.getNotification());
 	        });
 	        return data;
 	    }).catch(function (err) {
 	        console.warn(err);
 	    });
+	}
+
+	function notifyUser(notification) {
+	    console.log('----------------------- noti --------------------------');
+	    notification.forEach(function (player) {
+	        console.log('--- noti info', player.n, player.order);
+	    });
+	    console.log('----------------------- END --------------------------');
 	}
 
 	function parseGameTime(data, players) {
@@ -149,7 +160,7 @@
 	    // Assume all time are pm
 	    // moment format "YYYY-MM-DD HH:mm a"
 	    // need to pass 'pm' at the end of time.
-	    console.log(data, players);
+	    //console.log(data, players);
 	    var updatedPlayerList = players.players.map(function (player) {
 	        // player.t is team name.  Need to look for team name abbr in data.data.games[0]
 	        //console.log(data.data.games);
@@ -171,7 +182,7 @@
 	    var newPlayerList = Object.assign({}, players, { players: updatedPlayerList });
 	    //console.log('newplayerlist', newPlayerList);
 	    chrome.storage.sync.set({ 'players': newPlayerList }, function () {
-	        console.log('updated player time');
+	        //console.log('updated player time');
 	    });
 	}
 
@@ -567,7 +578,7 @@
 /* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
+	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
 	 * @overview es6-promise - a tiny implementation of Promises/A+.
 	 * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
 	 * @license   Licensed under MIT license
@@ -28623,7 +28634,7 @@
 
 	        this.players = players.players;
 	        this.gameTimeSet = players.gameTimeSet;
-	        this.buffer = {};
+	        this.notification = [];
 	    }
 
 	    _createClass(PlayerList, [{
@@ -28678,22 +28689,20 @@
 	    }, {
 	        key: 'updateIfNecessary',
 	        value: function updateIfNecessary() {
-	            var _this2 = this;
-
 	            var data = arguments.length <= 0 || arguments[0] === undefined ? this.data : arguments[0];
 
-	            var currentTime = (0, _momentTimezone2.default)();
-	            console.log(this.players);
-	            var updatedList = this.players.map(function (player) {
-	                if (_this2.shouldUpdate(player.timeDate)) {
-	                    console.log('player status should be updated', player.n);
-	                    _this2.updatePlayerStats();
-	                } else {
-	                    console.log('game has not started yet', player.n);
-	                }
-	                return player;
-	            });
-	            this.players = updatedList;
+	            //let currentTime = moment();
+	            //console.log(this.players);
+	            //let updatedList = this.players.map(player => {
+	            if (this.shouldUpdate()) {
+	                //console.log('player status should be updated', player.n);
+	                this.updatePlayerStats();
+	            } else {
+	                console.log('game has not started yet', player.n);
+	            }
+	            //return player;
+	            //});
+	            //this.players = updatedList;
 	        }
 	        /**
 	         * shouldUpdate
@@ -28705,40 +28714,48 @@
 	    }, {
 	        key: 'shouldUpdate',
 	        value: function shouldUpdate(time) {
+	            return true;
 	            // Time when data is being parsed
-	            var currentTime = (0, _momentTimezone2.default)();
+	            //let currentTime = moment();
 	            // Time when the game starts
-	            console.log(time);
-	            var gameTime = (0, _momentTimezone2.default)(time + ' pm', 'YYYY/MM/DD HH:mm a').tz('America/New_York');
+	            //console.log(time);
+	            //let gameTime =  moment(`${time} pm`, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
 
-	            console.log(currentTime.format(), gameTime.format());
-	            console.log(currentTime.isAfter(gameTime));
+	            //console.log(currentTime.format(), gameTime.format());
+	            //console.log(currentTime.isAfter(gameTime));
 
 	            //return currentTime.isAfter(gameTime);
-	            return true;
+	            //return true;
 	        }
 	    }, {
 	        key: 'updatePlayerStats',
 	        value: function updatePlayerStats() {
-	            var _this3 = this;
+	            var _this2 = this;
 
 	            //this.fetchDataBasedOnTeam(player);
-	            console.log(this.data);
+	            //console.log(this.data);
+	            console.log('why twice', this.players);
 	            var allGames = this.data.data.games.game;
 	            var updatedPlayers = this.players.map(function (player) {
 	                for (var i = 0, len = allGames.length; i < len; i++) {
 	                    var currentGame = allGames[i];
+	                    if (currentGame.status.status !== 'In Progress') {
+	                        continue;
+	                    }
 	                    if (currentGame.away_name_abbrev === player.t || currentGame.home_name_abbrev === player.t) {
 	                        player.lastOrder = player.order;
-	                        player.order = _this3.getCurrentOrder(player.p, currentGame);
+	                        player.order = _this2.getCurrentOrder(player.p, currentGame);
 	                        player.lastUpdated = (0, _momentTimezone2.default)().format();
 	                        break;
 	                    }
-	                    player.lastOrder = player.order;
-	                    player.order = 'dugout';
-	                    player.lastUpdated = (0, _momentTimezone2.default)().format();
+	                    //player.lastOrder = player.order;
+	                    //player.order = 'dugout';
+	                    //player.lastUpdated = moment().format();
 	                }
-	                _this3.sendNotificationIfNecessary(player);
+	                if (player.order === undefined || player.order === 'Dugout') {
+	                    player.order = 'Dugout';
+	                }
+	                _this2.setNotificationIfNecessary(player);
 	                return player;
 	            });
 	            this.players = updatedPlayers;
@@ -28746,20 +28763,54 @@
 	    }, {
 	        key: 'getCurrentOrder',
 	        value: function getCurrentOrder(id, game) {
+	            console.log('--current game batter', game.batter.id, id, game.batter.id === id);
+	            console.log('--current game deck', game.ondeck.id, id, game.ondeck.id === id);
+	            console.log('--current game hole', game.inhole.id, id, game.inhole.id === id);
 	            if (game.status.status === 'Final' || game.status.status === 'Game Over') {
 	                return 'Final';
+	            } else if (game.batter.id === id) {
+	                return 'At Bat';
+	            } else if (game.inhole.id === id) {
+	                return 'In Hole';
+	            } else if (game.ondeck.id === id) {
+	                return 'On Deck';
 	            }
 	            return 'dugout';
 	        }
+	        /**
+	         * setNotificationIfNecessary
+	         * Pushes all the notification that need to be activated in to this.noti(Array)
+	         *
+	         * @returns {undefined}
+	         */
+
 	    }, {
-	        key: 'sendNotificationIfNecessary',
-	        value: function sendNotificationIfNecessary(player) {
-	            console.log('---order', player.n, player.order, player.lastUpdated);
+	        key: 'setNotificationIfNecessary',
+	        value: function setNotificationIfNecessary(player) {
+	            console.log('---order', player.n, player.order, player.lastOrder);
 	            if (player.order === 'Final' || player.lastOrder === player.order) {
 	                console.log('--- no notification b/c same or game ended');
-	            } else {
-	                console.log('--- show noti since order changed');
+	                return;
 	            }
+	            //console.log('--- show noti since order changed');
+	            console.log('pushing', player.n, player.p);
+	            this.notification = this.notification.concat(player);
+	        }
+
+	        /**
+	         * notification
+	         * getter
+	         *
+	         * @returns {undefined}
+	         */
+
+	    }, {
+	        key: 'getNotification',
+	        value: function getNotification() {
+	            if (!this.notification) {
+	                return [];
+	            }
+	            return this.notification;
 	        }
 	    }, {
 	        key: 'getPlayersArr',
@@ -28789,7 +28840,7 @@
 	                    return data;
 	                }
 	                var comingUp = data.data.game.players;
-	                console.log('PLAYER: ', player.n, player.p);
+	                //console.log('PLAYER: ', player.n, player.p);
 	                if (comingUp.batter.pid === player.p) {
 	                    console.log('AT BAT');
 	                }
