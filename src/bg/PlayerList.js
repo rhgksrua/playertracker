@@ -90,52 +90,88 @@ class PlayerList {
         //return currentTime.isAfter(gameTime);
         //return true;
     }
+
+    /**
+     *  updatePlayerStats
+     *  Updates players stats.
+     *  It loops through all the players set by the user.  Then looks for
+     *  all the games playing for the day.  If player's team is playing
+     *  checks for batting order.
+     *
+     * @returns {undefined}
+     */
     updatePlayerStats() {
         //this.fetchDataBasedOnTeam(player);
         //console.log(this.data);
-        console.log('why twice', this.players);
         let allGames = this.data.data.games.game;
+
+        // Loop through all the players stored
         let updatedPlayers = this.players.map(player => {
+
+            // Loop thru all the games available
             for (let i = 0, len = allGames.length; i < len; i++) {
                 let currentGame = allGames[i];
-                if (currentGame.status.status !== 'In Progress') {
-                    continue;
-                }
                 if (currentGame.away_name_abbrev === player.t ||
                     currentGame.home_name_abbrev === player.t) {
+
+                    // Game did not start or has ended
+                    if (currentGame.status.status !== 'In Progress') {
+                        player.gameStatus = currentGame.status.status;
+                        continue;
+                    }
+
+                    // Set all required data for player
                     player.lastOrder = player.order;
-                    player.order = this.getCurrentOrder(player.p, currentGame);
+
+                    let order = this.getCurrentOrder(player.p, currentGame);
+                    player.order = order.order;
+                    player.orderKey = order.orderKey;
+                    
+                    player.gameStatus = currentGame.status.status;
                     player.lastUpdated = moment().format();
+
+                    console.log(currentGame, player.orderKey);
+                    player.hits = currentGame[player.orderKey].h;
+                    player.ab = currentGame[player.orderKey].ab;
+
                     break;
                 }
-                //player.lastOrder = player.order;
-                //player.order = 'dugout';
-                //player.lastUpdated = moment().format();
             }
+
+            // Checks for newly added player or in Dugout
             if (player.order === undefined || player.order === 'Dugout') {
                 player.order = 'Dugout';
             }
+
+            // No games found for the day
+            if (player.gameStatus === undefined) {
+                player.gameStatus = 'No Games';
+            }
+
             this.setNotificationIfNecessary(player);
             return player;
 
         });
         this.players = updatedPlayers;
     }
+    /**
+     * getCurrentOrder
+     * Returns current order of player
+     *
+     * @returns {undefined}
+     */
     getCurrentOrder(id, game) {
-        console.log('--current game batter', game.batter.id, id, game.batter.id === id);
-        console.log('--current game deck', game.ondeck.id, id, game.ondeck.id === id);
-        console.log('--current game hole', game.inhole.id, id, game.inhole.id === id);
         if (game.status.status === 'Final' ||
             game.status.status === 'Game Over') {
-            return 'Final';
+            return { order: 'Final', orderKey: '' };
         } else if (game.batter.id === id) {
-            return 'At Bat';
+            return { order: 'At Bat', orderKey: 'batter' };
         } else if (game.inhole.id === id) {
-            return 'In Hole';
+            return { order: 'In Hole', orderKey: 'inhole' };
         } else if (game.ondeck.id === id) {
-            return 'On Deck';
+            return { order: 'On Deck', orderKey: 'ondeck' };
         }
-        return 'dugout';
+        return { order: 'Dugout', orderKey: '' };
     }
     /**
      * setNotificationIfNecessary
@@ -144,19 +180,17 @@ class PlayerList {
      * @returns {undefined}
      */
     setNotificationIfNecessary(player) {
-        console.log('---order', player.n, player.order, player.lastOrder);
-        if (player.order === 'Final' || player.lastOrder === player.order) {
-            console.log('--- no notification b/c same or game ended');
+        console.log(player.lastOrder, player.order);
+        if (player.order === 'Final' || 
+            player.lastOrder === player.order || 
+            player.order === 'Dugout') {
             return;
         }
-        //console.log('--- show noti since order changed');
-        console.log('pushing', player.n, player.p);
         this.notification = this.notification.concat(player);
     }
 
     /**
      * notification
-     * getter
      *
      * @returns {undefined}
      */
@@ -167,49 +201,12 @@ class PlayerList {
         return this.notification;
     }
 
-    getPlayersArr() {
-        return this.players;
+    get notis() {
+        return this.notification;
     }
 
-    fetchDataBasedOnTeam(player) {
-
-        let options = {};
-        if (!player.url) {
-            return;
-        }
-        let url = `http://gd2.mlb.com${player.url}/plays.json`;
-        fetch(url, options)
-            .then(data => {
-                return data.json();
-            })
-            // cannot use arrow func because 'this' cannot be changed
-            .then(function(data) {
-                //this.buffer[`${player.t}${}`] = data;
-                return data;
-            }.bind(this))
-            .then(data => {
-                let outs = data.data.game.o;
-                let status = data.data.game.status;
-                if (status === 'Game Over' || status === 'Final') {
-                    return data;
-                }
-                let comingUp = data.data.game.players;
-                //console.log('PLAYER: ', player.n, player.p);
-                if (comingUp.batter.pid === player.p) {
-                    console.log('AT BAT');
-                }
-                if (comingUp.deck.pid === player.p) {
-                    console.log('ON DECK');
-                }
-                if (comingUp.hole.pid === player.p) {
-                    console.log('IN HOLE');
-                }
-                console.log('---- done');
-                return data;
-            })
-            .catch(err => {
-                console.warn(err);
-            });
+    getPlayersArr() {
+        return this.players;
     }
 }
 

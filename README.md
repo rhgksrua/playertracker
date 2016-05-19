@@ -22,3 +22,7 @@ game_events.json
 master_scoreboard.json
 miniscoreboard.json
 - has which teams are playing
+
+# NOTES
+
+comment out lastOrder order equality to test notification

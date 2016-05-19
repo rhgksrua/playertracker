@@ -77,6 +77,12 @@
 	var API_DOMAIN = 'http://gd2.mlb.com/';
 	var API_BASE = 'http://gd2.mlb.com/components/game/mlb/';
 
+	var test = true;
+
+	/**
+	 * Entry point
+	 * Uses chrome.alarms to update player status every one minute.
+	 **/
 	chrome.alarms.create('update', { periodInMinutes: 1 });
 	chrome.storage.sync.get('players', update);
 
@@ -98,7 +104,6 @@
 	}
 
 	function update(players) {
-	    //console.log('----- PLayers', players);
 	    // If players.players is undefined, nothing is stored in storage.sync. Need to exit
 	    // and do nothing
 	    if (!players.players) {
@@ -123,21 +128,22 @@
 	    //const options = {};
 	    var options = {};
 	    var url = getTodayScoreBoardUrl();
+	    if (test) {
+	        url = '/master.json';
+	    }
 	    (0, _isomorphicFetch2.default)(url, options).then(function (data) {
 	        return data.json();
 	    }).then(function (data) {
 	        playerList.parseGameData(data);
 	        chrome.storage.sync.get('players', function (players) {
-	            //console.log('storage players', players);
-	            //console.log('playerList. array', playerList.getPlayersArr());
 	            var newPlayerList = Object.assign({}, players, { players: playerList.getPlayersArr() });
-	            //console.log('newplayerlist', newPlayerList);
 	            chrome.storage.sync.set({ 'players': newPlayerList }, function () {
 	                console.log('updated player time');
 	            });
 
-	            // notify user
-	            notifyUser(playerList.getNotification());
+	            //notifyUser(playerList.getNotification());
+	            console.log('notis', playerList.notis);
+	            notifyUser(playerList.notis);
 	        });
 	        return data;
 	    }).catch(function (err) {
@@ -148,69 +154,32 @@
 	function notifyUser(notification) {
 	    console.log('----------------------- noti --------------------------');
 	    notification.forEach(function (player) {
+	        var notiOpt = {
+	            type: 'basic',
+	            iconUrl: 'http://mlb.mlb.com/images/players/assets/74_' + player.p + '.png',
+	            title: player.n,
+	            message: player.order + ' Today: ' + player.hits + ' for ' + player.ab
+	        };
+	        chrome.notifications.create(notiOpt, function (notiId) {
+	            console.log('noti id', notiId);
+	        });
 	        console.log('--- noti info', player.n, player.order);
 	    });
 	    console.log('----------------------- END --------------------------');
-	}
 
-	function parseGameTime(data, players) {
-	    // data is list of game data
-	    // data.data.games.game is array of all games
-	    // data.data.games.game[0].time -> "1:05"
-	    // Assume all time are pm
-	    // moment format "YYYY-MM-DD HH:mm a"
-	    // need to pass 'pm' at the end of time.
-	    //console.log(data, players);
-	    var updatedPlayerList = players.players.map(function (player) {
-	        // player.t is team name.  Need to look for team name abbr in data.data.games[0]
-	        //console.log(data.data.games);
-	        var games = data.data.games.game;
-
-	        var gamesLen = games.length;
-	        for (var i = 0; i < gamesLen; i++) {
-	            var currentGame = games[i];
-	            if (currentGame['home_name_abbrev'] === player.t || currentGame['away_name_abbrev'] === player.t) {
-
-	                //console.log('game found', currentGame.time);
-	                player.time = currentGame.time;
-	                break;
-	            }
-	        }
-	        return player;
+	    /*
+	    let notiOpt = {
+	    type: 'basic',
+	    iconUrl: `http://mlb.mlb.com/images/players/assets/74_${player.p}.png`,
+	    title: 'playertracker',
+	    message: 'does this work?'
+	    };
+	    chrome.notifications.create(notiOpt, notiId => {
+	    console.log('noti id', notiId);
+	    
 	    });
-	    //console.log('list with time', updatedPlayerList);
-	    var newPlayerList = Object.assign({}, players, { players: updatedPlayerList });
-	    //console.log('newplayerlist', newPlayerList);
-	    chrome.storage.sync.set({ 'players': newPlayerList }, function () {
-	        //console.log('updated player time');
-	    });
+	    */
 	}
-
-	/**
-	 * getPlayersTeam
-	 * Returns all the teams for the players.  Gameday provides data based on the teams
-	 * playing eachother.
-	 *
-	 * @returns {undefined}
-	 */
-	function getPlayersTeam() {}
-
-	function getLineup() {}
-
-	/**
-	 * BatDeckHole
-	 * Gets current at bat, on deck, and in hole.
-	 * If players found in any of those situtation, fire off notification
-	 *
-	 * @returns {undefined}
-	 */
-	function BatDeckHole() {}
-
-	function getAtBat() {}
-
-	function getOnDeck() {}
-
-	function getInHole() {}
 
 /***/ },
 /* 1 */,
@@ -578,7 +547,7 @@
 /* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
+	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
 	 * @overview es6-promise - a tiny implementation of Promises/A+.
 	 * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
 	 * @license   Licensed under MIT license
@@ -28727,6 +28696,17 @@
 	            //return currentTime.isAfter(gameTime);
 	            //return true;
 	        }
+
+	        /**
+	         *  updatePlayerStats
+	         *  Updates players stats.
+	         *  It loops through all the players set by the user.  Then looks for
+	         *  all the games playing for the day.  If player's team is playing
+	         *  checks for batting order.
+	         *
+	         * @returns {undefined}
+	         */
+
 	    }, {
 	        key: 'updatePlayerStats',
 	        value: function updatePlayerStats() {
@@ -28734,48 +28714,75 @@
 
 	            //this.fetchDataBasedOnTeam(player);
 	            //console.log(this.data);
-	            console.log('why twice', this.players);
 	            var allGames = this.data.data.games.game;
+
+	            // Loop through all the players stored
 	            var updatedPlayers = this.players.map(function (player) {
+
+	                // Loop thru all the games available
 	                for (var i = 0, len = allGames.length; i < len; i++) {
 	                    var currentGame = allGames[i];
-	                    if (currentGame.status.status !== 'In Progress') {
-	                        continue;
-	                    }
 	                    if (currentGame.away_name_abbrev === player.t || currentGame.home_name_abbrev === player.t) {
+
+	                        // Game did not start or has ended
+	                        if (currentGame.status.status !== 'In Progress') {
+	                            player.gameStatus = currentGame.status.status;
+	                            continue;
+	                        }
+
+	                        // Set all required data for player
 	                        player.lastOrder = player.order;
-	                        player.order = _this2.getCurrentOrder(player.p, currentGame);
+
+	                        var order = _this2.getCurrentOrder(player.p, currentGame);
+	                        player.order = order.order;
+	                        player.orderKey = order.orderKey;
+
+	                        player.gameStatus = currentGame.status.status;
 	                        player.lastUpdated = (0, _momentTimezone2.default)().format();
+
+	                        console.log(currentGame, player.orderKey);
+	                        player.hits = currentGame[player.orderKey].h;
+	                        player.ab = currentGame[player.orderKey].ab;
+
 	                        break;
 	                    }
-	                    //player.lastOrder = player.order;
-	                    //player.order = 'dugout';
-	                    //player.lastUpdated = moment().format();
 	                }
+
+	                // Checks for newly added player or in Dugout
 	                if (player.order === undefined || player.order === 'Dugout') {
 	                    player.order = 'Dugout';
 	                }
+
+	                // No games found for the day
+	                if (player.gameStatus === undefined) {
+	                    player.gameStatus = 'No Games';
+	                }
+
 	                _this2.setNotificationIfNecessary(player);
 	                return player;
 	            });
 	            this.players = updatedPlayers;
 	        }
+	        /**
+	         * getCurrentOrder
+	         * Returns current order of player
+	         *
+	         * @returns {undefined}
+	         */
+
 	    }, {
 	        key: 'getCurrentOrder',
 	        value: function getCurrentOrder(id, game) {
-	            console.log('--current game batter', game.batter.id, id, game.batter.id === id);
-	            console.log('--current game deck', game.ondeck.id, id, game.ondeck.id === id);
-	            console.log('--current game hole', game.inhole.id, id, game.inhole.id === id);
 	            if (game.status.status === 'Final' || game.status.status === 'Game Over') {
-	                return 'Final';
+	                return { order: 'Final', orderKey: '' };
 	            } else if (game.batter.id === id) {
-	                return 'At Bat';
+	                return { order: 'At Bat', orderKey: 'batter' };
 	            } else if (game.inhole.id === id) {
-	                return 'In Hole';
+	                return { order: 'In Hole', orderKey: 'inhole' };
 	            } else if (game.ondeck.id === id) {
-	                return 'On Deck';
+	                return { order: 'On Deck', orderKey: 'ondeck' };
 	            }
-	            return 'dugout';
+	            return { order: 'Dugout', orderKey: '' };
 	        }
 	        /**
 	         * setNotificationIfNecessary
@@ -28787,19 +28794,15 @@
 	    }, {
 	        key: 'setNotificationIfNecessary',
 	        value: function setNotificationIfNecessary(player) {
-	            console.log('---order', player.n, player.order, player.lastOrder);
-	            if (player.order === 'Final' || player.lastOrder === player.order) {
-	                console.log('--- no notification b/c same or game ended');
+	            console.log(player.lastOrder, player.order);
+	            if (player.order === 'Final' || player.lastOrder === player.order || player.order === 'Dugout') {
 	                return;
 	            }
-	            //console.log('--- show noti since order changed');
-	            console.log('pushing', player.n, player.p);
 	            this.notification = this.notification.concat(player);
 	        }
 
 	        /**
 	         * notification
-	         * getter
 	         *
 	         * @returns {undefined}
 	         */
@@ -28818,43 +28821,9 @@
 	            return this.players;
 	        }
 	    }, {
-	        key: 'fetchDataBasedOnTeam',
-	        value: function fetchDataBasedOnTeam(player) {
-
-	            var options = {};
-	            if (!player.url) {
-	                return;
-	            }
-	            var url = 'http://gd2.mlb.com' + player.url + '/plays.json';
-	            (0, _isomorphicFetch2.default)(url, options).then(function (data) {
-	                return data.json();
-	            })
-	            // cannot use arrow func because 'this' cannot be changed
-	            .then(function (data) {
-	                //this.buffer[`${player.t}${}`] = data;
-	                return data;
-	            }.bind(this)).then(function (data) {
-	                var outs = data.data.game.o;
-	                var status = data.data.game.status;
-	                if (status === 'Game Over' || status === 'Final') {
-	                    return data;
-	                }
-	                var comingUp = data.data.game.players;
-	                //console.log('PLAYER: ', player.n, player.p);
-	                if (comingUp.batter.pid === player.p) {
-	                    console.log('AT BAT');
-	                }
-	                if (comingUp.deck.pid === player.p) {
-	                    console.log('ON DECK');
-	                }
-	                if (comingUp.hole.pid === player.p) {
-	                    console.log('IN HOLE');
-	                }
-	                console.log('---- done');
-	                return data;
-	            }).catch(function (err) {
-	                console.warn(err);
-	            });
+	        key: 'notis',
+	        get: function get() {
+	            return this.notification;
 	        }
 	    }]);
 

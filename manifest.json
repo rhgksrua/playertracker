@@ -24,6 +24,7 @@
         "notifications",
         "storage",
         "alarms",
-        "http://gd2.mlb.com/"
+        "http://*.mlb.com/",
+        "tabs"
     ]
 }

@@ -21734,7 +21734,7 @@
 /* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
+	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
 	 * @overview es6-promise - a tiny implementation of Promises/A+.
 	 * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
 	 * @license   Licensed under MIT license
@@ -36186,10 +36186,19 @@
 	    function Player(props) {
 	        _classCallCheck(this, Player);
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Player).call(this, props));
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Player).call(this, props));
+
+	        _this.openPlayerPage = _this.openPlayerPage.bind(_this);
+	        return _this;
 	    }
 
 	    _createClass(Player, [{
+	        key: 'openPlayerPage',
+	        value: function openPlayerPage() {
+	            console.log('open page for ', this.props.playerObj.p);
+	            chrome.tabs.create({ url: 'http://mlb.mlb.com/team/player.jsp?player_id=' + this.props.playerObj.p });
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            return _react2.default.createElement(
@@ -36198,7 +36207,11 @@
 	                _react2.default.createElement(
 	                    'h3',
 	                    null,
-	                    this.props.playerObj.n
+	                    _react2.default.createElement(
+	                        'a',
+	                        { href: '#', onClick: this.openPlayerPage },
+	                        this.props.playerObj.n
+	                    )
 	                ),
 	                _react2.default.createElement(
 	                    'p',
@@ -36227,6 +36240,12 @@
 	                    null,
 	                    'Last Updated ',
 	                    this.props.playerObj.lastUpdated
+	                ),
+	                this.props.playerObj.gameStatus && _react2.default.createElement(
+	                    'p',
+	                    null,
+	                    'Game Status: ',
+	                    this.props.playerObj.gameStatus
 	                ),
 	                _react2.default.createElement(
 	                    'button',
