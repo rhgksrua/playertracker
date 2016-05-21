@@ -31,7 +31,6 @@ class PlayerList {
 
                     // game not finished or in progress
                     player.timeDate = currentGame.time_date;
-                    //player.url = currentGame.game_data_directory;
                     break;
                 }
             }
@@ -57,18 +56,12 @@ class PlayerList {
      * @returns {undefined}
      */
     updateIfNecessary(data = this.data) {
-        //let currentTime = moment();
-        //console.log(this.players);
-        //let updatedList = this.players.map(player => {
         if(this.shouldUpdate()) {
             //console.log('player status should be updated', player.n);
             this.updatePlayerStats();
         } else {
             console.log('game has not started yet', player.n);
         }
-        //return player;
-        //});
-        //this.players = updatedList;
     }
     /**
      * shouldUpdate
@@ -101,8 +94,6 @@ class PlayerList {
      * @returns {undefined}
      */
     updatePlayerStats() {
-        //this.fetchDataBasedOnTeam(player);
-        //console.log(this.data);
         let allGames = this.data.data.games.game;
 
         // Loop through all the players stored
@@ -126,13 +117,23 @@ class PlayerList {
                     let order = this.getCurrentOrder(player.p, currentGame);
                     player.order = order.order;
                     player.orderKey = order.orderKey;
+
+                    player.outs = currentGame.status.o;
                     
                     player.gameStatus = currentGame.status.status;
                     player.lastUpdated = moment().format();
 
-                    console.log(currentGame, player.orderKey);
-                    player.hits = currentGame[player.orderKey].h;
-                    player.ab = currentGame[player.orderKey].ab;
+                    player.mlbtv = this.parseMlbtv(currentGame.links.mlbtv);
+
+                    // Get today stat for player
+                    const validOrder = ['batter', 'inhole', 'ondeck'];
+                    if (validOrder.indexOf(player.orderKey) >= 0) {
+                        player.hits = currentGame[player.orderKey].h;
+                        player.ab = currentGame[player.orderKey].ab;
+                    } else {
+                        player.hits = 0;
+                        player.ab = 0;
+                    }
 
                     break;
                 }
@@ -207,6 +208,18 @@ class PlayerList {
 
     getPlayersArr() {
         return this.players;
+    }
+    parseMlbtv(raw) {
+        let id = this.parseCalendarId(raw);
+        return `${id}`;
+    }
+    parseCalendarId(raw) {
+        const re = /calendar_event_id:\'([\d\-]+)\'/;
+        let results = re.exec(raw);
+        if (results.length > 1) {
+            return results[1];
+        }
+        return '';
     }
 }
 

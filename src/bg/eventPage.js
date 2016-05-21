@@ -10,11 +10,9 @@ import PlayerList from './PlayerList';
 const API_DOMAIN = 'http://gd2.mlb.com/';
 const API_BASE = 'http://gd2.mlb.com/components/game/mlb/';
 
-let test = true;
-
 /**
  * Entry point
- * Uses chrome.alarms to update player status every one minute.
+ * Uses chrome.alarms to update player status once per minute.
  **/
 chrome.alarms.create('update', {periodInMinutes: 1});
 chrome.storage.sync.get('players', update);
@@ -44,7 +42,6 @@ function update(players) {
     }
 
     let playerList = new PlayerList(players.players);
-    //let playerList = players.players;
     fetchGameData(playerList);
 }
 
@@ -61,9 +58,7 @@ function fetchGameData(playerList) {
     //const options = {};
     const options = {};
     let url = getTodayScoreBoardUrl();
-    if (test) {
-        url = '/master.json';
-    }
+    //url = '/master.json';
     fetch(url, options)
         .then(data => {
             return data.json();
@@ -94,28 +89,32 @@ function notifyUser(notification) {
             type: 'basic',
             iconUrl: `http://mlb.mlb.com/images/players/assets/74_${player.p}.png`,
             title: player.n,
-            message: `${player.order} Today: ${player.hits} for ${player.ab}`
+            message: `${player.order}`,
+            contextMessage: `${player.hits} for ${player.ab}`,
+            buttons: [
+                {
+                    title: 'watch on mlb.tv'
+                }
+            ],
+            isClickable: true,
+            requireInteraction: true
         };
         chrome.notifications.create(notiOpt, notiId => {
-            console.log('noti id', notiId);
+            let p = player;
+            console.log('notification create');
+            chrome.notifications.onButtonClicked.addListener(function(id, index) {
+                if (id === notiId) {
+                    console.log('clicked event', p.n, p.t, p.p, p.mlbtv);
+                }
+            });
             
         });
         console.log('--- noti info', player.n, player.order);
     });
     console.log('----------------------- END --------------------------');
-
-        /*
-    let notiOpt = {
-        type: 'basic',
-        iconUrl: `http://mlb.mlb.com/images/players/assets/74_${player.p}.png`,
-        title: 'playertracker',
-        message: 'does this work?'
-    };
-
-    chrome.notifications.create(notiOpt, notiId => {
-        console.log('noti id', notiId);
-        
-    });
-    */
 }
 
+
+function openMlbtv(id, index) {
+    console.log('id index', id, index);
+}

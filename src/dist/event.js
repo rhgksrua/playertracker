@@ -77,11 +77,9 @@
 	var API_DOMAIN = 'http://gd2.mlb.com/';
 	var API_BASE = 'http://gd2.mlb.com/components/game/mlb/';
 
-	var test = true;
-
 	/**
 	 * Entry point
-	 * Uses chrome.alarms to update player status every one minute.
+	 * Uses chrome.alarms to update player status once per minute.
 	 **/
 	chrome.alarms.create('update', { periodInMinutes: 1 });
 	chrome.storage.sync.get('players', update);
@@ -111,7 +109,6 @@
 	    }
 
 	    var playerList = new _PlayerList2.default(players.players);
-	    //let playerList = players.players;
 	    fetchGameData(playerList);
 	}
 
@@ -128,9 +125,7 @@
 	    //const options = {};
 	    var options = {};
 	    var url = getTodayScoreBoardUrl();
-	    if (test) {
-	        url = '/master.json';
-	    }
+	    //url = '/master.json';
 	    (0, _isomorphicFetch2.default)(url, options).then(function (data) {
 	        return data.json();
 	    }).then(function (data) {
@@ -158,27 +153,30 @@
 	            type: 'basic',
 	            iconUrl: 'http://mlb.mlb.com/images/players/assets/74_' + player.p + '.png',
 	            title: player.n,
-	            message: player.order + ' Today: ' + player.hits + ' for ' + player.ab
+	            message: '' + player.order,
+	            contextMessage: player.hits + ' for ' + player.ab,
+	            buttons: [{
+	                title: 'watch on mlb.tv'
+	            }],
+	            isClickable: true,
+	            requireInteraction: true
 	        };
 	        chrome.notifications.create(notiOpt, function (notiId) {
-	            console.log('noti id', notiId);
+	            var p = player;
+	            console.log('notification create');
+	            chrome.notifications.onButtonClicked.addListener(function (id, index) {
+	                if (id === notiId) {
+	                    console.log('clicked event', p.n, p.t, p.p, p.mlbtv);
+	                }
+	            });
 	        });
 	        console.log('--- noti info', player.n, player.order);
 	    });
 	    console.log('----------------------- END --------------------------');
+	}
 
-	    /*
-	    let notiOpt = {
-	    type: 'basic',
-	    iconUrl: `http://mlb.mlb.com/images/players/assets/74_${player.p}.png`,
-	    title: 'playertracker',
-	    message: 'does this work?'
-	    };
-	    chrome.notifications.create(notiOpt, notiId => {
-	    console.log('noti id', notiId);
-	    
-	    });
-	    */
+	function openMlbtv(id, index) {
+	    console.log('id index', id, index);
 	}
 
 /***/ },
@@ -547,7 +545,7 @@
 /* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
+	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
 	 * @overview es6-promise - a tiny implementation of Promises/A+.
 	 * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
 	 * @license   Licensed under MIT license
@@ -28626,7 +28624,6 @@
 
 	                        // game not finished or in progress
 	                        player.timeDate = currentGame.time_date;
-	                        //player.url = currentGame.game_data_directory;
 	                        break;
 	                    }
 	                }
@@ -28660,18 +28657,12 @@
 	        value: function updateIfNecessary() {
 	            var data = arguments.length <= 0 || arguments[0] === undefined ? this.data : arguments[0];
 
-	            //let currentTime = moment();
-	            //console.log(this.players);
-	            //let updatedList = this.players.map(player => {
 	            if (this.shouldUpdate()) {
 	                //console.log('player status should be updated', player.n);
 	                this.updatePlayerStats();
 	            } else {
 	                console.log('game has not started yet', player.n);
 	            }
-	            //return player;
-	            //});
-	            //this.players = updatedList;
 	        }
 	        /**
 	         * shouldUpdate
@@ -28712,8 +28703,6 @@
 	        value: function updatePlayerStats() {
 	            var _this2 = this;
 
-	            //this.fetchDataBasedOnTeam(player);
-	            //console.log(this.data);
 	            var allGames = this.data.data.games.game;
 
 	            // Loop through all the players stored
@@ -28737,12 +28726,22 @@
 	                        player.order = order.order;
 	                        player.orderKey = order.orderKey;
 
+	                        player.outs = currentGame.status.o;
+
 	                        player.gameStatus = currentGame.status.status;
 	                        player.lastUpdated = (0, _momentTimezone2.default)().format();
 
-	                        console.log(currentGame, player.orderKey);
-	                        player.hits = currentGame[player.orderKey].h;
-	                        player.ab = currentGame[player.orderKey].ab;
+	                        player.mlbtv = _this2.parseMlbtv(currentGame.links.mlbtv);
+
+	                        // Get today stat for player
+	                        var validOrder = ['batter', 'inhole', 'ondeck'];
+	                        if (validOrder.indexOf(player.orderKey) >= 0) {
+	                            player.hits = currentGame[player.orderKey].h;
+	                            player.ab = currentGame[player.orderKey].ab;
+	                        } else {
+	                            player.hits = 0;
+	                            player.ab = 0;
+	                        }
 
 	                        break;
 	                    }
@@ -28819,6 +28818,22 @@
 	        key: 'getPlayersArr',
 	        value: function getPlayersArr() {
 	            return this.players;
+	        }
+	    }, {
+	        key: 'parseMlbtv',
+	        value: function parseMlbtv(raw) {
+	            var id = this.parseCalendarId(raw);
+	            return '' + id;
+	        }
+	    }, {
+	        key: 'parseCalendarId',
+	        value: function parseCalendarId(raw) {
+	            var re = /calendar_event_id:\'([\d\-]+)\'/;
+	            var results = re.exec(raw);
+	            if (results.length > 1) {
+	                return results[1];
+	            }
+	            return '';
 	        }
 	    }, {
 	        key: 'notis',
