@@ -211,7 +211,9 @@ class PlayerList {
     }
     parseMlbtv(raw) {
         let id = this.parseCalendarId(raw);
-        return `${id}`;
+        let clickOrigin = '';
+        let team = '';
+        return `http://m.mlb.com/tv/e${id}/?clickOrigin=${clickOrigin}&team=${team}`;
     }
     parseCalendarId(raw) {
         const re = /calendar_event_id:\'([\d\-]+)\'/;

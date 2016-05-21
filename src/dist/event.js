@@ -78,7 +78,6 @@
 	var API_BASE = 'http://gd2.mlb.com/components/game/mlb/';
 
 	/**
-	 * Entry point
 	 * Uses chrome.alarms to update player status once per minute.
 	 **/
 	chrome.alarms.create('update', { periodInMinutes: 1 });
@@ -87,6 +86,18 @@
 	chrome.alarms.onAlarm.addListener(function () {
 	    chrome.storage.sync.get('players', update);
 	});
+
+	chrome.notifications.onButtonClicked.addListener(function (id, index) {
+	    var url = parseNotificationId(id);
+	    chrome.tabs.create({ url: url });
+	    chrome.notifications.clear(id, function (wasCleared) {
+	        console.log('notification cleared and opened link to mlbtv');
+	    });
+	});
+
+	function parseNotificationId(id) {
+	    return id.split('|')[1];
+	}
 
 	/**
 	 * getTodayScoreBoard
@@ -161,22 +172,19 @@
 	            isClickable: true,
 	            requireInteraction: true
 	        };
-	        chrome.notifications.create(notiOpt, function (notiId) {
-	            var p = player;
-	            console.log('notification create');
-	            chrome.notifications.onButtonClicked.addListener(function (id, index) {
-	                if (id === notiId) {
-	                    console.log('clicked event', p.n, p.t, p.p, p.mlbtv);
-	                }
-	            });
+	        // Might need to consider using player id and mlbtv id to create
+	        // notification id.
+	        var notificationId = createNotificationId(player.p, player.mlbtv);
+	        chrome.notifications.create(notificationId, notiOpt, function (notiId) {
+	            console.log('created notification');
 	        });
 	        console.log('--- noti info', player.n, player.order);
 	    });
 	    console.log('----------------------- END --------------------------');
 	}
 
-	function openMlbtv(id, index) {
-	    console.log('id index', id, index);
+	function createNotificationId(playerId, mlbtv) {
+	    return playerId + '|' + mlbtv;
 	}
 
 /***/ },
@@ -545,7 +553,7 @@
 /* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
+	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
 	 * @overview es6-promise - a tiny implementation of Promises/A+.
 	 * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
 	 * @license   Licensed under MIT license
@@ -28823,7 +28831,9 @@
 	        key: 'parseMlbtv',
 	        value: function parseMlbtv(raw) {
 	            var id = this.parseCalendarId(raw);
-	            return '' + id;
+	            var clickOrigin = '';
+	            var team = '';
+	            return 'http://m.mlb.com/tv/e' + id + '/?clickOrigin=' + clickOrigin + '&team=' + team;
 	        }
 	    }, {
 	        key: 'parseCalendarId',

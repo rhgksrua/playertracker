@@ -11,7 +11,6 @@ const API_DOMAIN = 'http://gd2.mlb.com/';
 const API_BASE = 'http://gd2.mlb.com/components/game/mlb/';
 
 /**
- * Entry point
  * Uses chrome.alarms to update player status once per minute.
  **/
 chrome.alarms.create('update', {periodInMinutes: 1});
@@ -20,6 +19,18 @@ chrome.storage.sync.get('players', update);
 chrome.alarms.onAlarm.addListener(function(){
     chrome.storage.sync.get('players', update);
 });
+
+chrome.notifications.onButtonClicked.addListener(function(id, index) {
+    let url = parseNotificationId(id);
+    chrome.tabs.create({ url: url });
+    chrome.notifications.clear(id, function(wasCleared) {
+        console.log('notification cleared and opened link to mlbtv');
+    });
+});
+
+function parseNotificationId(id) {
+    return id.split('|')[1];
+}
 
 /**
  * getTodayScoreBoard
@@ -99,22 +110,17 @@ function notifyUser(notification) {
             isClickable: true,
             requireInteraction: true
         };
-        chrome.notifications.create(notiOpt, notiId => {
-            let p = player;
-            console.log('notification create');
-            chrome.notifications.onButtonClicked.addListener(function(id, index) {
-                if (id === notiId) {
-                    console.log('clicked event', p.n, p.t, p.p, p.mlbtv);
-                }
-            });
-            
+        // Might need to consider using player id and mlbtv id to create
+        // notification id.
+        let notificationId = createNotificationId(player.p, player.mlbtv);
+        chrome.notifications.create(notificationId, notiOpt, notiId => {
+            console.log('created notification');
         });
         console.log('--- noti info', player.n, player.order);
     });
     console.log('----------------------- END --------------------------');
 }
 
-
-function openMlbtv(id, index) {
-    console.log('id index', id, index);
+function createNotificationId(playerId, mlbtv) {
+    return `${playerId}|${mlbtv}`;
 }
