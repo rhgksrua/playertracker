@@ -58,19 +58,19 @@
 
 	var _redux = __webpack_require__(166);
 
-	var _reduxThunk = __webpack_require__(181);
+	var _reduxThunk = __webpack_require__(185);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-	var _reduxLogger = __webpack_require__(182);
+	var _reduxLogger = __webpack_require__(186);
 
 	var _reduxLogger2 = _interopRequireDefault(_reduxLogger);
 
-	var _reducers = __webpack_require__(183);
+	var _reducers = __webpack_require__(187);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
-	var _App = __webpack_require__(358);
+	var _App = __webpack_require__(364);
 
 	var _App2 = _interopRequireDefault(_App);
 
@@ -83,7 +83,8 @@
 
 	var store = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(_reduxThunk2.default, loggerMiddleware));
 
-	__webpack_require__(370);
+	__webpack_require__(376);
+	__webpack_require__(496);
 
 	_reactDom2.default.render(_react2.default.createElement(
 	    _reactRedux.Provider,
@@ -19879,15 +19880,15 @@
 
 	var _warning2 = _interopRequireDefault(_warning);
 
-	var _isPlainObject = __webpack_require__(168);
+	var _isPlainObject = __webpack_require__(179);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-	var _hoistNonReactStatics = __webpack_require__(179);
+	var _hoistNonReactStatics = __webpack_require__(183);
 
 	var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
 
-	var _invariant = __webpack_require__(180);
+	var _invariant = __webpack_require__(184);
 
 	var _invariant2 = _interopRequireDefault(_invariant);
 
@@ -21139,6 +21140,164 @@
 
 /***/ },
 /* 179 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getPrototype = __webpack_require__(180),
+	    isHostObject = __webpack_require__(181),
+	    isObjectLike = __webpack_require__(182);
+
+	/** `Object#toString` result references. */
+	var objectTag = '[object Object]';
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to resolve the decompiled source of functions. */
+	var funcToString = Function.prototype.toString;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/** Used to infer the `Object` constructor. */
+	var objectCtorString = funcToString.call(Object);
+
+	/**
+	 * Used to resolve the
+	 * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objectToString = objectProto.toString;
+
+	/**
+	 * Checks if `value` is a plain object, that is, an object created by the
+	 * `Object` constructor or one with a `[[Prototype]]` of `null`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.8.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a plain object,
+	 *  else `false`.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 * }
+	 *
+	 * _.isPlainObject(new Foo);
+	 * // => false
+	 *
+	 * _.isPlainObject([1, 2, 3]);
+	 * // => false
+	 *
+	 * _.isPlainObject({ 'x': 0, 'y': 0 });
+	 * // => true
+	 *
+	 * _.isPlainObject(Object.create(null));
+	 * // => true
+	 */
+	function isPlainObject(value) {
+	  if (!isObjectLike(value) ||
+	      objectToString.call(value) != objectTag || isHostObject(value)) {
+	    return false;
+	  }
+	  var proto = getPrototype(value);
+	  if (proto === null) {
+	    return true;
+	  }
+	  var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
+	  return (typeof Ctor == 'function' &&
+	    Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString);
+	}
+
+	module.exports = isPlainObject;
+
+
+/***/ },
+/* 180 */
+/***/ function(module, exports) {
+
+	/* Built-in method references for those with the same name as other `lodash` methods. */
+	var nativeGetPrototype = Object.getPrototypeOf;
+
+	/**
+	 * Gets the `[[Prototype]]` of `value`.
+	 *
+	 * @private
+	 * @param {*} value The value to query.
+	 * @returns {null|Object} Returns the `[[Prototype]]`.
+	 */
+	function getPrototype(value) {
+	  return nativeGetPrototype(Object(value));
+	}
+
+	module.exports = getPrototype;
+
+
+/***/ },
+/* 181 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is a host object in IE < 9.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
+	 */
+	function isHostObject(value) {
+	  // Many host objects are `Object` objects that can coerce to strings
+	  // despite having improperly defined `toString` methods.
+	  var result = false;
+	  if (value != null && typeof value.toString != 'function') {
+	    try {
+	      result = !!(value + '');
+	    } catch (e) {}
+	  }
+	  return result;
+	}
+
+	module.exports = isHostObject;
+
+
+/***/ },
+/* 182 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is object-like. A value is object-like if it's not `null`
+	 * and has a `typeof` result of "object".
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 * @example
+	 *
+	 * _.isObjectLike({});
+	 * // => true
+	 *
+	 * _.isObjectLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObjectLike(_.noop);
+	 * // => false
+	 *
+	 * _.isObjectLike(null);
+	 * // => false
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+
+	module.exports = isObjectLike;
+
+
+/***/ },
+/* 183 */
 /***/ function(module, exports) {
 
 	/**
@@ -21168,13 +21327,15 @@
 	};
 
 	module.exports = function hoistNonReactStatics(targetComponent, sourceComponent) {
-	    var keys = Object.getOwnPropertyNames(sourceComponent);
-	    for (var i=0; i<keys.length; ++i) {
-	        if (!REACT_STATICS[keys[i]] && !KNOWN_STATICS[keys[i]]) {
-	            try {
-	                targetComponent[keys[i]] = sourceComponent[keys[i]];
-	            } catch (error) {
+	    if (typeof sourceComponent !== 'string') { // don't hoist over string (html) components
+	        var keys = Object.getOwnPropertyNames(sourceComponent);
+	        for (var i=0; i<keys.length; ++i) {
+	            if (!REACT_STATICS[keys[i]] && !KNOWN_STATICS[keys[i]]) {
+	                try {
+	                    targetComponent[keys[i]] = sourceComponent[keys[i]];
+	                } catch (error) {
 
+	                }
 	            }
 	        }
 	    }
@@ -21184,7 +21345,7 @@
 
 
 /***/ },
-/* 180 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -21242,30 +21403,35 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 181 */
+/* 185 */
 /***/ function(module, exports) {
 
 	'use strict';
 
 	exports.__esModule = true;
-	exports['default'] = thunkMiddleware;
-	function thunkMiddleware(_ref) {
-	  var dispatch = _ref.dispatch;
-	  var getState = _ref.getState;
+	function createThunkMiddleware(extraArgument) {
+	  return function (_ref) {
+	    var dispatch = _ref.dispatch;
+	    var getState = _ref.getState;
+	    return function (next) {
+	      return function (action) {
+	        if (typeof action === 'function') {
+	          return action(dispatch, getState, extraArgument);
+	        }
 
-	  return function (next) {
-	    return function (action) {
-	      if (typeof action === 'function') {
-	        return action(dispatch, getState);
-	      }
-
-	      return next(action);
+	        return next(action);
+	      };
 	    };
 	  };
 	}
 
+	var thunk = createThunkMiddleware();
+	thunk.withExtraArgument = createThunkMiddleware;
+
+	exports['default'] = thunk;
+
 /***/ },
-/* 182 */
+/* 186 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -21498,7 +21664,7 @@
 	module.exports = createLogger;
 
 /***/ },
-/* 183 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21509,9 +21675,9 @@
 
 	var _redux = __webpack_require__(166);
 
-	var _actions = __webpack_require__(184);
+	var _actions = __webpack_require__(188);
 
-	var _playerId = __webpack_require__(357);
+	var _playerId = __webpack_require__(363);
 
 	var _playerId2 = _interopRequireDefault(_playerId);
 
@@ -21597,7 +21763,7 @@
 	exports.default = rootReducer;
 
 /***/ },
-/* 184 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21607,15 +21773,15 @@
 	});
 	exports.initializing = exports.initialize = exports.updateStore = exports.updateOnChanged = exports.update = exports.removePlayer = exports.addPlayer = exports.updateGameTimeIfNeeded = exports.UPDATE_ON_CHANGE = exports.INITIALIZE = exports.UPDATE = exports.REMOVE_PLAYER = exports.ADD_PLAYER = undefined;
 
-	var _es6Promise = __webpack_require__(185);
+	var _es6Promise = __webpack_require__(189);
 
 	var _es6Promise2 = _interopRequireDefault(_es6Promise);
 
-	var _isomorphicFetch = __webpack_require__(189);
+	var _isomorphicFetch = __webpack_require__(193);
 
 	var _isomorphicFetch2 = _interopRequireDefault(_isomorphicFetch);
 
-	var _xml2js = __webpack_require__(191);
+	var _xml2js = __webpack_require__(195);
 
 	var _xml2js2 = _interopRequireDefault(_xml2js);
 
@@ -21742,15 +21908,15 @@
 	};
 
 /***/ },
-/* 185 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
+	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
 	 * @overview es6-promise - a tiny implementation of Promises/A+.
 	 * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
 	 * @license   Licensed under MIT license
 	 *            See https://raw.githubusercontent.com/jakearchibald/es6-promise/master/LICENSE
-	 * @version   3.1.2
+	 * @version   3.2.1
 	 */
 
 	(function() {
@@ -21808,7 +21974,7 @@
 	    var lib$es6$promise$asap$$browserWindow = (typeof window !== 'undefined') ? window : undefined;
 	    var lib$es6$promise$asap$$browserGlobal = lib$es6$promise$asap$$browserWindow || {};
 	    var lib$es6$promise$asap$$BrowserMutationObserver = lib$es6$promise$asap$$browserGlobal.MutationObserver || lib$es6$promise$asap$$browserGlobal.WebKitMutationObserver;
-	    var lib$es6$promise$asap$$isNode = typeof process !== 'undefined' && {}.toString.call(process) === '[object process]';
+	    var lib$es6$promise$asap$$isNode = typeof self === 'undefined' && typeof process !== 'undefined' && {}.toString.call(process) === '[object process]';
 
 	    // test for web worker but not in IE10
 	    var lib$es6$promise$asap$$isWorker = typeof Uint8ClampedArray !== 'undefined' &&
@@ -21875,7 +22041,7 @@
 	    function lib$es6$promise$asap$$attemptVertx() {
 	      try {
 	        var r = require;
-	        var vertx = __webpack_require__(187);
+	        var vertx = __webpack_require__(191);
 	        lib$es6$promise$asap$$vertxNext = vertx.runOnLoop || vertx.runOnContext;
 	        return lib$es6$promise$asap$$useVertxTimer();
 	      } catch(e) {
@@ -21898,19 +22064,19 @@
 	    }
 	    function lib$es6$promise$then$$then(onFulfillment, onRejection) {
 	      var parent = this;
-	      var state = parent._state;
-
-	      if (state === lib$es6$promise$$internal$$FULFILLED && !onFulfillment || state === lib$es6$promise$$internal$$REJECTED && !onRejection) {
-	        return this;
-	      }
 
 	      var child = new this.constructor(lib$es6$promise$$internal$$noop);
-	      var result = parent._result;
+
+	      if (child[lib$es6$promise$$internal$$PROMISE_ID] === undefined) {
+	        lib$es6$promise$$internal$$makePromise(child);
+	      }
+
+	      var state = parent._state;
 
 	      if (state) {
 	        var callback = arguments[state - 1];
 	        lib$es6$promise$asap$$asap(function(){
-	          lib$es6$promise$$internal$$invokeCallback(state, child, callback, result);
+	          lib$es6$promise$$internal$$invokeCallback(state, child, callback, parent._result);
 	        });
 	      } else {
 	        lib$es6$promise$$internal$$subscribe(parent, child, onFulfillment, onRejection);
@@ -21932,6 +22098,7 @@
 	      return promise;
 	    }
 	    var lib$es6$promise$promise$resolve$$default = lib$es6$promise$promise$resolve$$resolve;
+	    var lib$es6$promise$$internal$$PROMISE_ID = Math.random().toString(36).substring(16);
 
 	    function lib$es6$promise$$internal$$noop() {}
 
@@ -22162,6 +22329,18 @@
 	      }
 	    }
 
+	    var lib$es6$promise$$internal$$id = 0;
+	    function lib$es6$promise$$internal$$nextId() {
+	      return lib$es6$promise$$internal$$id++;
+	    }
+
+	    function lib$es6$promise$$internal$$makePromise(promise) {
+	      promise[lib$es6$promise$$internal$$PROMISE_ID] = lib$es6$promise$$internal$$id++;
+	      promise._state = undefined;
+	      promise._result = undefined;
+	      promise._subscribers = [];
+	    }
+
 	    function lib$es6$promise$promise$all$$all(entries) {
 	      return new lib$es6$promise$enumerator$$default(this, entries).promise;
 	    }
@@ -22170,28 +22349,18 @@
 	      /*jshint validthis:true */
 	      var Constructor = this;
 
-	      var promise = new Constructor(lib$es6$promise$$internal$$noop);
-
 	      if (!lib$es6$promise$utils$$isArray(entries)) {
-	        lib$es6$promise$$internal$$reject(promise, new TypeError('You must pass an array to race.'));
-	        return promise;
+	        return new Constructor(function(resolve, reject) {
+	          reject(new TypeError('You must pass an array to race.'));
+	        });
+	      } else {
+	        return new Constructor(function(resolve, reject) {
+	          var length = entries.length;
+	          for (var i = 0; i < length; i++) {
+	            Constructor.resolve(entries[i]).then(resolve, reject);
+	          }
+	        });
 	      }
-
-	      var length = entries.length;
-
-	      function onFulfillment(value) {
-	        lib$es6$promise$$internal$$resolve(promise, value);
-	      }
-
-	      function onRejection(reason) {
-	        lib$es6$promise$$internal$$reject(promise, reason);
-	      }
-
-	      for (var i = 0; promise._state === lib$es6$promise$$internal$$PENDING && i < length; i++) {
-	        lib$es6$promise$$internal$$subscribe(Constructor.resolve(entries[i]), undefined, onFulfillment, onRejection);
-	      }
-
-	      return promise;
 	    }
 	    var lib$es6$promise$promise$race$$default = lib$es6$promise$promise$race$$race;
 	    function lib$es6$promise$promise$reject$$reject(reason) {
@@ -22203,7 +22372,6 @@
 	    }
 	    var lib$es6$promise$promise$reject$$default = lib$es6$promise$promise$reject$$reject;
 
-	    var lib$es6$promise$promise$$counter = 0;
 
 	    function lib$es6$promise$promise$$needsResolver() {
 	      throw new TypeError('You must pass a resolver function as the first argument to the promise constructor');
@@ -22318,9 +22486,8 @@
 	      @constructor
 	    */
 	    function lib$es6$promise$promise$$Promise(resolver) {
-	      this._id = lib$es6$promise$promise$$counter++;
-	      this._state = undefined;
-	      this._result = undefined;
+	      this[lib$es6$promise$$internal$$PROMISE_ID] = lib$es6$promise$$internal$$nextId();
+	      this._result = this._state = undefined;
 	      this._subscribers = [];
 
 	      if (lib$es6$promise$$internal$$noop !== resolver) {
@@ -22571,7 +22738,11 @@
 	      this._instanceConstructor = Constructor;
 	      this.promise = new Constructor(lib$es6$promise$$internal$$noop);
 
-	      if (Array.isArray(input)) {
+	      if (!this.promise[lib$es6$promise$$internal$$PROMISE_ID]) {
+	        lib$es6$promise$$internal$$makePromise(this.promise);
+	      }
+
+	      if (lib$es6$promise$utils$$isArray(input)) {
 	        this._input     = input;
 	        this.length     = input.length;
 	        this._remaining = input.length;
@@ -22588,13 +22759,13 @@
 	          }
 	        }
 	      } else {
-	        lib$es6$promise$$internal$$reject(this.promise, this._validationError());
+	        lib$es6$promise$$internal$$reject(this.promise, lib$es6$promise$enumerator$$validationError());
 	      }
 	    }
 
-	    lib$es6$promise$enumerator$$Enumerator.prototype._validationError = function() {
+	    function lib$es6$promise$enumerator$$validationError() {
 	      return new Error('Array Methods must be provided an Array');
-	    };
+	    }
 
 	    lib$es6$promise$enumerator$$Enumerator.prototype._enumerate = function() {
 	      var length  = this.length;
@@ -22688,7 +22859,7 @@
 	    };
 
 	    /* global define:true module:true window: true */
-	    if ("function" === 'function' && __webpack_require__(188)['amd']) {
+	    if ("function" === 'function' && __webpack_require__(192)['amd']) {
 	      !(__WEBPACK_AMD_DEFINE_RESULT__ = function() { return lib$es6$promise$umd$$ES6Promise; }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	    } else if (typeof module !== 'undefined' && module['exports']) {
 	      module['exports'] = lib$es6$promise$umd$$ES6Promise;
@@ -22700,10 +22871,10 @@
 	}).call(this);
 
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4), (function() { return this; }()), __webpack_require__(186)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4), (function() { return this; }()), __webpack_require__(190)(module)))
 
 /***/ },
-/* 186 */
+/* 190 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -22719,32 +22890,32 @@
 
 
 /***/ },
-/* 187 */
+/* 191 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
 
 /***/ },
-/* 188 */
+/* 192 */
 /***/ function(module, exports) {
 
 	module.exports = function() { throw new Error("define cannot be used indirect"); };
 
 
 /***/ },
-/* 189 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// the whatwg-fetch polyfill installs the fetch() function
 	// on the global object (window or self)
 	//
 	// Return that as the export for use in Webpack, Browserify etc.
-	__webpack_require__(190);
+	__webpack_require__(194);
 	module.exports = self.fetch.bind(self);
 
 
 /***/ },
-/* 190 */
+/* 194 */
 /***/ function(module, exports) {
 
 	(function(self) {
@@ -23183,7 +23354,7 @@
 
 
 /***/ },
-/* 191 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Generated by CoffeeScript 1.10.0
@@ -23194,17 +23365,17 @@
 	    hasProp = {}.hasOwnProperty,
 	    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-	  sax = __webpack_require__(192);
+	  sax = __webpack_require__(196);
 
-	  events = __webpack_require__(198);
+	  events = __webpack_require__(202);
 
-	  builder = __webpack_require__(214);
+	  builder = __webpack_require__(219);
 
-	  bom = __webpack_require__(354);
+	  bom = __webpack_require__(360);
 
-	  processors = __webpack_require__(355);
+	  processors = __webpack_require__(361);
 
-	  setImmediate = __webpack_require__(356).setImmediate;
+	  setImmediate = __webpack_require__(362).setImmediate;
 
 	  isEmpty = function(thing) {
 	    return typeof thing === "object" && (thing != null) && Object.keys(thing).length === 0;
@@ -23727,7 +23898,7 @@
 
 
 /***/ },
-/* 192 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer) {;(function (sax) { // wrapper for non-node envs
@@ -23892,7 +24063,7 @@
 
 	  var Stream
 	  try {
-	    Stream = __webpack_require__(197).Stream
+	    Stream = __webpack_require__(201).Stream
 	  } catch (ex) {
 	    Stream = function () {}
 	  }
@@ -23962,7 +24133,7 @@
 	      typeof Buffer.isBuffer === 'function' &&
 	      Buffer.isBuffer(data)) {
 	      if (!this._decoder) {
-	        var SD = __webpack_require__(207).StringDecoder
+	        var SD = __webpack_require__(212).StringDecoder
 	        this._decoder = new SD('utf8')
 	      }
 	      data = this._decoder.write(data)
@@ -25307,10 +25478,10 @@
 	  }
 	})( false ? this.sax = {} : exports)
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(193).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(197).Buffer))
 
 /***/ },
-/* 193 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer, global) {/*!
@@ -25323,9 +25494,9 @@
 
 	'use strict'
 
-	var base64 = __webpack_require__(194)
-	var ieee754 = __webpack_require__(195)
-	var isArray = __webpack_require__(196)
+	var base64 = __webpack_require__(198)
+	var ieee754 = __webpack_require__(199)
+	var isArray = __webpack_require__(200)
 
 	exports.Buffer = Buffer
 	exports.SlowBuffer = SlowBuffer
@@ -26862,10 +27033,10 @@
 	  return i
 	}
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(193).Buffer, (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(197).Buffer, (function() { return this; }())))
 
 /***/ },
-/* 194 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -26995,7 +27166,7 @@
 
 
 /***/ },
-/* 195 */
+/* 199 */
 /***/ function(module, exports) {
 
 	exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -27085,7 +27256,7 @@
 
 
 /***/ },
-/* 196 */
+/* 200 */
 /***/ function(module, exports) {
 
 	var toString = {}.toString;
@@ -27096,7 +27267,7 @@
 
 
 /***/ },
-/* 197 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -27122,15 +27293,15 @@
 
 	module.exports = Stream;
 
-	var EE = __webpack_require__(198).EventEmitter;
-	var inherits = __webpack_require__(199);
+	var EE = __webpack_require__(202).EventEmitter;
+	var inherits = __webpack_require__(203);
 
 	inherits(Stream, EE);
-	Stream.Readable = __webpack_require__(200);
-	Stream.Writable = __webpack_require__(210);
-	Stream.Duplex = __webpack_require__(211);
-	Stream.Transform = __webpack_require__(212);
-	Stream.PassThrough = __webpack_require__(213);
+	Stream.Readable = __webpack_require__(204);
+	Stream.Writable = __webpack_require__(215);
+	Stream.Duplex = __webpack_require__(216);
+	Stream.Transform = __webpack_require__(217);
+	Stream.PassThrough = __webpack_require__(218);
 
 	// Backwards-compat with node 0.4.x
 	Stream.Stream = Stream;
@@ -27229,7 +27400,7 @@
 
 
 /***/ },
-/* 198 */
+/* 202 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -27533,7 +27704,7 @@
 
 
 /***/ },
-/* 199 */
+/* 203 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -27562,24 +27733,24 @@
 
 
 /***/ },
-/* 200 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(process) {exports = module.exports = __webpack_require__(201);
-	exports.Stream = __webpack_require__(197);
+	/* WEBPACK VAR INJECTION */(function(process) {exports = module.exports = __webpack_require__(205);
+	exports.Stream = __webpack_require__(201);
 	exports.Readable = exports;
-	exports.Writable = __webpack_require__(206);
-	exports.Duplex = __webpack_require__(205);
-	exports.Transform = __webpack_require__(208);
-	exports.PassThrough = __webpack_require__(209);
+	exports.Writable = __webpack_require__(211);
+	exports.Duplex = __webpack_require__(210);
+	exports.Transform = __webpack_require__(213);
+	exports.PassThrough = __webpack_require__(214);
 	if (!process.browser && process.env.READABLE_STREAM === 'disable') {
-	  module.exports = __webpack_require__(197);
+	  module.exports = __webpack_require__(201);
 	}
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 201 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -27606,17 +27777,17 @@
 	module.exports = Readable;
 
 	/*<replacement>*/
-	var isArray = __webpack_require__(202);
+	var isArray = __webpack_require__(206);
 	/*</replacement>*/
 
 
 	/*<replacement>*/
-	var Buffer = __webpack_require__(193).Buffer;
+	var Buffer = __webpack_require__(197).Buffer;
 	/*</replacement>*/
 
 	Readable.ReadableState = ReadableState;
 
-	var EE = __webpack_require__(198).EventEmitter;
+	var EE = __webpack_require__(202).EventEmitter;
 
 	/*<replacement>*/
 	if (!EE.listenerCount) EE.listenerCount = function(emitter, type) {
@@ -27624,18 +27795,18 @@
 	};
 	/*</replacement>*/
 
-	var Stream = __webpack_require__(197);
+	var Stream = __webpack_require__(201);
 
 	/*<replacement>*/
-	var util = __webpack_require__(203);
-	util.inherits = __webpack_require__(199);
+	var util = __webpack_require__(207);
+	util.inherits = __webpack_require__(208);
 	/*</replacement>*/
 
 	var StringDecoder;
 
 
 	/*<replacement>*/
-	var debug = __webpack_require__(204);
+	var debug = __webpack_require__(209);
 	if (debug && debug.debuglog) {
 	  debug = debug.debuglog('stream');
 	} else {
@@ -27647,7 +27818,7 @@
 	util.inherits(Readable, Stream);
 
 	function ReadableState(options, stream) {
-	  var Duplex = __webpack_require__(205);
+	  var Duplex = __webpack_require__(210);
 
 	  options = options || {};
 
@@ -27708,14 +27879,14 @@
 	  this.encoding = null;
 	  if (options.encoding) {
 	    if (!StringDecoder)
-	      StringDecoder = __webpack_require__(207).StringDecoder;
+	      StringDecoder = __webpack_require__(212).StringDecoder;
 	    this.decoder = new StringDecoder(options.encoding);
 	    this.encoding = options.encoding;
 	  }
 	}
 
 	function Readable(options) {
-	  var Duplex = __webpack_require__(205);
+	  var Duplex = __webpack_require__(210);
 
 	  if (!(this instanceof Readable))
 	    return new Readable(options);
@@ -27818,7 +27989,7 @@
 	// backwards compatibility.
 	Readable.prototype.setEncoding = function(enc) {
 	  if (!StringDecoder)
-	    StringDecoder = __webpack_require__(207).StringDecoder;
+	    StringDecoder = __webpack_require__(212).StringDecoder;
 	  this._readableState.decoder = new StringDecoder(enc);
 	  this._readableState.encoding = enc;
 	  return this;
@@ -28537,7 +28708,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 202 */
+/* 206 */
 /***/ function(module, exports) {
 
 	module.exports = Array.isArray || function (arr) {
@@ -28546,7 +28717,7 @@
 
 
 /***/ },
-/* 203 */
+/* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer) {// Copyright Joyent, Inc. and other Node contributors.
@@ -28657,16 +28828,45 @@
 	  return Object.prototype.toString.call(o);
 	}
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(193).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(197).Buffer))
 
 /***/ },
-/* 204 */
+/* 208 */
+/***/ function(module, exports) {
+
+	if (typeof Object.create === 'function') {
+	  // implementation from standard node.js 'util' module
+	  module.exports = function inherits(ctor, superCtor) {
+	    ctor.super_ = superCtor
+	    ctor.prototype = Object.create(superCtor.prototype, {
+	      constructor: {
+	        value: ctor,
+	        enumerable: false,
+	        writable: true,
+	        configurable: true
+	      }
+	    });
+	  };
+	} else {
+	  // old school shim for old browsers
+	  module.exports = function inherits(ctor, superCtor) {
+	    ctor.super_ = superCtor
+	    var TempCtor = function () {}
+	    TempCtor.prototype = superCtor.prototype
+	    ctor.prototype = new TempCtor()
+	    ctor.prototype.constructor = ctor
+	  }
+	}
+
+
+/***/ },
+/* 209 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
 
 /***/ },
-/* 205 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -28707,12 +28907,12 @@
 
 
 	/*<replacement>*/
-	var util = __webpack_require__(203);
-	util.inherits = __webpack_require__(199);
+	var util = __webpack_require__(207);
+	util.inherits = __webpack_require__(208);
 	/*</replacement>*/
 
-	var Readable = __webpack_require__(201);
-	var Writable = __webpack_require__(206);
+	var Readable = __webpack_require__(205);
+	var Writable = __webpack_require__(211);
 
 	util.inherits(Duplex, Readable);
 
@@ -28762,7 +28962,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 206 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -28793,18 +28993,18 @@
 	module.exports = Writable;
 
 	/*<replacement>*/
-	var Buffer = __webpack_require__(193).Buffer;
+	var Buffer = __webpack_require__(197).Buffer;
 	/*</replacement>*/
 
 	Writable.WritableState = WritableState;
 
 
 	/*<replacement>*/
-	var util = __webpack_require__(203);
-	util.inherits = __webpack_require__(199);
+	var util = __webpack_require__(207);
+	util.inherits = __webpack_require__(208);
 	/*</replacement>*/
 
-	var Stream = __webpack_require__(197);
+	var Stream = __webpack_require__(201);
 
 	util.inherits(Writable, Stream);
 
@@ -28815,7 +29015,7 @@
 	}
 
 	function WritableState(options, stream) {
-	  var Duplex = __webpack_require__(205);
+	  var Duplex = __webpack_require__(210);
 
 	  options = options || {};
 
@@ -28903,7 +29103,7 @@
 	}
 
 	function Writable(options) {
-	  var Duplex = __webpack_require__(205);
+	  var Duplex = __webpack_require__(210);
 
 	  // Writable ctor is applied to Duplexes, though they're not
 	  // instanceof Writable, they're instanceof Readable.
@@ -29246,7 +29446,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 207 */
+/* 212 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -29270,7 +29470,7 @@
 	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 	// USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-	var Buffer = __webpack_require__(193).Buffer;
+	var Buffer = __webpack_require__(197).Buffer;
 
 	var isBufferEncoding = Buffer.isEncoding
 	  || function(encoding) {
@@ -29473,7 +29673,7 @@
 
 
 /***/ },
-/* 208 */
+/* 213 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -29542,11 +29742,11 @@
 
 	module.exports = Transform;
 
-	var Duplex = __webpack_require__(205);
+	var Duplex = __webpack_require__(210);
 
 	/*<replacement>*/
-	var util = __webpack_require__(203);
-	util.inherits = __webpack_require__(199);
+	var util = __webpack_require__(207);
+	util.inherits = __webpack_require__(208);
 	/*</replacement>*/
 
 	util.inherits(Transform, Duplex);
@@ -29688,7 +29888,7 @@
 
 
 /***/ },
-/* 209 */
+/* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -29718,11 +29918,11 @@
 
 	module.exports = PassThrough;
 
-	var Transform = __webpack_require__(208);
+	var Transform = __webpack_require__(213);
 
 	/*<replacement>*/
-	var util = __webpack_require__(203);
-	util.inherits = __webpack_require__(199);
+	var util = __webpack_require__(207);
+	util.inherits = __webpack_require__(208);
 	/*</replacement>*/
 
 	util.inherits(PassThrough, Transform);
@@ -29740,44 +29940,44 @@
 
 
 /***/ },
-/* 210 */
+/* 215 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(206)
+	module.exports = __webpack_require__(211)
 
 
 /***/ },
-/* 211 */
+/* 216 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(205)
+	module.exports = __webpack_require__(210)
 
 
 /***/ },
-/* 212 */
+/* 217 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(208)
+	module.exports = __webpack_require__(213)
 
 
 /***/ },
-/* 213 */
+/* 218 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(209)
+	module.exports = __webpack_require__(214)
 
 
 /***/ },
-/* 214 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Generated by CoffeeScript 1.9.1
 	(function() {
 	  var XMLBuilder, assign;
 
-	  assign = __webpack_require__(215);
+	  assign = __webpack_require__(220);
 
-	  XMLBuilder = __webpack_require__(244);
+	  XMLBuilder = __webpack_require__(251);
 
 	  module.exports.create = function(name, xmldec, doctype, options) {
 	    options = assign({}, xmldec, doctype, options);
@@ -29788,15 +29988,15 @@
 
 
 /***/ },
-/* 215 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assignValue = __webpack_require__(216),
-	    copyObject = __webpack_require__(218),
-	    createAssigner = __webpack_require__(219),
-	    isArrayLike = __webpack_require__(221),
-	    isPrototype = __webpack_require__(234),
-	    keys = __webpack_require__(235);
+	var assignValue = __webpack_require__(221),
+	    copyObject = __webpack_require__(223),
+	    createAssigner = __webpack_require__(224),
+	    isArrayLike = __webpack_require__(226),
+	    isPrototype = __webpack_require__(240),
+	    keys = __webpack_require__(241);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -29858,10 +30058,10 @@
 
 
 /***/ },
-/* 216 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var eq = __webpack_require__(217);
+	var eq = __webpack_require__(222);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -29891,7 +30091,7 @@
 
 
 /***/ },
-/* 217 */
+/* 222 */
 /***/ function(module, exports) {
 
 	/**
@@ -29934,10 +30134,10 @@
 
 
 /***/ },
-/* 218 */
+/* 223 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assignValue = __webpack_require__(216);
+	var assignValue = __webpack_require__(221);
 
 	/**
 	 * Copies properties of `source` to `object`.
@@ -29971,11 +30171,11 @@
 
 
 /***/ },
-/* 219 */
+/* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isIterateeCall = __webpack_require__(220),
-	    rest = __webpack_require__(228);
+	var isIterateeCall = __webpack_require__(225),
+	    rest = __webpack_require__(233);
 
 	/**
 	 * Creates a function like `_.assign`.
@@ -30014,13 +30214,13 @@
 
 
 /***/ },
-/* 220 */
+/* 225 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var eq = __webpack_require__(217),
-	    isArrayLike = __webpack_require__(221),
-	    isIndex = __webpack_require__(227),
-	    isObject = __webpack_require__(225);
+	var eq = __webpack_require__(222),
+	    isArrayLike = __webpack_require__(226),
+	    isIndex = __webpack_require__(232),
+	    isObject = __webpack_require__(230);
 
 	/**
 	 * Checks if the given arguments are from an iteratee call.
@@ -30050,12 +30250,12 @@
 
 
 /***/ },
-/* 221 */
+/* 226 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getLength = __webpack_require__(222),
-	    isFunction = __webpack_require__(224),
-	    isLength = __webpack_require__(226);
+	var getLength = __webpack_require__(227),
+	    isFunction = __webpack_require__(229),
+	    isLength = __webpack_require__(231);
 
 	/**
 	 * Checks if `value` is array-like. A value is considered array-like if it's
@@ -30090,10 +30290,10 @@
 
 
 /***/ },
-/* 222 */
+/* 227 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseProperty = __webpack_require__(223);
+	var baseProperty = __webpack_require__(228);
 
 	/**
 	 * Gets the "length" property value of `object`.
@@ -30112,7 +30312,7 @@
 
 
 /***/ },
-/* 223 */
+/* 228 */
 /***/ function(module, exports) {
 
 	/**
@@ -30132,10 +30332,10 @@
 
 
 /***/ },
-/* 224 */
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObject = __webpack_require__(225);
+	var isObject = __webpack_require__(230);
 
 	/** `Object#toString` result references. */
 	var funcTag = '[object Function]',
@@ -30181,7 +30381,7 @@
 
 
 /***/ },
-/* 225 */
+/* 230 */
 /***/ function(module, exports) {
 
 	/**
@@ -30218,7 +30418,7 @@
 
 
 /***/ },
-/* 226 */
+/* 231 */
 /***/ function(module, exports) {
 
 	/** Used as references for various `Number` constants. */
@@ -30260,7 +30460,7 @@
 
 
 /***/ },
-/* 227 */
+/* 232 */
 /***/ function(module, exports) {
 
 	/** Used as references for various `Number` constants. */
@@ -30288,11 +30488,11 @@
 
 
 /***/ },
-/* 228 */
+/* 233 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var apply = __webpack_require__(229),
-	    toInteger = __webpack_require__(230);
+	var apply = __webpack_require__(234),
+	    toInteger = __webpack_require__(235);
 
 	/** Used as the `TypeError` message for "Functions" methods. */
 	var FUNC_ERROR_TEXT = 'Expected a function';
@@ -30358,7 +30558,7 @@
 
 
 /***/ },
-/* 229 */
+/* 234 */
 /***/ function(module, exports) {
 
 	/**
@@ -30386,15 +30586,15 @@
 
 
 /***/ },
-/* 230 */
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var toFinite = __webpack_require__(231);
+	var toFinite = __webpack_require__(236);
 
 	/**
 	 * Converts `value` to an integer.
 	 *
-	 * **Note:** This function is loosely based on
+	 * **Note:** This method is loosely based on
 	 * [`ToInteger`](http://www.ecma-international.org/ecma-262/6.0/#sec-tointeger).
 	 *
 	 * @static
@@ -30428,10 +30628,10 @@
 
 
 /***/ },
-/* 231 */
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var toNumber = __webpack_require__(232);
+	var toNumber = __webpack_require__(237);
 
 	/** Used as references for various `Number` constants. */
 	var INFINITY = 1 / 0,
@@ -30476,12 +30676,12 @@
 
 
 /***/ },
-/* 232 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isFunction = __webpack_require__(224),
-	    isObject = __webpack_require__(225),
-	    isSymbol = __webpack_require__(233);
+	var isFunction = __webpack_require__(229),
+	    isObject = __webpack_require__(230),
+	    isSymbol = __webpack_require__(238);
 
 	/** Used as references for various `Number` constants. */
 	var NAN = 0 / 0;
@@ -30549,10 +30749,10 @@
 
 
 /***/ },
-/* 233 */
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObjectLike = __webpack_require__(171);
+	var isObjectLike = __webpack_require__(239);
 
 	/** `Object#toString` result references. */
 	var symbolTag = '[object Symbol]';
@@ -30594,7 +30794,42 @@
 
 
 /***/ },
-/* 234 */
+/* 239 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is object-like. A value is object-like if it's not `null`
+	 * and has a `typeof` result of "object".
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 * @example
+	 *
+	 * _.isObjectLike({});
+	 * // => true
+	 *
+	 * _.isObjectLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObjectLike(_.noop);
+	 * // => false
+	 *
+	 * _.isObjectLike(null);
+	 * // => false
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+
+	module.exports = isObjectLike;
+
+
+/***/ },
+/* 240 */
 /***/ function(module, exports) {
 
 	/** Used for built-in method references. */
@@ -30618,15 +30853,15 @@
 
 
 /***/ },
-/* 235 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseHas = __webpack_require__(236),
-	    baseKeys = __webpack_require__(237),
-	    indexKeys = __webpack_require__(238),
-	    isArrayLike = __webpack_require__(221),
-	    isIndex = __webpack_require__(227),
-	    isPrototype = __webpack_require__(234);
+	var baseHas = __webpack_require__(242),
+	    baseKeys = __webpack_require__(244),
+	    indexKeys = __webpack_require__(245),
+	    isArrayLike = __webpack_require__(226),
+	    isIndex = __webpack_require__(232),
+	    isPrototype = __webpack_require__(240);
 
 	/**
 	 * Creates an array of the own enumerable property names of `object`.
@@ -30680,10 +30915,10 @@
 
 
 /***/ },
-/* 236 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getPrototype = __webpack_require__(169);
+	var getPrototype = __webpack_require__(243);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -30695,7 +30930,7 @@
 	 * The base implementation of `_.has` without support for deep paths.
 	 *
 	 * @private
-	 * @param {Object} object The object to query.
+	 * @param {Object} [object] The object to query.
 	 * @param {Array|string} key The key to check.
 	 * @returns {boolean} Returns `true` if `key` exists, else `false`.
 	 */
@@ -30703,15 +30938,37 @@
 	  // Avoid a bug in IE 10-11 where objects with a [[Prototype]] of `null`,
 	  // that are composed entirely of index properties, return `false` for
 	  // `hasOwnProperty` checks of them.
-	  return hasOwnProperty.call(object, key) ||
-	    (typeof object == 'object' && key in object && getPrototype(object) === null);
+	  return object != null &&
+	    (hasOwnProperty.call(object, key) ||
+	      (typeof object == 'object' && key in object && getPrototype(object) === null));
 	}
 
 	module.exports = baseHas;
 
 
 /***/ },
-/* 237 */
+/* 243 */
+/***/ function(module, exports) {
+
+	/* Built-in method references for those with the same name as other `lodash` methods. */
+	var nativeGetPrototype = Object.getPrototypeOf;
+
+	/**
+	 * Gets the `[[Prototype]]` of `value`.
+	 *
+	 * @private
+	 * @param {*} value The value to query.
+	 * @returns {null|Object} Returns the `[[Prototype]]`.
+	 */
+	function getPrototype(value) {
+	  return nativeGetPrototype(Object(value));
+	}
+
+	module.exports = getPrototype;
+
+
+/***/ },
+/* 244 */
 /***/ function(module, exports) {
 
 	/* Built-in method references for those with the same name as other `lodash` methods. */
@@ -30733,14 +30990,14 @@
 
 
 /***/ },
-/* 238 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseTimes = __webpack_require__(239),
-	    isArguments = __webpack_require__(240),
-	    isArray = __webpack_require__(242),
-	    isLength = __webpack_require__(226),
-	    isString = __webpack_require__(243);
+	var baseTimes = __webpack_require__(246),
+	    isArguments = __webpack_require__(247),
+	    isArray = __webpack_require__(249),
+	    isLength = __webpack_require__(231),
+	    isString = __webpack_require__(250);
 
 	/**
 	 * Creates an array of index keys for `object` values of arrays,
@@ -30763,7 +31020,7 @@
 
 
 /***/ },
-/* 239 */
+/* 246 */
 /***/ function(module, exports) {
 
 	/**
@@ -30789,10 +31046,10 @@
 
 
 /***/ },
-/* 240 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isArrayLikeObject = __webpack_require__(241);
+	var isArrayLikeObject = __webpack_require__(248);
 
 	/** `Object#toString` result references. */
 	var argsTag = '[object Arguments]';
@@ -30841,11 +31098,11 @@
 
 
 /***/ },
-/* 241 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isArrayLike = __webpack_require__(221),
-	    isObjectLike = __webpack_require__(171);
+	var isArrayLike = __webpack_require__(226),
+	    isObjectLike = __webpack_require__(239);
 
 	/**
 	 * This method is like `_.isArrayLike` except that it also checks if `value`
@@ -30880,7 +31137,7 @@
 
 
 /***/ },
-/* 242 */
+/* 249 */
 /***/ function(module, exports) {
 
 	/**
@@ -30914,11 +31171,11 @@
 
 
 /***/ },
-/* 243 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isArray = __webpack_require__(242),
-	    isObjectLike = __webpack_require__(171);
+	var isArray = __webpack_require__(249),
+	    isObjectLike = __webpack_require__(239);
 
 	/** `Object#toString` result references. */
 	var stringTag = '[object String]';
@@ -30960,20 +31217,20 @@
 
 
 /***/ },
-/* 244 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Generated by CoffeeScript 1.9.1
 	(function() {
 	  var XMLBuilder, XMLDeclaration, XMLDocType, XMLElement, XMLStringifier;
 
-	  XMLStringifier = __webpack_require__(245);
+	  XMLStringifier = __webpack_require__(252);
 
-	  XMLDeclaration = __webpack_require__(246);
+	  XMLDeclaration = __webpack_require__(253);
 
-	  XMLDocType = __webpack_require__(347);
+	  XMLDocType = __webpack_require__(353);
 
-	  XMLElement = __webpack_require__(265);
+	  XMLElement = __webpack_require__(276);
 
 	  module.exports = XMLBuilder = (function() {
 	    function XMLBuilder(name, options) {
@@ -31035,7 +31292,7 @@
 
 
 /***/ },
-/* 245 */
+/* 252 */
 /***/ function(module, exports) {
 
 	// Generated by CoffeeScript 1.9.1
@@ -31211,7 +31468,7 @@
 
 
 /***/ },
-/* 246 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Generated by CoffeeScript 1.9.1
@@ -31220,11 +31477,11 @@
 	    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	    hasProp = {}.hasOwnProperty;
 
-	  create = __webpack_require__(247);
+	  create = __webpack_require__(254);
 
-	  isObject = __webpack_require__(225);
+	  isObject = __webpack_require__(230);
 
-	  XMLNode = __webpack_require__(250);
+	  XMLNode = __webpack_require__(257);
 
 	  module.exports = XMLDeclaration = (function(superClass) {
 	    extend(XMLDeclaration, superClass);
@@ -31282,11 +31539,11 @@
 
 
 /***/ },
-/* 247 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseAssign = __webpack_require__(248),
-	    baseCreate = __webpack_require__(249);
+	var baseAssign = __webpack_require__(255),
+	    baseCreate = __webpack_require__(256);
 
 	/**
 	 * Creates an object that inherits from the `prototype` object. If a
@@ -31331,11 +31588,11 @@
 
 
 /***/ },
-/* 248 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(218),
-	    keys = __webpack_require__(235);
+	var copyObject = __webpack_require__(223),
+	    keys = __webpack_require__(241);
 
 	/**
 	 * The base implementation of `_.assign` without support for multiple sources
@@ -31354,10 +31611,10 @@
 
 
 /***/ },
-/* 249 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObject = __webpack_require__(225);
+	var isObject = __webpack_require__(230);
 
 	/** Built-in value references. */
 	var objectCreate = Object.create;
@@ -31378,7 +31635,7 @@
 
 
 /***/ },
-/* 250 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Generated by CoffeeScript 1.9.1
@@ -31386,11 +31643,11 @@
 	  var XMLCData, XMLComment, XMLDeclaration, XMLDocType, XMLElement, XMLNode, XMLRaw, XMLText, isEmpty, isFunction, isObject,
 	    hasProp = {}.hasOwnProperty;
 
-	  isObject = __webpack_require__(225);
+	  isObject = __webpack_require__(230);
 
-	  isFunction = __webpack_require__(224);
+	  isFunction = __webpack_require__(229);
 
-	  isEmpty = __webpack_require__(251);
+	  isEmpty = __webpack_require__(258);
 
 	  XMLElement = null;
 
@@ -31412,13 +31669,13 @@
 	      this.options = this.parent.options;
 	      this.stringify = this.parent.stringify;
 	      if (XMLElement === null) {
-	        XMLElement = __webpack_require__(265);
-	        XMLCData = __webpack_require__(345);
-	        XMLComment = __webpack_require__(346);
-	        XMLDeclaration = __webpack_require__(246);
-	        XMLDocType = __webpack_require__(347);
-	        XMLRaw = __webpack_require__(352);
-	        XMLText = __webpack_require__(353);
+	        XMLElement = __webpack_require__(276);
+	        XMLCData = __webpack_require__(351);
+	        XMLComment = __webpack_require__(352);
+	        XMLDeclaration = __webpack_require__(253);
+	        XMLDocType = __webpack_require__(353);
+	        XMLRaw = __webpack_require__(358);
+	        XMLText = __webpack_require__(359);
 	      }
 	    }
 
@@ -31715,18 +31972,18 @@
 
 
 /***/ },
-/* 251 */
+/* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getTag = __webpack_require__(252),
-	    isArguments = __webpack_require__(240),
-	    isArray = __webpack_require__(242),
-	    isArrayLike = __webpack_require__(221),
-	    isBuffer = __webpack_require__(263),
-	    isFunction = __webpack_require__(224),
-	    isObjectLike = __webpack_require__(171),
-	    isString = __webpack_require__(243),
-	    keys = __webpack_require__(235);
+	var getTag = __webpack_require__(259),
+	    isArguments = __webpack_require__(247),
+	    isArray = __webpack_require__(249),
+	    isArrayLike = __webpack_require__(226),
+	    isBuffer = __webpack_require__(274),
+	    isFunction = __webpack_require__(229),
+	    isObjectLike = __webpack_require__(239),
+	    isString = __webpack_require__(250),
+	    keys = __webpack_require__(241);
 
 	/** `Object#toString` result references. */
 	var mapTag = '[object Map]',
@@ -31801,15 +32058,15 @@
 
 
 /***/ },
-/* 252 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var DataView = __webpack_require__(253),
-	    Map = __webpack_require__(259),
-	    Promise = __webpack_require__(260),
-	    Set = __webpack_require__(261),
-	    WeakMap = __webpack_require__(262),
-	    toSource = __webpack_require__(256);
+	var DataView = __webpack_require__(260),
+	    Map = __webpack_require__(270),
+	    Promise = __webpack_require__(271),
+	    Set = __webpack_require__(272),
+	    WeakMap = __webpack_require__(273),
+	    toSource = __webpack_require__(268);
 
 	/** `Object#toString` result references. */
 	var mapTag = '[object Map]',
@@ -31877,11 +32134,11 @@
 
 
 /***/ },
-/* 253 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getNative = __webpack_require__(254),
-	    root = __webpack_require__(257);
+	var getNative = __webpack_require__(261),
+	    root = __webpack_require__(266);
 
 	/* Built-in method references that are verified to be native. */
 	var DataView = getNative(root, 'DataView');
@@ -31890,10 +32147,11 @@
 
 
 /***/ },
-/* 254 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isNative = __webpack_require__(255);
+	var baseIsNative = __webpack_require__(262),
+	    getValue = __webpack_require__(269);
 
 	/**
 	 * Gets the native function at `key` of `object`.
@@ -31904,21 +32162,22 @@
 	 * @returns {*} Returns the function if it's native, else `undefined`.
 	 */
 	function getNative(object, key) {
-	  var value = object[key];
-	  return isNative(value) ? value : undefined;
+	  var value = getValue(object, key);
+	  return baseIsNative(value) ? value : undefined;
 	}
 
 	module.exports = getNative;
 
 
 /***/ },
-/* 255 */
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isFunction = __webpack_require__(224),
-	    isHostObject = __webpack_require__(170),
-	    isObject = __webpack_require__(225),
-	    toSource = __webpack_require__(256);
+	var isFunction = __webpack_require__(229),
+	    isHostObject = __webpack_require__(263),
+	    isMasked = __webpack_require__(264),
+	    isObject = __webpack_require__(230),
+	    toSource = __webpack_require__(268);
 
 	/**
 	 * Used to match `RegExp`
@@ -31945,36 +32204,130 @@
 	);
 
 	/**
-	 * Checks if `value` is a native function.
+	 * The base implementation of `_.isNative` without bad shim checks.
 	 *
-	 * @static
-	 * @memberOf _
-	 * @since 3.0.0
-	 * @category Lang
+	 * @private
 	 * @param {*} value The value to check.
 	 * @returns {boolean} Returns `true` if `value` is a native function,
 	 *  else `false`.
-	 * @example
-	 *
-	 * _.isNative(Array.prototype.push);
-	 * // => true
-	 *
-	 * _.isNative(_);
-	 * // => false
 	 */
-	function isNative(value) {
-	  if (!isObject(value)) {
+	function baseIsNative(value) {
+	  if (!isObject(value) || isMasked(value)) {
 	    return false;
 	  }
 	  var pattern = (isFunction(value) || isHostObject(value)) ? reIsNative : reIsHostCtor;
 	  return pattern.test(toSource(value));
 	}
 
-	module.exports = isNative;
+	module.exports = baseIsNative;
 
 
 /***/ },
-/* 256 */
+/* 263 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is a host object in IE < 9.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
+	 */
+	function isHostObject(value) {
+	  // Many host objects are `Object` objects that can coerce to strings
+	  // despite having improperly defined `toString` methods.
+	  var result = false;
+	  if (value != null && typeof value.toString != 'function') {
+	    try {
+	      result = !!(value + '');
+	    } catch (e) {}
+	  }
+	  return result;
+	}
+
+	module.exports = isHostObject;
+
+
+/***/ },
+/* 264 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var coreJsData = __webpack_require__(265);
+
+	/** Used to detect methods masquerading as native. */
+	var maskSrcKey = (function() {
+	  var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');
+	  return uid ? ('Symbol(src)_1.' + uid) : '';
+	}());
+
+	/**
+	 * Checks if `func` has its source masked.
+	 *
+	 * @private
+	 * @param {Function} func The function to check.
+	 * @returns {boolean} Returns `true` if `func` is masked, else `false`.
+	 */
+	function isMasked(func) {
+	  return !!maskSrcKey && (maskSrcKey in func);
+	}
+
+	module.exports = isMasked;
+
+
+/***/ },
+/* 265 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var root = __webpack_require__(266);
+
+	/** Used to detect overreaching core-js shims. */
+	var coreJsData = root['__core-js_shared__'];
+
+	module.exports = coreJsData;
+
+
+/***/ },
+/* 266 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {var checkGlobal = __webpack_require__(267);
+
+	/** Detect free variable `global` from Node.js. */
+	var freeGlobal = checkGlobal(typeof global == 'object' && global);
+
+	/** Detect free variable `self`. */
+	var freeSelf = checkGlobal(typeof self == 'object' && self);
+
+	/** Detect `this` as the global object. */
+	var thisGlobal = checkGlobal(typeof this == 'object' && this);
+
+	/** Used as a reference to the global object. */
+	var root = freeGlobal || freeSelf || thisGlobal || Function('return this')();
+
+	module.exports = root;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 267 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is a global object.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {null|Object} Returns `value` if it's a global object, else `null`.
+	 */
+	function checkGlobal(value) {
+	  return (value && value.Object === Object) ? value : null;
+	}
+
+	module.exports = checkGlobal;
+
+
+/***/ },
+/* 268 */
 /***/ function(module, exports) {
 
 	/** Used to resolve the decompiled source of functions. */
@@ -32003,77 +32356,30 @@
 
 
 /***/ },
-/* 257 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module, global) {var checkGlobal = __webpack_require__(258);
-
-	/** Used to determine if values are of the language type `Object`. */
-	var objectTypes = {
-	  'function': true,
-	  'object': true
-	};
-
-	/** Detect free variable `exports`. */
-	var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType)
-	  ? exports
-	  : undefined;
-
-	/** Detect free variable `module`. */
-	var freeModule = (objectTypes[typeof module] && module && !module.nodeType)
-	  ? module
-	  : undefined;
-
-	/** Detect free variable `global` from Node.js. */
-	var freeGlobal = checkGlobal(freeExports && freeModule && typeof global == 'object' && global);
-
-	/** Detect free variable `self`. */
-	var freeSelf = checkGlobal(objectTypes[typeof self] && self);
-
-	/** Detect free variable `window`. */
-	var freeWindow = checkGlobal(objectTypes[typeof window] && window);
-
-	/** Detect `this` as the global object. */
-	var thisGlobal = checkGlobal(objectTypes[typeof this] && this);
-
-	/**
-	 * Used as a reference to the global object.
-	 *
-	 * The `this` value is used if it's the global object to avoid Greasemonkey's
-	 * restricted `window` object, otherwise the `window` object is used.
-	 */
-	var root = freeGlobal ||
-	  ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) ||
-	    freeSelf || thisGlobal || Function('return this')();
-
-	module.exports = root;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(186)(module), (function() { return this; }())))
-
-/***/ },
-/* 258 */
+/* 269 */
 /***/ function(module, exports) {
 
 	/**
-	 * Checks if `value` is a global object.
+	 * Gets the value at `key` of `object`.
 	 *
 	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {null|Object} Returns `value` if it's a global object, else `null`.
+	 * @param {Object} [object] The object to query.
+	 * @param {string} key The key of the property to get.
+	 * @returns {*} Returns the property value.
 	 */
-	function checkGlobal(value) {
-	  return (value && value.Object === Object) ? value : null;
+	function getValue(object, key) {
+	  return object == null ? undefined : object[key];
 	}
 
-	module.exports = checkGlobal;
+	module.exports = getValue;
 
 
 /***/ },
-/* 259 */
+/* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getNative = __webpack_require__(254),
-	    root = __webpack_require__(257);
+	var getNative = __webpack_require__(261),
+	    root = __webpack_require__(266);
 
 	/* Built-in method references that are verified to be native. */
 	var Map = getNative(root, 'Map');
@@ -32082,11 +32388,11 @@
 
 
 /***/ },
-/* 260 */
+/* 271 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getNative = __webpack_require__(254),
-	    root = __webpack_require__(257);
+	var getNative = __webpack_require__(261),
+	    root = __webpack_require__(266);
 
 	/* Built-in method references that are verified to be native. */
 	var Promise = getNative(root, 'Promise');
@@ -32095,11 +32401,11 @@
 
 
 /***/ },
-/* 261 */
+/* 272 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getNative = __webpack_require__(254),
-	    root = __webpack_require__(257);
+	var getNative = __webpack_require__(261),
+	    root = __webpack_require__(266);
 
 	/* Built-in method references that are verified to be native. */
 	var Set = getNative(root, 'Set');
@@ -32108,11 +32414,11 @@
 
 
 /***/ },
-/* 262 */
+/* 273 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getNative = __webpack_require__(254),
-	    root = __webpack_require__(257);
+	var getNative = __webpack_require__(261),
+	    root = __webpack_require__(266);
 
 	/* Built-in method references that are verified to be native. */
 	var WeakMap = getNative(root, 'WeakMap');
@@ -32121,32 +32427,20 @@
 
 
 /***/ },
-/* 263 */
+/* 274 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(module) {var constant = __webpack_require__(264),
-	    root = __webpack_require__(257);
-
-	/** Used to determine if values are of the language type `Object`. */
-	var objectTypes = {
-	  'function': true,
-	  'object': true
-	};
+	/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(266),
+	    stubFalse = __webpack_require__(275);
 
 	/** Detect free variable `exports`. */
-	var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType)
-	  ? exports
-	  : undefined;
+	var freeExports = typeof exports == 'object' && exports;
 
 	/** Detect free variable `module`. */
-	var freeModule = (objectTypes[typeof module] && module && !module.nodeType)
-	  ? module
-	  : undefined;
+	var freeModule = freeExports && typeof module == 'object' && module;
 
 	/** Detect the popular CommonJS extension `module.exports`. */
-	var moduleExports = (freeModule && freeModule.exports === freeExports)
-	  ? freeExports
-	  : undefined;
+	var moduleExports = freeModule && freeModule.exports === freeExports;
 
 	/** Built-in value references. */
 	var Buffer = moduleExports ? root.Buffer : undefined;
@@ -32168,46 +32462,40 @@
 	 * _.isBuffer(new Uint8Array(2));
 	 * // => false
 	 */
-	var isBuffer = !Buffer ? constant(false) : function(value) {
+	var isBuffer = !Buffer ? stubFalse : function(value) {
 	  return value instanceof Buffer;
 	};
 
 	module.exports = isBuffer;
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(186)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(190)(module)))
 
 /***/ },
-/* 264 */
+/* 275 */
 /***/ function(module, exports) {
 
 	/**
-	 * Creates a function that returns `value`.
+	 * A method that returns `false`.
 	 *
 	 * @static
 	 * @memberOf _
-	 * @since 2.4.0
+	 * @since 4.13.0
 	 * @category Util
-	 * @param {*} value The value to return from the new function.
-	 * @returns {Function} Returns the new constant function.
+	 * @returns {boolean} Returns `false`.
 	 * @example
 	 *
-	 * var object = { 'user': 'fred' };
-	 * var getter = _.constant(object);
-	 *
-	 * getter() === object;
-	 * // => true
+	 * _.times(2, _.stubFalse);
+	 * // => [false, false]
 	 */
-	function constant(value) {
-	  return function() {
-	    return value;
-	  };
+	function stubFalse() {
+	  return false;
 	}
 
-	module.exports = constant;
+	module.exports = stubFalse;
 
 
 /***/ },
-/* 265 */
+/* 276 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Generated by CoffeeScript 1.9.1
@@ -32216,19 +32504,19 @@
 	    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	    hasProp = {}.hasOwnProperty;
 
-	  create = __webpack_require__(247);
+	  create = __webpack_require__(254);
 
-	  isObject = __webpack_require__(225);
+	  isObject = __webpack_require__(230);
 
-	  isFunction = __webpack_require__(224);
+	  isFunction = __webpack_require__(229);
 
-	  every = __webpack_require__(266);
+	  every = __webpack_require__(277);
 
-	  XMLNode = __webpack_require__(250);
+	  XMLNode = __webpack_require__(257);
 
-	  XMLAttribute = __webpack_require__(343);
+	  XMLAttribute = __webpack_require__(349);
 
-	  XMLProcessingInstruction = __webpack_require__(344);
+	  XMLProcessingInstruction = __webpack_require__(350);
 
 	  module.exports = XMLElement = (function(superClass) {
 	    extend(XMLElement, superClass);
@@ -32425,14 +32713,14 @@
 
 
 /***/ },
-/* 266 */
+/* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var arrayEvery = __webpack_require__(267),
-	    baseEvery = __webpack_require__(268),
-	    baseIteratee = __webpack_require__(274),
-	    isArray = __webpack_require__(242),
-	    isIterateeCall = __webpack_require__(220);
+	var arrayEvery = __webpack_require__(278),
+	    baseEvery = __webpack_require__(279),
+	    baseIteratee = __webpack_require__(285),
+	    isArray = __webpack_require__(249),
+	    isIterateeCall = __webpack_require__(225);
 
 	/**
 	 * Checks if `predicate` returns truthy for **all** elements of `collection`.
@@ -32483,7 +32771,7 @@
 
 
 /***/ },
-/* 267 */
+/* 278 */
 /***/ function(module, exports) {
 
 	/**
@@ -32491,14 +32779,14 @@
 	 * iteratee shorthands.
 	 *
 	 * @private
-	 * @param {Array} array The array to iterate over.
+	 * @param {Array} [array] The array to iterate over.
 	 * @param {Function} predicate The function invoked per iteration.
 	 * @returns {boolean} Returns `true` if all elements pass the predicate check,
 	 *  else `false`.
 	 */
 	function arrayEvery(array, predicate) {
 	  var index = -1,
-	      length = array.length;
+	      length = array ? array.length : 0;
 
 	  while (++index < length) {
 	    if (!predicate(array[index], index, array)) {
@@ -32512,10 +32800,10 @@
 
 
 /***/ },
-/* 268 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseEach = __webpack_require__(269);
+	var baseEach = __webpack_require__(280);
 
 	/**
 	 * The base implementation of `_.every` without support for iteratee shorthands.
@@ -32539,11 +32827,11 @@
 
 
 /***/ },
-/* 269 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseForOwn = __webpack_require__(270),
-	    createBaseEach = __webpack_require__(273);
+	var baseForOwn = __webpack_require__(281),
+	    createBaseEach = __webpack_require__(284);
 
 	/**
 	 * The base implementation of `_.forEach` without support for iteratee shorthands.
@@ -32559,11 +32847,11 @@
 
 
 /***/ },
-/* 270 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseFor = __webpack_require__(271),
-	    keys = __webpack_require__(235);
+	var baseFor = __webpack_require__(282),
+	    keys = __webpack_require__(241);
 
 	/**
 	 * The base implementation of `_.forOwn` without support for iteratee shorthands.
@@ -32581,10 +32869,10 @@
 
 
 /***/ },
-/* 271 */
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var createBaseFor = __webpack_require__(272);
+	var createBaseFor = __webpack_require__(283);
 
 	/**
 	 * The base implementation of `baseForOwn` which iterates over `object`
@@ -32603,7 +32891,7 @@
 
 
 /***/ },
-/* 272 */
+/* 283 */
 /***/ function(module, exports) {
 
 	/**
@@ -32634,10 +32922,10 @@
 
 
 /***/ },
-/* 273 */
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isArrayLike = __webpack_require__(221);
+	var isArrayLike = __webpack_require__(226);
 
 	/**
 	 * Creates a `baseEach` or `baseEachRight` function.
@@ -32672,14 +32960,14 @@
 
 
 /***/ },
-/* 274 */
+/* 285 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseMatches = __webpack_require__(275),
-	    baseMatchesProperty = __webpack_require__(327),
-	    identity = __webpack_require__(340),
-	    isArray = __webpack_require__(242),
-	    property = __webpack_require__(341);
+	var baseMatches = __webpack_require__(286),
+	    baseMatchesProperty = __webpack_require__(333),
+	    identity = __webpack_require__(346),
+	    isArray = __webpack_require__(249),
+	    property = __webpack_require__(347);
 
 	/**
 	 * The base implementation of `_.iteratee`.
@@ -32709,12 +32997,12 @@
 
 
 /***/ },
-/* 275 */
+/* 286 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIsMatch = __webpack_require__(276),
-	    getMatchData = __webpack_require__(319),
-	    matchesStrictComparable = __webpack_require__(326);
+	var baseIsMatch = __webpack_require__(287),
+	    getMatchData = __webpack_require__(330),
+	    matchesStrictComparable = __webpack_require__(332);
 
 	/**
 	 * The base implementation of `_.matches` which doesn't clone `source`.
@@ -32737,11 +33025,11 @@
 
 
 /***/ },
-/* 276 */
+/* 287 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Stack = __webpack_require__(277),
-	    baseIsEqual = __webpack_require__(305);
+	var Stack = __webpack_require__(288),
+	    baseIsEqual = __webpack_require__(316);
 
 	/** Used to compose bitmasks for comparison styles. */
 	var UNORDERED_COMPARE_FLAG = 1,
@@ -32805,15 +33093,15 @@
 
 
 /***/ },
-/* 277 */
+/* 288 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var ListCache = __webpack_require__(278),
-	    stackClear = __webpack_require__(285),
-	    stackDelete = __webpack_require__(286),
-	    stackGet = __webpack_require__(287),
-	    stackHas = __webpack_require__(288),
-	    stackSet = __webpack_require__(289);
+	var ListCache = __webpack_require__(289),
+	    stackClear = __webpack_require__(296),
+	    stackDelete = __webpack_require__(297),
+	    stackGet = __webpack_require__(298),
+	    stackHas = __webpack_require__(299),
+	    stackSet = __webpack_require__(300);
 
 	/**
 	 * Creates a stack cache object to store key-value pairs.
@@ -32837,14 +33125,14 @@
 
 
 /***/ },
-/* 278 */
+/* 289 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var listCacheClear = __webpack_require__(279),
-	    listCacheDelete = __webpack_require__(280),
-	    listCacheGet = __webpack_require__(282),
-	    listCacheHas = __webpack_require__(283),
-	    listCacheSet = __webpack_require__(284);
+	var listCacheClear = __webpack_require__(290),
+	    listCacheDelete = __webpack_require__(291),
+	    listCacheGet = __webpack_require__(293),
+	    listCacheHas = __webpack_require__(294),
+	    listCacheSet = __webpack_require__(295);
 
 	/**
 	 * Creates an list cache object.
@@ -32875,7 +33163,7 @@
 
 
 /***/ },
-/* 279 */
+/* 290 */
 /***/ function(module, exports) {
 
 	/**
@@ -32893,10 +33181,10 @@
 
 
 /***/ },
-/* 280 */
+/* 291 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assocIndexOf = __webpack_require__(281);
+	var assocIndexOf = __webpack_require__(292);
 
 	/** Used for built-in method references. */
 	var arrayProto = Array.prototype;
@@ -32933,10 +33221,10 @@
 
 
 /***/ },
-/* 281 */
+/* 292 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var eq = __webpack_require__(217);
+	var eq = __webpack_require__(222);
 
 	/**
 	 * Gets the index at which the `key` is found in `array` of key-value pairs.
@@ -32960,10 +33248,10 @@
 
 
 /***/ },
-/* 282 */
+/* 293 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assocIndexOf = __webpack_require__(281);
+	var assocIndexOf = __webpack_require__(292);
 
 	/**
 	 * Gets the list cache value for `key`.
@@ -32985,10 +33273,10 @@
 
 
 /***/ },
-/* 283 */
+/* 294 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assocIndexOf = __webpack_require__(281);
+	var assocIndexOf = __webpack_require__(292);
 
 	/**
 	 * Checks if a list cache value for `key` exists.
@@ -33007,10 +33295,10 @@
 
 
 /***/ },
-/* 284 */
+/* 295 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assocIndexOf = __webpack_require__(281);
+	var assocIndexOf = __webpack_require__(292);
 
 	/**
 	 * Sets the list cache `key` to `value`.
@@ -33038,10 +33326,10 @@
 
 
 /***/ },
-/* 285 */
+/* 296 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var ListCache = __webpack_require__(278);
+	var ListCache = __webpack_require__(289);
 
 	/**
 	 * Removes all key-value entries from the stack.
@@ -33058,7 +33346,7 @@
 
 
 /***/ },
-/* 286 */
+/* 297 */
 /***/ function(module, exports) {
 
 	/**
@@ -33078,7 +33366,7 @@
 
 
 /***/ },
-/* 287 */
+/* 298 */
 /***/ function(module, exports) {
 
 	/**
@@ -33098,7 +33386,7 @@
 
 
 /***/ },
-/* 288 */
+/* 299 */
 /***/ function(module, exports) {
 
 	/**
@@ -33118,11 +33406,11 @@
 
 
 /***/ },
-/* 289 */
+/* 300 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var ListCache = __webpack_require__(278),
-	    MapCache = __webpack_require__(290);
+	var ListCache = __webpack_require__(289),
+	    MapCache = __webpack_require__(301);
 
 	/** Used as the size to enable large array optimizations. */
 	var LARGE_ARRAY_SIZE = 200;
@@ -33150,14 +33438,14 @@
 
 
 /***/ },
-/* 290 */
+/* 301 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var mapCacheClear = __webpack_require__(291),
-	    mapCacheDelete = __webpack_require__(299),
-	    mapCacheGet = __webpack_require__(302),
-	    mapCacheHas = __webpack_require__(303),
-	    mapCacheSet = __webpack_require__(304);
+	var mapCacheClear = __webpack_require__(302),
+	    mapCacheDelete = __webpack_require__(310),
+	    mapCacheGet = __webpack_require__(313),
+	    mapCacheHas = __webpack_require__(314),
+	    mapCacheSet = __webpack_require__(315);
 
 	/**
 	 * Creates a map cache object to store key-value pairs.
@@ -33188,12 +33476,12 @@
 
 
 /***/ },
-/* 291 */
+/* 302 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Hash = __webpack_require__(292),
-	    ListCache = __webpack_require__(278),
-	    Map = __webpack_require__(259);
+	var Hash = __webpack_require__(303),
+	    ListCache = __webpack_require__(289),
+	    Map = __webpack_require__(270);
 
 	/**
 	 * Removes all key-value entries from the map.
@@ -33214,14 +33502,14 @@
 
 
 /***/ },
-/* 292 */
+/* 303 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var hashClear = __webpack_require__(293),
-	    hashDelete = __webpack_require__(295),
-	    hashGet = __webpack_require__(296),
-	    hashHas = __webpack_require__(297),
-	    hashSet = __webpack_require__(298);
+	var hashClear = __webpack_require__(304),
+	    hashDelete = __webpack_require__(306),
+	    hashGet = __webpack_require__(307),
+	    hashHas = __webpack_require__(308),
+	    hashSet = __webpack_require__(309);
 
 	/**
 	 * Creates a hash object.
@@ -33252,10 +33540,10 @@
 
 
 /***/ },
-/* 293 */
+/* 304 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var nativeCreate = __webpack_require__(294);
+	var nativeCreate = __webpack_require__(305);
 
 	/**
 	 * Removes all key-value entries from the hash.
@@ -33272,10 +33560,10 @@
 
 
 /***/ },
-/* 294 */
+/* 305 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getNative = __webpack_require__(254);
+	var getNative = __webpack_require__(261);
 
 	/* Built-in method references that are verified to be native. */
 	var nativeCreate = getNative(Object, 'create');
@@ -33284,7 +33572,7 @@
 
 
 /***/ },
-/* 295 */
+/* 306 */
 /***/ function(module, exports) {
 
 	/**
@@ -33305,10 +33593,10 @@
 
 
 /***/ },
-/* 296 */
+/* 307 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var nativeCreate = __webpack_require__(294);
+	var nativeCreate = __webpack_require__(305);
 
 	/** Used to stand-in for `undefined` hash values. */
 	var HASH_UNDEFINED = '__lodash_hash_undefined__';
@@ -33341,10 +33629,10 @@
 
 
 /***/ },
-/* 297 */
+/* 308 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var nativeCreate = __webpack_require__(294);
+	var nativeCreate = __webpack_require__(305);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -33370,10 +33658,10 @@
 
 
 /***/ },
-/* 298 */
+/* 309 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var nativeCreate = __webpack_require__(294);
+	var nativeCreate = __webpack_require__(305);
 
 	/** Used to stand-in for `undefined` hash values. */
 	var HASH_UNDEFINED = '__lodash_hash_undefined__';
@@ -33398,10 +33686,10 @@
 
 
 /***/ },
-/* 299 */
+/* 310 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getMapData = __webpack_require__(300);
+	var getMapData = __webpack_require__(311);
 
 	/**
 	 * Removes `key` and its value from the map.
@@ -33420,10 +33708,10 @@
 
 
 /***/ },
-/* 300 */
+/* 311 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isKeyable = __webpack_require__(301);
+	var isKeyable = __webpack_require__(312);
 
 	/**
 	 * Gets the data for `map`.
@@ -33444,7 +33732,7 @@
 
 
 /***/ },
-/* 301 */
+/* 312 */
 /***/ function(module, exports) {
 
 	/**
@@ -33465,10 +33753,10 @@
 
 
 /***/ },
-/* 302 */
+/* 313 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getMapData = __webpack_require__(300);
+	var getMapData = __webpack_require__(311);
 
 	/**
 	 * Gets the map value for `key`.
@@ -33487,10 +33775,10 @@
 
 
 /***/ },
-/* 303 */
+/* 314 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getMapData = __webpack_require__(300);
+	var getMapData = __webpack_require__(311);
 
 	/**
 	 * Checks if a map value for `key` exists.
@@ -33509,10 +33797,10 @@
 
 
 /***/ },
-/* 304 */
+/* 315 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getMapData = __webpack_require__(300);
+	var getMapData = __webpack_require__(311);
 
 	/**
 	 * Sets the map `key` to `value`.
@@ -33533,12 +33821,12 @@
 
 
 /***/ },
-/* 305 */
+/* 316 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIsEqualDeep = __webpack_require__(306),
-	    isObject = __webpack_require__(225),
-	    isObjectLike = __webpack_require__(171);
+	var baseIsEqualDeep = __webpack_require__(317),
+	    isObject = __webpack_require__(230),
+	    isObjectLike = __webpack_require__(239);
 
 	/**
 	 * The base implementation of `_.isEqual` which supports partial comparisons
@@ -33569,17 +33857,17 @@
 
 
 /***/ },
-/* 306 */
+/* 317 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Stack = __webpack_require__(277),
-	    equalArrays = __webpack_require__(307),
-	    equalByTag = __webpack_require__(312),
-	    equalObjects = __webpack_require__(317),
-	    getTag = __webpack_require__(252),
-	    isArray = __webpack_require__(242),
-	    isHostObject = __webpack_require__(170),
-	    isTypedArray = __webpack_require__(318);
+	var Stack = __webpack_require__(288),
+	    equalArrays = __webpack_require__(318),
+	    equalByTag = __webpack_require__(323),
+	    equalObjects = __webpack_require__(328),
+	    getTag = __webpack_require__(259),
+	    isArray = __webpack_require__(249),
+	    isHostObject = __webpack_require__(263),
+	    isTypedArray = __webpack_require__(329);
 
 	/** Used to compose bitmasks for comparison styles. */
 	var PARTIAL_COMPARE_FLAG = 2;
@@ -33657,11 +33945,11 @@
 
 
 /***/ },
-/* 307 */
+/* 318 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var SetCache = __webpack_require__(308),
-	    arraySome = __webpack_require__(311);
+	var SetCache = __webpack_require__(319),
+	    arraySome = __webpack_require__(322);
 
 	/** Used to compose bitmasks for comparison styles. */
 	var UNORDERED_COMPARE_FLAG = 1,
@@ -33744,12 +34032,12 @@
 
 
 /***/ },
-/* 308 */
+/* 319 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var MapCache = __webpack_require__(290),
-	    setCacheAdd = __webpack_require__(309),
-	    setCacheHas = __webpack_require__(310);
+	var MapCache = __webpack_require__(301),
+	    setCacheAdd = __webpack_require__(320),
+	    setCacheHas = __webpack_require__(321);
 
 	/**
 	 *
@@ -33777,7 +34065,7 @@
 
 
 /***/ },
-/* 309 */
+/* 320 */
 /***/ function(module, exports) {
 
 	/** Used to stand-in for `undefined` hash values. */
@@ -33802,7 +34090,7 @@
 
 
 /***/ },
-/* 310 */
+/* 321 */
 /***/ function(module, exports) {
 
 	/**
@@ -33822,7 +34110,7 @@
 
 
 /***/ },
-/* 311 */
+/* 322 */
 /***/ function(module, exports) {
 
 	/**
@@ -33830,14 +34118,14 @@
 	 * shorthands.
 	 *
 	 * @private
-	 * @param {Array} array The array to iterate over.
+	 * @param {Array} [array] The array to iterate over.
 	 * @param {Function} predicate The function invoked per iteration.
 	 * @returns {boolean} Returns `true` if any element passes the predicate check,
 	 *  else `false`.
 	 */
 	function arraySome(array, predicate) {
 	  var index = -1,
-	      length = array.length;
+	      length = array ? array.length : 0;
 
 	  while (++index < length) {
 	    if (predicate(array[index], index, array)) {
@@ -33851,14 +34139,14 @@
 
 
 /***/ },
-/* 312 */
+/* 323 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Symbol = __webpack_require__(313),
-	    Uint8Array = __webpack_require__(314),
-	    equalArrays = __webpack_require__(307),
-	    mapToArray = __webpack_require__(315),
-	    setToArray = __webpack_require__(316);
+	var Symbol = __webpack_require__(324),
+	    Uint8Array = __webpack_require__(325),
+	    equalArrays = __webpack_require__(318),
+	    mapToArray = __webpack_require__(326),
+	    setToArray = __webpack_require__(327);
 
 	/** Used to compose bitmasks for comparison styles. */
 	var UNORDERED_COMPARE_FLAG = 1,
@@ -33971,10 +34259,10 @@
 
 
 /***/ },
-/* 313 */
+/* 324 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var root = __webpack_require__(257);
+	var root = __webpack_require__(266);
 
 	/** Built-in value references. */
 	var Symbol = root.Symbol;
@@ -33983,10 +34271,10 @@
 
 
 /***/ },
-/* 314 */
+/* 325 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var root = __webpack_require__(257);
+	var root = __webpack_require__(266);
 
 	/** Built-in value references. */
 	var Uint8Array = root.Uint8Array;
@@ -33995,7 +34283,7 @@
 
 
 /***/ },
-/* 315 */
+/* 326 */
 /***/ function(module, exports) {
 
 	/**
@@ -34019,7 +34307,7 @@
 
 
 /***/ },
-/* 316 */
+/* 327 */
 /***/ function(module, exports) {
 
 	/**
@@ -34043,11 +34331,11 @@
 
 
 /***/ },
-/* 317 */
+/* 328 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseHas = __webpack_require__(236),
-	    keys = __webpack_require__(235);
+	var baseHas = __webpack_require__(242),
+	    keys = __webpack_require__(241);
 
 	/** Used to compose bitmasks for comparison styles. */
 	var PARTIAL_COMPARE_FLAG = 2;
@@ -34132,11 +34420,11 @@
 
 
 /***/ },
-/* 318 */
+/* 329 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isLength = __webpack_require__(226),
-	    isObjectLike = __webpack_require__(171);
+	var isLength = __webpack_require__(231),
+	    isObjectLike = __webpack_require__(239);
 
 	/** `Object#toString` result references. */
 	var argsTag = '[object Arguments]',
@@ -34218,11 +34506,11 @@
 
 
 /***/ },
-/* 319 */
+/* 330 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isStrictComparable = __webpack_require__(320),
-	    toPairs = __webpack_require__(321);
+	var isStrictComparable = __webpack_require__(331),
+	    keys = __webpack_require__(241);
 
 	/**
 	 * Gets the property names, values, and compare flags of `object`.
@@ -34232,11 +34520,14 @@
 	 * @returns {Array} Returns the match data of `object`.
 	 */
 	function getMatchData(object) {
-	  var result = toPairs(object),
+	  var result = keys(object),
 	      length = result.length;
 
 	  while (length--) {
-	    result[length][2] = isStrictComparable(result[length][1]);
+	    var key = result[length],
+	        value = object[key];
+
+	    result[length] = [key, value, isStrictComparable(value)];
 	  }
 	  return result;
 	}
@@ -34245,10 +34536,10 @@
 
 
 /***/ },
-/* 320 */
+/* 331 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObject = __webpack_require__(225);
+	var isObject = __webpack_require__(230);
 
 	/**
 	 * Checks if `value` is suitable for strict equality comparisons, i.e. `===`.
@@ -34266,154 +34557,7 @@
 
 
 /***/ },
-/* 321 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var createToPairs = __webpack_require__(322),
-	    keys = __webpack_require__(235);
-
-	/**
-	 * Creates an array of own enumerable string keyed-value pairs for `object`
-	 * which can be consumed by `_.fromPairs`. If `object` is a map or set, its
-	 * entries are returned.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @alias entries
-	 * @category Object
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the key-value pairs.
-	 * @example
-	 *
-	 * function Foo() {
-	 *   this.a = 1;
-	 *   this.b = 2;
-	 * }
-	 *
-	 * Foo.prototype.c = 3;
-	 *
-	 * _.toPairs(new Foo);
-	 * // => [['a', 1], ['b', 2]] (iteration order is not guaranteed)
-	 */
-	var toPairs = createToPairs(keys);
-
-	module.exports = toPairs;
-
-
-/***/ },
-/* 322 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseToPairs = __webpack_require__(323),
-	    getTag = __webpack_require__(252),
-	    mapToArray = __webpack_require__(315),
-	    setToPairs = __webpack_require__(325);
-
-	/** `Object#toString` result references. */
-	var mapTag = '[object Map]',
-	    setTag = '[object Set]';
-
-	/**
-	 * Creates a `_.toPairs` or `_.toPairsIn` function.
-	 *
-	 * @private
-	 * @param {Function} keysFunc The function to get the keys of a given object.
-	 * @returns {Function} Returns the new pairs function.
-	 */
-	function createToPairs(keysFunc) {
-	  return function(object) {
-	    var tag = getTag(object);
-	    if (tag == mapTag) {
-	      return mapToArray(object);
-	    }
-	    if (tag == setTag) {
-	      return setToPairs(object);
-	    }
-	    return baseToPairs(object, keysFunc(object));
-	  };
-	}
-
-	module.exports = createToPairs;
-
-
-/***/ },
-/* 323 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var arrayMap = __webpack_require__(324);
-
-	/**
-	 * The base implementation of `_.toPairs` and `_.toPairsIn` which creates an array
-	 * of key-value pairs for `object` corresponding to the property names of `props`.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @param {Array} props The property names to get values for.
-	 * @returns {Object} Returns the key-value pairs.
-	 */
-	function baseToPairs(object, props) {
-	  return arrayMap(props, function(key) {
-	    return [key, object[key]];
-	  });
-	}
-
-	module.exports = baseToPairs;
-
-
-/***/ },
-/* 324 */
-/***/ function(module, exports) {
-
-	/**
-	 * A specialized version of `_.map` for arrays without support for iteratee
-	 * shorthands.
-	 *
-	 * @private
-	 * @param {Array} array The array to iterate over.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @returns {Array} Returns the new mapped array.
-	 */
-	function arrayMap(array, iteratee) {
-	  var index = -1,
-	      length = array.length,
-	      result = Array(length);
-
-	  while (++index < length) {
-	    result[index] = iteratee(array[index], index, array);
-	  }
-	  return result;
-	}
-
-	module.exports = arrayMap;
-
-
-/***/ },
-/* 325 */
-/***/ function(module, exports) {
-
-	/**
-	 * Converts `set` to its value-value pairs.
-	 *
-	 * @private
-	 * @param {Object} set The set to convert.
-	 * @returns {Array} Returns the value-value pairs.
-	 */
-	function setToPairs(set) {
-	  var index = -1,
-	      result = Array(set.size);
-
-	  set.forEach(function(value) {
-	    result[++index] = [value, value];
-	  });
-	  return result;
-	}
-
-	module.exports = setToPairs;
-
-
-/***/ },
-/* 326 */
+/* 332 */
 /***/ function(module, exports) {
 
 	/**
@@ -34439,16 +34583,16 @@
 
 
 /***/ },
-/* 327 */
+/* 333 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIsEqual = __webpack_require__(305),
-	    get = __webpack_require__(328),
-	    hasIn = __webpack_require__(337),
-	    isKey = __webpack_require__(335),
-	    isStrictComparable = __webpack_require__(320),
-	    matchesStrictComparable = __webpack_require__(326),
-	    toKey = __webpack_require__(336);
+	var baseIsEqual = __webpack_require__(316),
+	    get = __webpack_require__(334),
+	    hasIn = __webpack_require__(343),
+	    isKey = __webpack_require__(341),
+	    isStrictComparable = __webpack_require__(331),
+	    matchesStrictComparable = __webpack_require__(332),
+	    toKey = __webpack_require__(342);
 
 	/** Used to compose bitmasks for comparison styles. */
 	var UNORDERED_COMPARE_FLAG = 1,
@@ -34478,10 +34622,10 @@
 
 
 /***/ },
-/* 328 */
+/* 334 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGet = __webpack_require__(329);
+	var baseGet = __webpack_require__(335);
 
 	/**
 	 * Gets the value at `path` of `object`. If the resolved value is
@@ -34517,12 +34661,12 @@
 
 
 /***/ },
-/* 329 */
+/* 335 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var castPath = __webpack_require__(330),
-	    isKey = __webpack_require__(335),
-	    toKey = __webpack_require__(336);
+	var castPath = __webpack_require__(336),
+	    isKey = __webpack_require__(341),
+	    toKey = __webpack_require__(342);
 
 	/**
 	 * The base implementation of `_.get` without support for default values.
@@ -34548,11 +34692,11 @@
 
 
 /***/ },
-/* 330 */
+/* 336 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isArray = __webpack_require__(242),
-	    stringToPath = __webpack_require__(331);
+	var isArray = __webpack_require__(249),
+	    stringToPath = __webpack_require__(337);
 
 	/**
 	 * Casts `value` to a path array if it's not one.
@@ -34569,14 +34713,14 @@
 
 
 /***/ },
-/* 331 */
+/* 337 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var memoize = __webpack_require__(332),
-	    toString = __webpack_require__(333);
+	var memoize = __webpack_require__(338),
+	    toString = __webpack_require__(339);
 
 	/** Used to match property names within property paths. */
-	var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]/g;
+	var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(\.|\[\])(?:\4|$))/g;
 
 	/** Used to match backslashes in property paths. */
 	var reEscapeChar = /\\(\\)?/g;
@@ -34600,10 +34744,10 @@
 
 
 /***/ },
-/* 332 */
+/* 338 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var MapCache = __webpack_require__(290);
+	var MapCache = __webpack_require__(301);
 
 	/** Used as the `TypeError` message for "Functions" methods. */
 	var FUNC_ERROR_TEXT = 'Expected a function';
@@ -34679,10 +34823,10 @@
 
 
 /***/ },
-/* 333 */
+/* 339 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseToString = __webpack_require__(334);
+	var baseToString = __webpack_require__(340);
 
 	/**
 	 * Converts `value` to a string. An empty string is returned for `null`
@@ -34713,11 +34857,11 @@
 
 
 /***/ },
-/* 334 */
+/* 340 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Symbol = __webpack_require__(313),
-	    isSymbol = __webpack_require__(233);
+	var Symbol = __webpack_require__(324),
+	    isSymbol = __webpack_require__(238);
 
 	/** Used as references for various `Number` constants. */
 	var INFINITY = 1 / 0;
@@ -34750,11 +34894,11 @@
 
 
 /***/ },
-/* 335 */
+/* 341 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isArray = __webpack_require__(242),
-	    isSymbol = __webpack_require__(233);
+	var isArray = __webpack_require__(249),
+	    isSymbol = __webpack_require__(238);
 
 	/** Used to match property names within property paths. */
 	var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
@@ -34785,10 +34929,10 @@
 
 
 /***/ },
-/* 336 */
+/* 342 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isSymbol = __webpack_require__(233);
+	var isSymbol = __webpack_require__(238);
 
 	/** Used as references for various `Number` constants. */
 	var INFINITY = 1 / 0;
@@ -34812,11 +34956,11 @@
 
 
 /***/ },
-/* 337 */
+/* 343 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseHasIn = __webpack_require__(338),
-	    hasPath = __webpack_require__(339);
+	var baseHasIn = __webpack_require__(344),
+	    hasPath = __webpack_require__(345);
 
 	/**
 	 * Checks if `path` is a direct or inherited property of `object`.
@@ -34852,36 +34996,36 @@
 
 
 /***/ },
-/* 338 */
+/* 344 */
 /***/ function(module, exports) {
 
 	/**
 	 * The base implementation of `_.hasIn` without support for deep paths.
 	 *
 	 * @private
-	 * @param {Object} object The object to query.
+	 * @param {Object} [object] The object to query.
 	 * @param {Array|string} key The key to check.
 	 * @returns {boolean} Returns `true` if `key` exists, else `false`.
 	 */
 	function baseHasIn(object, key) {
-	  return key in Object(object);
+	  return object != null && key in Object(object);
 	}
 
 	module.exports = baseHasIn;
 
 
 /***/ },
-/* 339 */
+/* 345 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var castPath = __webpack_require__(330),
-	    isArguments = __webpack_require__(240),
-	    isArray = __webpack_require__(242),
-	    isIndex = __webpack_require__(227),
-	    isKey = __webpack_require__(335),
-	    isLength = __webpack_require__(226),
-	    isString = __webpack_require__(243),
-	    toKey = __webpack_require__(336);
+	var castPath = __webpack_require__(336),
+	    isArguments = __webpack_require__(247),
+	    isArray = __webpack_require__(249),
+	    isIndex = __webpack_require__(232),
+	    isKey = __webpack_require__(341),
+	    isLength = __webpack_require__(231),
+	    isString = __webpack_require__(250),
+	    toKey = __webpack_require__(342);
 
 	/**
 	 * Checks if `path` exists on `object`.
@@ -34918,7 +35062,7 @@
 
 
 /***/ },
-/* 340 */
+/* 346 */
 /***/ function(module, exports) {
 
 	/**
@@ -34934,7 +35078,7 @@
 	 *
 	 * var object = { 'user': 'fred' };
 	 *
-	 * _.identity(object) === object;
+	 * console.log(_.identity(object) === object);
 	 * // => true
 	 */
 	function identity(value) {
@@ -34945,13 +35089,13 @@
 
 
 /***/ },
-/* 341 */
+/* 347 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseProperty = __webpack_require__(223),
-	    basePropertyDeep = __webpack_require__(342),
-	    isKey = __webpack_require__(335),
-	    toKey = __webpack_require__(336);
+	var baseProperty = __webpack_require__(228),
+	    basePropertyDeep = __webpack_require__(348),
+	    isKey = __webpack_require__(341),
+	    toKey = __webpack_require__(342);
 
 	/**
 	 * Creates a function that returns the value at `path` of a given object.
@@ -34983,10 +35127,10 @@
 
 
 /***/ },
-/* 342 */
+/* 348 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGet = __webpack_require__(329);
+	var baseGet = __webpack_require__(335);
 
 	/**
 	 * A specialized version of `baseProperty` which supports deep paths.
@@ -35005,14 +35149,14 @@
 
 
 /***/ },
-/* 343 */
+/* 349 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Generated by CoffeeScript 1.9.1
 	(function() {
 	  var XMLAttribute, create;
 
-	  create = __webpack_require__(247);
+	  create = __webpack_require__(254);
 
 	  module.exports = XMLAttribute = (function() {
 	    function XMLAttribute(parent, name, value) {
@@ -35043,14 +35187,14 @@
 
 
 /***/ },
-/* 344 */
+/* 350 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Generated by CoffeeScript 1.9.1
 	(function() {
 	  var XMLProcessingInstruction, create;
 
-	  create = __webpack_require__(247);
+	  create = __webpack_require__(254);
 
 	  module.exports = XMLProcessingInstruction = (function() {
 	    function XMLProcessingInstruction(parent, target, value) {
@@ -35100,7 +35244,7 @@
 
 
 /***/ },
-/* 345 */
+/* 351 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Generated by CoffeeScript 1.9.1
@@ -35109,9 +35253,9 @@
 	    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	    hasProp = {}.hasOwnProperty;
 
-	  create = __webpack_require__(247);
+	  create = __webpack_require__(254);
 
-	  XMLNode = __webpack_require__(250);
+	  XMLNode = __webpack_require__(257);
 
 	  module.exports = XMLCData = (function(superClass) {
 	    extend(XMLCData, superClass);
@@ -35155,7 +35299,7 @@
 
 
 /***/ },
-/* 346 */
+/* 352 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Generated by CoffeeScript 1.9.1
@@ -35164,9 +35308,9 @@
 	    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	    hasProp = {}.hasOwnProperty;
 
-	  create = __webpack_require__(247);
+	  create = __webpack_require__(254);
 
-	  XMLNode = __webpack_require__(250);
+	  XMLNode = __webpack_require__(257);
 
 	  module.exports = XMLComment = (function(superClass) {
 	    extend(XMLComment, superClass);
@@ -35210,30 +35354,30 @@
 
 
 /***/ },
-/* 347 */
+/* 353 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Generated by CoffeeScript 1.9.1
 	(function() {
 	  var XMLCData, XMLComment, XMLDTDAttList, XMLDTDElement, XMLDTDEntity, XMLDTDNotation, XMLDocType, XMLProcessingInstruction, create, isObject;
 
-	  create = __webpack_require__(247);
+	  create = __webpack_require__(254);
 
-	  isObject = __webpack_require__(225);
+	  isObject = __webpack_require__(230);
 
-	  XMLCData = __webpack_require__(345);
+	  XMLCData = __webpack_require__(351);
 
-	  XMLComment = __webpack_require__(346);
+	  XMLComment = __webpack_require__(352);
 
-	  XMLDTDAttList = __webpack_require__(348);
+	  XMLDTDAttList = __webpack_require__(354);
 
-	  XMLDTDEntity = __webpack_require__(349);
+	  XMLDTDEntity = __webpack_require__(355);
 
-	  XMLDTDElement = __webpack_require__(350);
+	  XMLDTDElement = __webpack_require__(356);
 
-	  XMLDTDNotation = __webpack_require__(351);
+	  XMLDTDNotation = __webpack_require__(357);
 
-	  XMLProcessingInstruction = __webpack_require__(344);
+	  XMLProcessingInstruction = __webpack_require__(350);
 
 	  module.exports = XMLDocType = (function() {
 	    function XMLDocType(parent, pubID, sysID) {
@@ -35404,14 +35548,14 @@
 
 
 /***/ },
-/* 348 */
+/* 354 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Generated by CoffeeScript 1.9.1
 	(function() {
 	  var XMLDTDAttList, create;
 
-	  create = __webpack_require__(247);
+	  create = __webpack_require__(254);
 
 	  module.exports = XMLDTDAttList = (function() {
 	    function XMLDTDAttList(parent, elementName, attributeName, attributeType, defaultValueType, defaultValue) {
@@ -35478,16 +35622,16 @@
 
 
 /***/ },
-/* 349 */
+/* 355 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Generated by CoffeeScript 1.9.1
 	(function() {
 	  var XMLDTDEntity, create, isObject;
 
-	  create = __webpack_require__(247);
+	  create = __webpack_require__(254);
 
-	  isObject = __webpack_require__(225);
+	  isObject = __webpack_require__(230);
 
 	  module.exports = XMLDTDEntity = (function() {
 	    function XMLDTDEntity(parent, pe, name, value) {
@@ -35568,14 +35712,14 @@
 
 
 /***/ },
-/* 350 */
+/* 356 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Generated by CoffeeScript 1.9.1
 	(function() {
 	  var XMLDTDElement, create;
 
-	  create = __webpack_require__(247);
+	  create = __webpack_require__(254);
 
 	  module.exports = XMLDTDElement = (function() {
 	    function XMLDTDElement(parent, name, value) {
@@ -35620,14 +35764,14 @@
 
 
 /***/ },
-/* 351 */
+/* 357 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Generated by CoffeeScript 1.9.1
 	(function() {
 	  var XMLDTDNotation, create;
 
-	  create = __webpack_require__(247);
+	  create = __webpack_require__(254);
 
 	  module.exports = XMLDTDNotation = (function() {
 	    function XMLDTDNotation(parent, name, value) {
@@ -35682,7 +35826,7 @@
 
 
 /***/ },
-/* 352 */
+/* 358 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Generated by CoffeeScript 1.9.1
@@ -35691,9 +35835,9 @@
 	    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	    hasProp = {}.hasOwnProperty;
 
-	  create = __webpack_require__(247);
+	  create = __webpack_require__(254);
 
-	  XMLNode = __webpack_require__(250);
+	  XMLNode = __webpack_require__(257);
 
 	  module.exports = XMLRaw = (function(superClass) {
 	    extend(XMLRaw, superClass);
@@ -35737,7 +35881,7 @@
 
 
 /***/ },
-/* 353 */
+/* 359 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Generated by CoffeeScript 1.9.1
@@ -35746,9 +35890,9 @@
 	    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	    hasProp = {}.hasOwnProperty;
 
-	  create = __webpack_require__(247);
+	  create = __webpack_require__(254);
 
-	  XMLNode = __webpack_require__(250);
+	  XMLNode = __webpack_require__(257);
 
 	  module.exports = XMLText = (function(superClass) {
 	    extend(XMLText, superClass);
@@ -35792,7 +35936,7 @@
 
 
 /***/ },
-/* 354 */
+/* 360 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Generated by CoffeeScript 1.10.0
@@ -35800,7 +35944,7 @@
 	  "use strict";
 	  var xml2js;
 
-	  xml2js = __webpack_require__(191);
+	  xml2js = __webpack_require__(195);
 
 	  exports.stripBOM = function(str) {
 	    if (str[0] === '\uFEFF') {
@@ -35814,7 +35958,7 @@
 
 
 /***/ },
-/* 355 */
+/* 361 */
 /***/ function(module, exports) {
 
 	// Generated by CoffeeScript 1.10.0
@@ -35854,7 +35998,7 @@
 
 
 /***/ },
-/* 356 */
+/* 362 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(4).nextTick;
@@ -35933,16 +36077,16 @@
 	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
 	  delete immediateIds[id];
 	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(356).setImmediate, __webpack_require__(356).clearImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(362).setImmediate, __webpack_require__(362).clearImmediate))
 
 /***/ },
-/* 357 */
+/* 363 */
 /***/ function(module, exports) {
 
 	"use strict";Object.defineProperty(exports,"__esModule",{value:true});var playerId={"search_autocomp":{"copyRight":" Copyright 2016 MLB Advanced Media, L.P.  Use of any content on this page acknowledges agreement to the terms posted here http://gdx.mlb.com/components/copyright.txt  ","search_autocomplete":{"queryResults":{"created":"2016-05-07T22:23:04","totalSize":"2150","row":[{"t":"LAA","p":"592091","n":"A.J. Achter"},{"t":"WSH","p":"595918","n":"A.J. Cole"},{"t":"LAD","p":"454560","n":"A.J. Ellis"},{"t":"TEX","p":"456167","n":"A.J. Griffin"},{"t":"ATL","p":"150229","n":"A.J. Pierzynski"},{"t":"ARI","p":"572041","n":"A.J. Pollock"},{"t":"MIA","p":"573109","n":"A.J. Ramos"},{"t":"PIT","p":"519263","n":"A.J. Schugel"},{"t":"PHI","p":"571437","n":"Aaron Altherr"},{"t":"WSH","p":"502578","n":"Aaron Barrett"},{"t":"ATL","p":"594760","n":"Aaron Blair"},{"t":"CHC","p":"605156","n":"Aaron Brooks"},{"t":"CHC","p":"543070","n":"Aaron Crow"},{"t":"PHI","p":"421685","n":"Aaron Harang"},{"t":"NYY","p":"543305","n":"Aaron Hicks"},{"t":"MIL","p":"431094","n":"Aaron Hill"},{"t":"WSH","p":"444836","n":"Aaron Laffey"},{"t":"TOR","p":"571901","n":"Aaron Loup"},{"t":"PHI","p":"605400","n":"Aaron Nola"},{"t":"TOR","p":"592717","n":"Aaron Sanchez"},{"t":"MIN","p":"457744","n":"Aaron Thompson"},{"t":"WSH","p":"593582","n":"Abel De Los Santos"},{"t":"CLE","p":"501659","n":"Abraham Almonte"},{"t":"MIA","p":"543045","n":"Adam Conley"},{"t":"CIN","p":"594807","n":"Adam Duvall"},{"t":"CWS","p":"594809","n":"Adam Eaton"},{"t":"MIA","p":"435279","n":"Adam Greenberg"},{"t":"BAL","p":"430945","n":"Adam Jones"},{"t":"CWS","p":"425560","n":"Adam LaRoche"},{"t":"LAD","p":"571893","n":"Adam Liberatore"},{"t":"SEA","p":"452252","n":"Adam Lind"},{"t":"ARI","p":"429400","n":"Adam Loewen"},{"t":"CLE","p":"446192","n":"Adam Moore"},{"t":"PHI","p":"605388","n":"Adam Morgan"},{"t":"COL","p":"493603","n":"Adam Ottavino"},{"t":"TB","p":"519179","n":"Adam Reifer"},{"t":"SD","p":"489267","n":"Adam Rosales"},{"t":"STL","p":"425794","n":"Adam Wainwright"},{"t":"CHC","p":"476589","n":"Adam Warren"},{"t":"TB","p":"573244","n":"Adam Wilk"},{"t":"NYM","p":"592665","n":"Addison Reed"},{"t":"CHC","p":"608365","n":"Addison Russell"},{"t":"MIA","p":"588751","n":"Adeiny Hechavarria"},{"t":"ATL","p":"611177","n":"Adonis Garcia"},{"t":"TEX","p":"134181","n":"Adrian Beltre"},{"t":"LAD","p":"408236","n":"Adrian Gonzalez"},{"t":"MIL","p":"605288","n":"Adrian Houser"},{"t":"MIA","p":"543589","n":"Adrian Nieto"},{"t":"CHC","p":"518545","n":"Adron Chambers"},{"t":"NYM","p":"592570","n":"Akeel Morris"},{"t":"LAA","p":"456379","n":"Al Alburquerque"},{"t":"LAA","p":"405395","n":"Albert Pujols"},{"t":"SF","p":"544150","n":"Albert Suarez"},{"t":"DET","p":"501227","n":"Alberto Cabrera"},{"t":"LAD","p":"430948","n":"Alberto Callaspo"},{"t":"LAD","p":"441368","n":"Alberto Castillo"},{"t":"HOU","p":"112107","n":"Alberto Castillo"},{"t":"DET","p":"471868","n":"Alberto Gonzalez"},{"t":"KC","p":"444876","n":"Alcides Escobar"},{"t":"CIN","p":"543002","n":"Alden Carrithers"},{"t":"PHI","p":"594742","n":"Alec Asher"},{"t":"STL","p":"649557","n":"Aledmys Diaz"},{"t":"NYM","p":"457477","n":"Alejandro De Aza"},{"t":"CWS","p":"488671","n":"Alex Avila"},{"t":"CHC","p":"488751","n":"Alex Burnett"},{"t":"ARI","p":"294697","n":"Alex Cabrera"},{"t":"COL","p":"543008","n":"Alex Castellanos"},{"t":"WSH","p":"400090","n":"Alex Cintron"},{"t":"TEX","p":"592222","n":"Alex Claudio"},{"t":"TB","p":"502171","n":"Alex Cobb"},{"t":"TB","p":"517008","n":"Alex Colome"},{"t":"STL","p":"133321","n":"Alex Cora"},{"t":"SD","p":"543105","n":"Alex Dickerson"},{"t":"KC","p":"460086","n":"Alex Gordon"},{"t":"LAD","p":"648717","n":"Alex Guerrero"},{"t":"LAD","p":"572910","n":"Alex Hassan"},{"t":"DET","p":"407789","n":"Alex Herrera"},{"t":"BAL","p":"499926","n":"Alex Liddi"},{"t":"MIN","p":"543542","n":"Alex Meyer"},{"t":"MIL","p":"502100","n":"Alex Presley"},{"t":"KC","p":"425567","n":"Alex Rios"},{"t":"NYY","p":"121347","n":"Alex Rodriguez"},{"t":"MIA","p":"464900","n":"Alex Romero"},{"t":"LAA","p":"502253","n":"Alex Sanabia"},{"t":"LAA","p":"443563","n":"Alex Serrano"},{"t":"SF","p":"456776","n":"Alex Torres"},{"t":"ATL","p":"502229","n":"Alex White"},{"t":"DET","p":"543935","n":"Alex Wilson"},{"t":"LAD","p":"622072","n":"Alex Wood"},{"t":"SD","p":"493351","n":"Alexei Ramirez"},{"t":"SD","p":"506560","n":"Alexi Amarista"},{"t":"TOR","p":"458210","n":"Alexi Casilla"},{"t":"ATL","p":"468396","n":"Alexi Ogando"},{"t":"NYY","p":"150093","n":"Alfonso Soriano"},{"t":"SF","p":"469686","n":"Alfredo Aceves"},{"t":"LAD","p":"407792","n":"Alfredo Amezaga"},{"t":"MIA","p":"594906","n":"Alfredo Lopez"},{"t":"PHI","p":"501245","n":"Alfredo Marte"},{"t":"CIN","p":"430580","n":"Alfredo Simon"},{"t":"BOS","p":"455378","n":"Ali Solis"},{"t":"TB","p":"488852","n":"Allan Dykstra"},{"t":"BOS","p":"501800","n":"Allen Craig"},{"t":"PIT","p":"543903","n":"Allen Webster"},{"t":"NYY","p":"490313","n":"Amauri Sanit"},{"t":"PIT","p":"435038","n":"Anderson Hernandez"},{"t":"LAD","p":"444843","n":"Andre Ethier"},{"t":"MIA","p":"516589","n":"Andre Rienzo"},{"t":"LAA","p":"592743","n":"Andrelton Simmons"},{"t":"PHI","p":"433217","n":"Andres Blanco"},{"t":"MIN","p":"452027","n":"Andrew Albers"},{"t":"PHI","p":"607446","n":"Andrew Amaro"},{"t":"PHI","p":"457732","n":"Andrew Bailey"},{"t":"TB","p":"571479","n":"Andrew Bellatti"},{"t":"SF","p":"446398","n":"Andrew Carignan"},{"t":"SD","p":"488768","n":"Andrew Cashner"},{"t":"ARI","p":"605177","n":"Andrew Chafin"},{"t":"TEX","p":"605226","n":"Andrew Faulkner"},{"t":"LAA","p":"571760","n":"Andrew Heaney"},{"t":"OAK","p":"518911","n":"Andrew Lambo"},{"t":"PIT","p":"457705","n":"Andrew McCutchen"},{"t":"ATL","p":"605374","n":"Andrew McKirahan"},{"t":"NYY","p":"453192","n":"Andrew Miller"},{"t":"DET","p":"461865","n":"Andrew Romine"},{"t":"SF","p":"572180","n":"Andrew Susac"},{"t":"OAK","p":"592811","n":"Andrew Triggs"},{"t":"NYY","p":"116662","n":"Andruw Jones"},{"t":"TOR","p":"542992","n":"Andy Burns"},{"t":"TOR","p":"543108","n":"Andy Dirks"},{"t":"PHI","p":"462413","n":"Andy Gonzalez"},{"t":"BAL","p":"501989","n":"Andy Oliver"},{"t":"CWS","p":"519107","n":"Andy Parrino"},{"t":"MIL","p":"519421","n":"Andy Wilkins"},{"t":"ARI","p":"407556","n":"Angel Berroa"},{"t":"OAK","p":"502162","n":"Angel Castro"},{"t":"TB","p":"425824","n":"Angel Chavez"},{"t":"DET","p":"553970","n":"Angel Nesbitt"},{"t":"SF","p":"434636","n":"Angel Pagan"},{"t":"DET","p":"434671","n":"Anibal Sanchez"},{"t":"SEA","p":"542914","n":"Anthony Bass"},{"t":"PIT","p":"488782","n":"Anthony Claggett"},{"t":"CIN","p":"543101","n":"Anthony DeSclafani"},{"t":"DET","p":"543238","n":"Anthony Gose"},{"t":"LAD","p":"471162","n":"Anthony Ortega"},{"t":"TEX","p":"519168","n":"Anthony Ranaudo"},{"t":"CLE","p":"489232","n":"Anthony Recker"},{"t":"WSH","p":"543685","n":"Anthony Rendon"},{"t":"CHC","p":"519203","n":"Anthony Rizzo"},{"t":"LAD","p":"460104","n":"Anthony Slama"},{"t":"NYY","p":"461872","n":"Anthony Swarzak"},{"t":"BOS","p":"460008","n":"Anthony Varvaro"},{"t":"PHI","p":"457786","n":"Anthony Vasquez"},{"t":"PIT","p":"460322","n":"Antoan Richardson"},{"t":"NYM","p":"455374","n":"Antonio Bastardo"},{"t":"PIT","p":"133380","n":"Aramis Ramirez"},{"t":"ARI","p":"605151","n":"Archie Bradley"},{"t":"DET","p":"469810","n":"Argenis Diaz"},{"t":"MIL","p":"516414","n":"Ariel Pena"},{"t":"CHC","p":"570489","n":"Arismendy Alcantara"},{"t":"TEX","p":"518169","n":"Armando Rodriguez"},{"t":"TOR","p":"504186","n":"Arnold Leon"},{"t":"ATL","p":"527055","n":"Arodys Vizcaino"},{"t":"NYY","p":"547973","n":"Aroldis Chapman"},{"t":"PIT","p":"491708","n":"Arquimedes Caminero"},{"t":"SD","p":"445995","n":"Arturo Lopez"},{"t":"NYM","p":"452678","n":"Asdrubal Cabrera"},{"t":"HOU","p":"592879","n":"Asher Wojciechowski"},{"t":"LAA","p":"463037","n":"Atahualpa Severino"},{"t":"BAL","p":"542233","n":"Audry Perez"},{"t":"CLE","p":"542866","n":"Austin Adams"},{"t":"LAD","p":"605131","n":"Austin Barnes"},{"t":"CLE","p":"656424","n":"Austin Fisher"},{"t":"SD","p":"595978","n":"Austin Hedges"},{"t":"CWS","p":"457706","n":"Austin Jackson"},{"t":"NYY","p":"519222","n":"Austin Romine"},{"t":"CWS","p":"541645","n":"Avisail Garcia"},{"t":"LAD","p":"543725","n":"B.J. Rosenberg"},{"t":"ATL","p":"498568","n":"Barbaro Canizares"},{"t":"LAD","p":"446264","n":"Barry Enright"},{"t":"NYM","p":"112526","n":"Bartolo Colon"},{"t":"PIT","p":"605893","n":"Bealyn Chourio"},{"t":"ARI","p":"450204","n":"Ben Francisco"},{"t":"NYY","p":"592325","n":"Ben Gamel"},{"t":"COL","p":"572019","n":"Ben Paulsen"},{"t":"WSH","p":"519184","n":"Ben Revere"},{"t":"TOR","p":"594985","n":"Ben Rowen"},{"t":"CHC","p":"450314","n":"Ben Zobrist"},{"t":"NYY","p":"124288","n":"Bernie Williams"},{"t":"OAK","p":"542993","n":"Billy Burns"},{"t":"OAK","p":"456714","n":"Billy Butler"},{"t":"CIN","p":"571740","n":"Billy Hamilton"},{"t":"MIL","p":"430641","n":"Blaine Boyer"},{"t":"DET","p":"543278","n":"Blaine Hardy"},{"t":"ARI","p":"518444","n":"Blake Beavan"},{"t":"ATL","p":"503351","n":"Blake Lalli"},{"t":"SEA","p":"453284","n":"Blake Parker"},{"t":"TB","p":"605483","n":"Blake Snell"},{"t":"BOS","p":"596119","n":"Blake Swihart"},{"t":"BOS","p":"493574","n":"Blake Tekotte"},{"t":"WSH","p":"595014","n":"Blake Treinen"},{"t":"CIN","p":"502028","n":"Blake Wood"},{"t":"TOR","p":"544759","n":"Bo Schultz"},{"t":"TOR","p":"445090","n":"Bobby Korecky"},{"t":"PHI","p":"489039","n":"Bobby LaFromboise"},{"t":"DET","p":"458730","n":"Bobby Parnell"},{"t":"TEX","p":"435064","n":"Bobby Wilson"},{"t":"COL","p":"457429","n":"Boone Logan"},{"t":"TB","p":"502202","n":"Brad Boxberger"},{"t":"BAL","p":"542960","n":"Brad Brach"},{"t":"TOR","p":"543223","n":"Brad Glenn"},{"t":"SD","p":"543272","n":"Brad Hand"},{"t":"PHI","p":"465705","n":"Brad Harman"},{"t":"PIT","p":"453184","n":"Brad Lincoln"},{"t":"TB","p":"543543","n":"Brad Miller"},{"t":"SEA","p":"502166","n":"Brad Mills"},{"t":"HOU","p":"502748","n":"Brad Peacock"},{"t":"TOR","p":"207267","n":"Brad Penny"},{"t":"DET","p":"346801","n":"Brad Thomas"},{"t":"ARI","p":"446899","n":"Brad Ziegler"},{"t":"TB","p":"543266","n":"Bradin Hagens"},{"t":"NYY","p":"572038","n":"Branden Pinder"},{"t":"CIN","p":"450315","n":"Brandon Allen"},{"t":"MIA","p":"572702","n":"Brandon Bantz"},{"t":"COL","p":"488681","n":"Brandon Barnes"},{"t":"LAD","p":"545404","n":"Brandon Beachy"},{"t":"SF","p":"474832","n":"Brandon Belt"},{"t":"SF","p":"543063","n":"Brandon Crawford"},{"t":"PIT","p":"592238","n":"Brandon Cumpton"},{"t":"ATL","p":"594792","n":"Brandon Cunniff"},{"t":"ARI","p":"592273","n":"Brandon Drury"},{"t":"CIN","p":"605232","n":"Brandon Finnegan"},{"t":"CHC","p":"460156","n":"Brandon Gomes"},{"t":"TB","p":"446386","n":"Brandon Guyer"},{"t":"LAD","p":"518794","n":"Brandon Hicks"},{"t":"MIN","p":"445213","n":"Brandon Kintzler"},{"t":"LAD","p":"434181","n":"Brandon League"},{"t":"SD","p":"543506","n":"Brandon Maurer"},{"t":"LAD","p":"435221","n":"Brandon McCarthy"},{"t":"SD","p":"453344","n":"Brandon Morrow"},{"t":"STL","p":"461235","n":"Brandon Moss"},{"t":"CIN","p":"408252","n":"Brandon Phillips"},{"t":"BOS","p":"657758","n":"Brandon Show"},{"t":"ATL","p":"474319","n":"Brandon Snyder"},{"t":"BOS","p":"519443","n":"Brandon Workman"},{"t":"STL","p":"430910","n":"Brayan Pena"},{"t":"BOS","p":"500903","n":"Brayan Villarreal"},{"t":"DET","p":"430593","n":"Brendan Harris"},{"t":"WSH","p":"453895","n":"Brendan Ryan"},{"t":"BOS","p":"453269","n":"Brennan Boesch"},{"t":"ARI","p":"459334","n":"Brent Clevlen"},{"t":"MIL","p":"489052","n":"Brent Leach"},{"t":"OAK","p":"543569","n":"Brent Morel"},{"t":"LAD","p":"474463","n":"Brett Anderson"},{"t":"SF","p":"594762","n":"Brett Bochy"},{"t":"TOR","p":"446399","n":"Brett Cecil"},{"t":"NYY","p":"458731","n":"Brett Gardner"},{"t":"ARI","p":"451109","n":"Brett Hayes"},{"t":"SF","p":"571804","n":"Brett Jackson"},{"t":"CWS","p":"543434","n":"Brett Lawrie"},{"t":"TB","p":"543493","n":"Brett Marshall"},{"t":"TEX","p":"592592","n":"Brett Nicholas"},{"t":"PHI","p":"519085","n":"Brett Oberholtzer"},{"t":"SD","p":"477165","n":"Brett Wallace"},{"t":"PHI","p":"460131","n":"Brian Bogusevic"},{"t":"KC","p":"518495","n":"Brian Broderick"},{"t":"MIN","p":"572821","n":"Brian Dozier"},{"t":"KC","p":"488846","n":"Brian Duensing"},{"t":"MIA","p":"623395","n":"Brian Ellington"},{"t":"KC","p":"543169","n":"Brian Flynn"},{"t":"LAA","p":"548343","n":"Brian Hernandez"},{"t":"BOS","p":"598271","n":"Brian Johnson"},{"t":"BAL","p":"451085","n":"Brian Matusz"},{"t":"NYY","p":"435263","n":"Brian McCann"},{"t":"COL","p":"489295","n":"Brian Schlitter"},{"t":"SEA","p":"425789","n":"Brian Sweeney"},{"t":"BOS","p":"571788","n":"Brock Holt"},{"t":"COL","p":"518830","n":"Brock Huntzinger"},{"t":"NYM","p":"453857","n":"Brock Peterson"},{"t":"WSH","p":"276520","n":"Bronson Arroyo"},{"t":"LAD","p":"453156","n":"Brooks Brown"},{"t":"NYM","p":"462405","n":"Brooks Conrad"},{"t":"LAA","p":"548384","n":"Brooks Raley"},{"t":"WSH","p":"501852","n":"Bruce Billings"},{"t":"CLE","p":"136600","n":"Bruce Chen"},{"t":"DET","p":"541652","n":"Bruce Rondon"},{"t":"OAK","p":"457762","n":"Bryan Anderson"},{"t":"TEX","p":"592407","n":"Bryan Holaday"},{"t":"NYY","p":"571951","n":"Bryan Mitchell"},{"t":"MIA","p":"457768","n":"Bryan Morris"},{"t":"MIL","p":"519128","n":"Bryan Petersen"},{"t":"CLE","p":"458669","n":"Bryan Price"},{"t":"CLE","p":"543766","n":"Bryan Shaw"},{"t":"BOS","p":"518490","n":"Bryce Brentz"},{"t":"WSH","p":"547180","n":"Bryce Harper"},{"t":"DET","p":"571656","n":"Buck Farmer"},{"t":"ATL","p":"502032","n":"Bud Norris"},{"t":"SD","p":"571473","n":"Buddy Baumann"},{"t":"MIN","p":"542953","n":"Buddy Boshers"},{"t":"TB","p":"572143","n":"Burch Smith"},{"t":"TEX","p":"488674","n":"Burke Badenhop"},{"t":"SF","p":"457763","n":"Buster Posey"},{"t":"MIN","p":"621439","n":"Byron Buxton"},{"t":"MIN","p":"666560","n":"Byung Ho Park"},{"t":"CLE","p":"547348","n":"C.C. Lee"},{"t":"LAA","p":"543068","n":"C.J. Cron"},{"t":"CHC","p":"592677","n":"C.J. Riefenhauser"},{"t":"LAA","p":"450351","n":"C.J. Wilson"},{"t":"CIN","p":"571584","n":"Caleb Cotham"},{"t":"TOR","p":"518725","n":"Caleb Gindl"},{"t":"BAL","p":"543376","n":"Caleb Joseph"},{"t":"SD","p":"573204","n":"Caleb Thielbar"},{"t":"LAA","p":"592135","n":"Cam Bedrosian"},{"t":"DET","p":"457727","n":"Cameron Maybin"},{"t":"PHI","p":"519237","n":"Cameron Rupp"},{"t":"LAD","p":"408307","n":"Carl Crawford"},{"t":"CHC","p":"605218","n":"Carl Edwards Jr."},{"t":"NYY","p":"136860","n":"Carlos Beltran"},{"t":"CLE","p":"471911","n":"Carlos Carrasco"},{"t":"CIN","p":"542266","n":"Carlos Contreras"},{"t":"TB","p":"449786","n":"Carlos Corporan"},{"t":"HOU","p":"621043","n":"Carlos Correa"},{"t":"COL","p":"608032","n":"Carlos Estevez"},{"t":"TEX","p":"457567","n":"Carlos Fisher"},{"t":"LAD","p":"516910","n":"Carlos Frias"},{"t":"HOU","p":"460576","n":"Carlos Gomez"},{"t":"COL","p":"471865","n":"Carlos Gonzalez"},{"t":"TB","p":"400056","n":"Carlos Hernandez"},{"t":"SEA","p":"660667","n":"Carlos Herrera"},{"t":"TEX","p":"430961","n":"Carlos Maldonado"},{"t":"BOS","p":"461791","n":"Carlos Marmol"},{"t":"STL","p":"593372","n":"Carlos Martinez"},{"t":"LAD","p":"467856","n":"Carlos Monasterios"},{"t":"STL","p":"451713","n":"Carlos Peguero"},{"t":"LAA","p":"542208","n":"Carlos Perez"},{"t":"MIN","p":"435041","n":"Carlos Quentin"},{"t":"COL","p":"425346","n":"Carlos Rivera"},{"t":"ARI","p":"491640","n":"Carlos Rivero"},{"t":"CWS","p":"607074","n":"Carlos Rodon"},{"t":"PHI","p":"434563","n":"Carlos Ruiz"},{"t":"CWS","p":"570560","n":"Carlos Sanchez"},{"t":"CLE","p":"467793","n":"Carlos Santana"},{"t":"BOS","p":"400067","n":"Carlos Silva"},{"t":"MIL","p":"448614","n":"Carlos Torres"},{"t":"CIN","p":"508892","n":"Carlos Triunfel"},{"t":"SD","p":"453646","n":"Carlos Villanueva"},{"t":"PHI","p":"407296","n":"Carlos Zambrano"},{"t":"OAK","p":"542942","n":"Carson Blair"},{"t":"BOS","p":"605476","n":"Carson Smith"},{"t":"MIA","p":"605169","n":"Carter Capps"},{"t":"SEA","p":"488787","n":"Casey Coleman"},{"t":"LAD","p":"502272","n":"Casey Fien"},{"t":"SD","p":"445163","n":"Casey Janssen"},{"t":"ATL","p":"543391","n":"Casey Kelly"},{"t":"TOR","p":"425773","n":"Casey Kotchman"},{"t":"DET","p":"431171","n":"Casey McGehee"},{"t":"PIT","p":"594987","n":"Casey Sadler"},{"t":"DET","p":"489413","n":"Casper Wells"},{"t":"NYY","p":"282332","n":"CC Sabathia"},{"t":"PHI","p":"501986","n":"Cedric Hunter"},{"t":"BAL","p":"501627","n":"Cesar Cabral"},{"t":"ARI","p":"460044","n":"Cesar Carrillo"},{"t":"PHI","p":"514917","n":"Cesar Hernandez"},{"t":"HOU","p":"285131","n":"Cesar Izturis"},{"t":"MIL","p":"462945","n":"Cesar Jimenez"},{"t":"TEX","p":"459987","n":"Cesar Ramos"},{"t":"HOU","p":"491624","n":"Cesar Valdez"},{"t":"SD","p":"570714","n":"Cesar Vargas"},{"t":"COL","p":"518452","n":"Chad Bettis"},{"t":"PHI","p":"451532","n":"Chad Billingsley"},{"t":"LAD","p":"429985","n":"Chad Gaudin"},{"t":"TOR","p":"643325","n":"Chad Girodo"},{"t":"DET","p":"502151","n":"Chad Huffman"},{"t":"TOR","p":"554432","n":"Chad Jenkins"},{"t":"COL","p":"430589","n":"Chad Qualls"},{"t":"TEX","p":"605477","n":"Chad Smith"},{"t":"ARI","p":"502033","n":"Charles Brewer"},{"t":"COL","p":"453568","n":"Charlie Blackmon"},{"t":"LAD","p":"518586","n":"Charlie Culberson"},{"t":"SEA","p":"518703","n":"Charlie Furbush"},{"t":"PIT","p":"489056","n":"Charlie Leesman"},{"t":"PHI","p":"450203","n":"Charlie Morton"},{"t":"MIL","p":"502624","n":"Chase Anderson"},{"t":"ATL","p":"488818","n":"Chase d'Arnaud"},{"t":"NYY","p":"452104","n":"Chase Headley"},{"t":"LAD","p":"400284","n":"Chase Utley"},{"t":"TB","p":"595032","n":"Chase Whitley"},{"t":"NYY","p":"592741","n":"Chasen Shreve"},{"t":"BAL","p":"475054","n":"Chaz Roe"},{"t":"TEX","p":"521428","n":"Che-Hsuan Lin"},{"t":"KC","p":"596144","n":"Cheslor Cuthbert"},{"t":"TEX","p":"592346","n":"Chi Chi Gonzalez"},{"t":"KC","p":"425426","n":"Chien-Ming Wang"},{"t":"LAD","p":"425835","n":"Chin-hui Tsao"},{"t":"MIA","p":"430894","n":"Chris Aguila"},{"t":"TB","p":"502042","n":"Chris Archer"},{"t":"OAK","p":"605135","n":"Chris Bassitt"},{"t":"CWS","p":"571476","n":"Chris Beck"},{"t":"MIL","p":"425626","n":"Chris Capuano"},{"t":"CIN","p":"452764","n":"Chris Carpenter"},{"t":"MIL","p":"474892","n":"Chris Carter"},{"t":"OAK","p":"458085","n":"Chris Coghlan"},{"t":"TOR","p":"499624","n":"Chris Colabello"},{"t":"BAL","p":"448801","n":"Chris Davis"},{"t":"NYY","p":"456121","n":"Chris Denorfia"},{"t":"HOU","p":"606965","n":"Chris Devenski"},{"t":"TOR","p":"447736","n":"Chris Dickerson"},{"t":"BOS","p":"458689","n":"Chris Dominguez"},{"t":"BAL","p":"543125","n":"Chris Dwyer"},{"t":"CLE","p":"460269","n":"Chris Gimenez"},{"t":"LAD","p":"501822","n":"Chris Hatcher"},{"t":"WSH","p":"502317","n":"Chris Heisey"},{"t":"ARI","p":"543302","n":"Chris Herrmann"},{"t":"SF","p":"518790","n":"Chris Heston"},{"t":"SEA","p":"455104","n":"Chris Iannetta"},{"t":"MIA","p":"453400","n":"Chris Johnson"},{"t":"TOR","p":"460092","n":"Chris Leroux"},{"t":"BOS","p":"502029","n":"Chris Marrero"},{"t":"NYY","p":"455119","n":"Chris Martin"},{"t":"PHI","p":"573027","n":"Chris McGuiness"},{"t":"MIA","p":"429780","n":"Chris Narveson"},{"t":"COL","p":"455126","n":"Chris Nelson"},{"t":"ARI","p":"572008","n":"Chris Owings"},{"t":"DET","p":"430684","n":"Chris Oxspring"},{"t":"NYY","p":"476633","n":"Chris Parmelee"},{"t":"SD","p":"595371","n":"Chris Rearick"},{"t":"MIA","p":"607068","n":"Chris Reed"},{"t":"ARI","p":"434562","n":"Chris Roberson"},{"t":"SD","p":"460101","n":"Chris Robinson"},{"t":"COL","p":"543734","n":"Chris Rusin"},{"t":"CWS","p":"519242","n":"Chris Sale"},{"t":"OAK","p":"434672","n":"Chris Smith"},{"t":"PIT","p":"421684","n":"Chris Snelling"},{"t":"PIT","p":"455755","n":"Chris Stewart"},{"t":"SF","p":"608717","n":"Chris Stratton"},{"t":"SEA","p":"621035","n":"Chris Taylor"},{"t":"BAL","p":"501957","n":"Chris Tillman"},{"t":"CHC","p":"453362","n":"Chris Valaika"},{"t":"CWS","p":"458690","n":"Chris Volstad"},{"t":"ATL","p":"519437","n":"Chris Withrow"},{"t":"KC","p":"432934","n":"Chris Young"},{"t":"BOS","p":"455759","n":"Chris Young"},{"t":"COL","p":"548357","n":"Christian Bergman"},{"t":"SD","p":"542194","n":"Christian Bethancourt"},{"t":"KC","p":"518568","n":"Christian Colon"},{"t":"SD","p":"543184","n":"Christian Friedrich"},{"t":"BOS","p":"543877","n":"Christian Vazquez"},{"t":"CHC","p":"570799","n":"Christian Villanueva"},{"t":"BAL","p":"572233","n":"Christian Walker"},{"t":"MIA","p":"592885","n":"Christian Yelich"},{"t":"BOS","p":"453329","n":"Clay Buchholz"},{"t":"SF","p":"449060","n":"Clay Rapada"},{"t":"SF","p":"607185","n":"Clayton Blackburn"},{"t":"LAD","p":"477132","n":"Clayton Kershaw"},{"t":"KC","p":"489150","n":"Clayton Mortensen"},{"t":"CHC","p":"453385","n":"Clayton Richard"},{"t":"LAA","p":"460060","n":"Cliff Pennington"},{"t":"KC","p":"425549","n":"Clint Barmes"},{"t":"WSH","p":"519208","n":"Clint Robinson"},{"t":"OAK","p":"424825","n":"Coco Crisp"},{"t":"CLE","p":"592102","n":"Cody Allen"},{"t":"CLE","p":"594736","n":"Cody Anderson"},{"t":"PHI","p":"605125","n":"Cody Asche"},{"t":"COL","p":"572804","n":"Cody Decker"},{"t":"MIA","p":"643297","n":"Cody Ege"},{"t":"ARI","p":"595235","n":"Cody Hall"},{"t":"SEA","p":"592533","n":"Cody Martin"},{"t":"ARI","p":"285068","n":"Cody Ransom"},{"t":"OAK","p":"425496","n":"Cody Ross"},{"t":"STL","p":"592774","n":"Cody Stanley"},{"t":"TEX","p":"407890","n":"Colby Lewis"},{"t":"HOU","p":"458675","n":"Colby Rasmus"},{"t":"PIT","p":"502676","n":"Cole Figueroa"},{"t":"TOR","p":"451198","n":"Cole Garner"},{"t":"MIA","p":"502261","n":"Cole Gillespie"},{"t":"TEX","p":"430935","n":"Cole Hamels"},{"t":"MIN","p":"607587","n":"Cole Johnson"},{"t":"SD","p":"607067","n":"Colin Rea"},{"t":"MIL","p":"595023","n":"Colin Walsh"},{"t":"CIN","p":"444446","n":"Collin Balester"},{"t":"CLE","p":"518577","n":"Collin Cowgill"},{"t":"HOU","p":"543521","n":"Collin McHugh"},{"t":"TOR","p":"518833","n":"Colt Hynes"},{"t":"PHI","p":"605396","n":"Colton Murray"},{"t":"ATL","p":"605341","n":"Connor Little"},{"t":"SF","p":"543216","n":"Conor Gillaspie"},{"t":"BAL","p":"543377","n":"Corban Joseph"},{"t":"PHI","p":"543647","n":"Cord Phelps"},{"t":"LAD","p":"446395","n":"Corey Brown"},{"t":"TB","p":"572816","n":"Corey Dickerson"},{"t":"PIT","p":"430611","n":"Corey Hart"},{"t":"CLE","p":"446372","n":"Corey Kluber"},{"t":"MIL","p":"608349","n":"Corey Knebel"},{"t":"LAD","p":"608369","n":"Corey Seager"},{"t":"TOR","p":"400139","n":"Cory Aldridge"},{"t":"TOR","p":"451132","n":"Cory Burns"},{"t":"SF","p":"518715","n":"Cory Gearrin"},{"t":"PIT","p":"458537","n":"Cory Luebke"},{"t":"SD","p":"543508","n":"Cory Mazzoni"},{"t":"LAA","p":"474284","n":"Cory Rasmus"},{"t":"SD","p":"605486","n":"Cory Spangenberg"},{"t":"MIA","p":"444520","n":"Craig Breslow"},{"t":"LAA","p":"502226","n":"Craig Gentry"},{"t":"BOS","p":"518886","n":"Craig Kimbrel"},{"t":"CLE","p":"489334","n":"Craig Stammen"},{"t":"MIA","p":"605492","n":"Craig Stem"},{"t":"COL","p":"542436","n":"Cristhian Adames"},{"t":"TB","p":"592200","n":"Curt Casali"},{"t":"NYM","p":"434158","n":"Curtis Granderson"},{"t":"PIT","p":"489197","n":"Curtis Partch"},{"t":"SD","p":"501851","n":"D'Arby Myers"},{"t":"SEA","p":"493193","n":"Dae-Ho Lee"},{"t":"NYM","p":"435082","n":"Dae-Sung Koo"},{"t":"LAD","p":"445612","n":"Dale Thayer"},{"t":"PHI","p":"648737","n":"Dalier Hinojosa"},{"t":"CHC","p":"542923","n":"Dallas Beeler"},{"t":"HOU","p":"572971","n":"Dallas Keuchel"},{"t":"TOR","p":"592647","n":"Dalton Pompey"},{"t":"BOS","p":"576788","n":"Dan Butler"},{"t":"CWS","p":"543359","n":"Dan Jennings"},{"t":"TB","p":"430681","n":"Dan Johnson"},{"t":"CLE","p":"519096","n":"Dan Otero"},{"t":"MIN","p":"502130","n":"Dan Runzler"},{"t":"COL","p":"122007","n":"Dan Serafini"},{"t":"CIN","p":"573185","n":"Dan Straily"},{"t":"WSH","p":"462564","n":"Dan Uggla"},{"t":"TB","p":"445968","n":"Dana Eveland"},{"t":"BAL","p":"451773","n":"Dane De La Rosa"},{"t":"PIT","p":"453268","n":"Daniel Bard"},{"t":"CIN","p":"425555","n":"Daniel Cabrera"},{"t":"ATL","p":"593495","n":"Daniel Castro"},{"t":"LAD","p":"542289","n":"Daniel Corcino"},{"t":"OAK","p":"543056","n":"Daniel Coulombe"},{"t":"COL","p":"518614","n":"Daniel Descalso"},{"t":"CWS","p":"571665","n":"Daniel Fields"},{"t":"NYM","p":"502609","n":"Daniel Herrera"},{"t":"ARI","p":"543339","n":"Daniel Hudson"},{"t":"SD","p":"445216","n":"Daniel McCutchen"},{"t":"SEA","p":"627392","n":"Daniel Missaki"},{"t":"SD","p":"446290","n":"Daniel Moskos"},{"t":"WSH","p":"502517","n":"Daniel Murphy"},{"t":"LAA","p":"537953","n":"Daniel Nava"},{"t":"DET","p":"596057","n":"Daniel Norris"},{"t":"SEA","p":"543706","n":"Daniel Robertson"},{"t":"TOR","p":"519259","n":"Daniel Schlereth"},{"t":"PHI","p":"621385","n":"Daniel Stumpf"},{"t":"CWS","p":"543900","n":"Daniel Webb"},{"t":"ATL","p":"595465","n":"Daniel Winkler"},{"t":"ATL","p":"592181","n":"Danny Burawa"},{"t":"TOR","p":"457760","n":"Danny Dorn"},{"t":"KC","p":"518633","n":"Danny Duffy"},{"t":"WSH","p":"457787","n":"Danny Espinosa"},{"t":"TB","p":"543144","n":"Danny Farquhar"},{"t":"NYM","p":"594940","n":"Danny Muno"},{"t":"MIA","p":"462950","n":"Danny Richar"},{"t":"BOS","p":"572095","n":"Danny Rosenbaum"},{"t":"CLE","p":"517593","n":"Danny Salazar"},{"t":"MIN","p":"542454","n":"Danny Santana"},{"t":"OAK","p":"502143","n":"Danny Valencia"},{"t":"HOU","p":"519445","n":"Danny Worth"},{"t":"TOR","p":"435558","n":"Daric Barton"},{"t":"BAL","p":"645848","n":"Dariel Alvarez"},{"t":"HOU","p":"445153","n":"Darin Downs"},{"t":"MIN","p":"518991","n":"Darin Mastroianni"},{"t":"PHI","p":"573131","n":"Darin Ruf"},{"t":"NYM","p":"516714","n":"Dario Alvarez"},{"t":"PHI","p":"572182","n":"Darnell Sweeney"},{"t":"TOR","p":"571553","n":"Darrell Ceciliani"},{"t":"SF","p":"452096","n":"Darren Ford"},{"t":"BAL","p":"503285","n":"Darren O'Day"},{"t":"TOR","p":"446381","n":"Darwin Barney"},{"t":"BAL","p":"319114","n":"Darwin Cubillan"},{"t":"NYM","p":"444354","n":"Daryl Thompson"},{"t":"ARI","p":"132880","n":"Daryle Ward"},{"t":"BOS","p":"543743","n":"Dave Sappelt"},{"t":"TOR","p":"430911","n":"David Aardsma"},{"t":"TOR","p":"458691","n":"David Adams"},{"t":"PHI","p":"571527","n":"David Buchanan"},{"t":"TB","p":"502304","n":"David Carpenter"},{"t":"ATL","p":"518526","n":"David Carpenter"},{"t":"LAA","p":"430203","n":"David DeJesus"},{"t":"PIT","p":"501896","n":"David Freese"},{"t":"MIL","p":"592341","n":"David Goforth"},{"t":"BAL","p":"571735","n":"David Hale"},{"t":"PHI","p":"456696","n":"David Hernandez"},{"t":"CWS","p":"571787","n":"David Holmberg"},{"t":"KC","p":"453307","n":"David Huff"},{"t":"PHI","p":"518953","n":"David Lough"},{"t":"MIN","p":"451075","n":"David Martinez"},{"t":"MIN","p":"461815","n":"David Murphy"},{"t":"BOS","p":"120074","n":"David Ortiz"},{"t":"ARI","p":"456102","n":"David Pauley"},{"t":"ARI","p":"444482","n":"David Peralta"},{"t":"MIA","p":"475479","n":"David Phelps"},{"t":"BOS","p":"456034","n":"David Price"},{"t":"CWS","p":"502085","n":"David Robertson"},{"t":"SEA","p":"543716","n":"David Rollins"},{"t":"CHC","p":"424325","n":"David Ross"},{"t":"NYM","p":"431151","n":"David Wright"},{"t":"TOR","p":"456630","n":"Davis Romero"},{"t":"SEA","p":"661276","n":"Dayner Moreira"},{"t":"STL","p":"542883","n":"Dean Anna"},{"t":"MIA","p":"543829","n":"Dee Gordon"},{"t":"TEX","p":"592261","n":"Delino DeShields"},{"t":"NYY","p":"476454","n":"Dellin Betances"},{"t":"BAL","p":"430321","n":"Delmon Young"},{"t":"CWS","p":"434704","n":"Delwyn Young"},{"t":"SF","p":"452655","n":"Denard Span"},{"t":"CWS","p":"464426","n":"Denis Phipps"},{"t":"BAL","p":"121096","n":"Dennys Reyes"},{"t":"LAA","p":"500610","n":"Deolis Guerra"},{"t":"MIA","p":"518618","n":"Derek Dietrich"},{"t":"TEX","p":"502706","n":"Derek Holland"},{"t":"SF","p":"571882","n":"Derek Law"},{"t":"SD","p":"519083","n":"Derek Norris"},{"t":"WSH","p":"501961","n":"Derrick Robinson"},{"t":"TB","p":"457775","n":"Desmond Jennings"},{"t":"CWS","p":"445177","n":"Deunte Heath"},{"t":"BOS","p":"571918","n":"Deven Marrero"},{"t":"CIN","p":"519023","n":"Devin Mesoraco"},{"t":"TOR","p":"581527","n":"Devon Travis"},{"t":"CHC","p":"451594","n":"Dexter Fowler"},{"t":"TB","p":"276508","n":"Dicky Gonzalez"},{"t":"NYY","p":"544369","n":"Didi Gregorius"},{"t":"TEX","p":"593639","n":"Diego Cedeno"},{"t":"NYY","p":"514981","n":"Diego Moreno"},{"t":"KC","p":"518716","n":"Dillon Gee"},{"t":"NYM","p":"599096","n":"Dilson Herrera"},{"t":"CWS","p":"425900","n":"Dioner Navarro"},{"t":"CHC","p":"452671","n":"Diory Hernandez"},{"t":"DET","p":"553988","n":"Dixon Machado"},{"t":"COL","p":"518934","n":"DJ LeMahieu"},{"t":"MIL","p":"570267","n":"Domingo Santana"},{"t":"ARI","p":"608678","n":"Dominic Leone"},{"t":"TOR","p":"502126","n":"Domonic Brown"},{"t":"MIA","p":"430603","n":"Don Kelly"},{"t":"CIN","p":"544371","n":"Donald Lutz"},{"t":"SEA","p":"543698","n":"Donn Roach"},{"t":"MIL","p":"430906","n":"Donnie Murphy"},{"t":"TEX","p":"453264","n":"Donnie Veal"},{"t":"CIN","p":"518764","n":"Donovan Hand"},{"t":"NYY","p":"456781","n":"Donovan Solano"},{"t":"TEX","p":"448674","n":"Doug Bernier"},{"t":"HOU","p":"450729","n":"Doug Fister"},{"t":"TB","p":"450545","n":"Doug Mathis"},{"t":"DET","p":"518493","n":"Drake Britton"},{"t":"KC","p":"460077","n":"Drew Butera"},{"t":"CIN","p":"502457","n":"Drew Hayes"},{"t":"TOR","p":"571800","n":"Drew Hutchison"},{"t":"SD","p":"519141","n":"Drew Pomeranz"},{"t":"CHC","p":"607968","n":"Drew Rucinski"},{"t":"TB","p":"592767","n":"Drew Smyly"},{"t":"TOR","p":"519322","n":"Drew Storen"},{"t":"TEX","p":"453211","n":"Drew Stubbs"},{"t":"DET","p":"572403","n":"Drew VerHagen"},{"t":"NYM","p":"502102","n":"Duane Below"},{"t":"SD","p":"400093","n":"Duaner Sanchez"},{"t":"SF","p":"444992","n":"Duke Welker"},{"t":"NYY","p":"554429","n":"Dustin Ackley"},{"t":"COL","p":"572863","n":"Dustin Garneau"},{"t":"MIA","p":"430661","n":"Dustin McGowan"},{"t":"BOS","p":"456030","n":"Dustin Pedroia"},{"t":"LAD","p":"450580","n":"Dustin Richardson"},{"t":"KC","p":"543038","n":"Dusty Coleman"},{"t":"MIA","p":"518420","n":"Dylan Axelrod"},{"t":"BAL","p":"605164","n":"Dylan Bundy"},{"t":"PIT","p":"446225","n":"Ed Easley"},{"t":"SEA","p":"448296","n":"Ed Lucas"},{"t":"COL","p":"572750","n":"Eddie Butler"},{"t":"MIN","p":"592696","n":"Eddie Rosario"},{"t":"NYY","p":"453256","n":"Eddy Rodriguez"},{"t":"CIN","p":"429440","n":"Edgar Gonzalez"},{"t":"CHC","p":"452989","n":"Edgar Gonzalez"},{"t":"PHI","p":"500891","n":"Edgar Ibarra"},{"t":"LAD","p":"442500","n":"Edgar Martinez"},{"t":"BAL","p":"543607","n":"Edgar Olmos"},{"t":"SF","p":"467850","n":"Edgmer Escalona"},{"t":"KC","p":"450172","n":"Edinson Volquez"},{"t":"MIN","p":"500871","n":"Eduardo Escobar"},{"t":"MIN","p":"456488","n":"Eduardo Nunez"},{"t":"CWS","p":"120408","n":"Eduardo Perez"},{"t":"BOS","p":"593958","n":"Eduardo Rodriguez"},{"t":"DET","p":"500674","n":"Eduardo Sanchez"},{"t":"HOU","p":"542369","n":"Edwar Cabrera"},{"t":"PHI","p":"465629","n":"Edward Mujica"},{"t":"TOR","p":"429665","n":"Edwin Encarnacion"},{"t":"ARI","p":"546276","n":"Edwin Escobar"},{"t":"MIA","p":"429719","n":"Edwin Jackson"},{"t":"MIL","p":"446474","n":"Edwin Maysonet"},{"t":"TEX","p":"519080","n":"Efrain Nieves"},{"t":"SEA","p":"519068","n":"Efren Navarro"},{"t":"SF","p":"501303","n":"Ehire Adrianza"},{"t":"LAD","p":"467070","n":"Elian Herrera"},{"t":"PIT","p":"553869","n":"Elias Diaz"},{"t":"LAD","p":"425769","n":"Eliezer Alfonzo"},{"t":"BAL","p":"534631","n":"Elih Villanueva"},{"t":"LAD","p":"471107","n":"Elliot Johnson"},{"t":"ATL","p":"554239","n":"Elmer Reyes"},{"t":"CIN","p":"468517","n":"Elvin Ramirez"},{"t":"TEX","p":"462101","n":"Elvis Andrus"},{"t":"PHI","p":"542587","n":"Elvis Araujo"},{"t":"ATL","p":"466988","n":"Emilio Bonifacio"},{"t":"PHI","p":"502034","n":"Emmanuel Burriss"},{"t":"MIA","p":"649699","n":"Emmanuel Nere"},{"t":"ATL","p":"542255","n":"Ender Inciarte"},{"t":"SEA","p":"346795","n":"Endy Chavez"},{"t":"HOU","p":"491688","n":"Enerio Del Rosario"},{"t":"SF","p":"520976","n":"Engel Beltre"},{"t":"TB","p":"544836","n":"Enny Romero"},{"t":"ARI","p":"542609","n":"Enrique Burgos"},{"t":"DET","p":"434619","n":"Enrique Gonzalez"},{"t":"LAD","p":"571771","n":"Enrique Hernandez"},{"t":"TB","p":"541640","n":"Erasmo Ramirez"},{"t":"NYM","p":"493472","n":"Eric Campbell"},{"t":"MIN","p":"456544","n":"Eric Farris"},{"t":"BAL","p":"543174","n":"Eric Fornataro"},{"t":"STL","p":"518700","n":"Eric Fryer"},{"t":"KC","p":"543333","n":"Eric Hosmer"},{"t":"MIA","p":"518852","n":"Eric Jokisch"},{"t":"ATL","p":"447714","n":"Eric O'Flaherty"},{"t":"ARI","p":"649437","n":"Eric Perrault"},{"t":"OAK","p":"519299","n":"Eric Sogard"},{"t":"LAD","p":"445590","n":"Eric Stults"},{"t":"OAK","p":"474668","n":"Eric Surkamp"},{"t":"MIL","p":"458913","n":"Eric Young Jr."},{"t":"ATL","p":"430947","n":"Erick Aybar"},{"t":"ARI","p":"408069","n":"Erick Threets"},{"t":"LAD","p":"407853","n":"Erik Bedard"},{"t":"MIA","p":"449170","n":"Erik Cordier"},{"t":"WSH","p":"458530","n":"Erik Davis"},{"t":"NYM","p":"592340","n":"Erik Goeddel"},{"t":"CWS","p":"605304","n":"Erik Johnson"},{"t":"HOU","p":"456124","n":"Erik Kratz"},{"t":"LAD","p":"628326","n":"Erisbel Arruebarrena"},{"t":"PHI","p":"457117","n":"Ernesto Frieri"},{"t":"MIN","p":"429722","n":"Ervin Santana"},{"t":"CHC","p":"534428","n":"Esmailin Caridad"},{"t":"NYY","p":"469134","n":"Esmil Rogers"},{"t":"ATL","p":"543495","n":"Ethan Martin"},{"t":"CIN","p":"553993","n":"Eugenio Suarez"},{"t":"TB","p":"464299","n":"Eugenio Velez"},{"t":"SD","p":"545001","n":"Eury De La Rosa"},{"t":"HOU","p":"516811","n":"Eury Perez"},{"t":"HOU","p":"594828","n":"Evan Gattis"},{"t":"TB","p":"446334","n":"Evan Longoria"},{"t":"STL","p":"449774","n":"Evan MacLane"},{"t":"ARI","p":"605359","n":"Evan Marshall"},{"t":"WSH","p":"457425","n":"Evan Meek"},{"t":"SEA","p":"519267","n":"Evan Scribner"},{"t":"SF","p":"465784","n":"Everth Cabrera"},{"t":"TOR","p":"485567","n":"Ezequiel Carrera"},{"t":"LAD","p":"466983","n":"Fabio Castro"},{"t":"CLE","p":"462956","n":"Felipe Paulino"},{"t":"WSH","p":"553878","n":"Felipe Rivero"},{"t":"OAK","p":"467094","n":"Felix Doubront"},{"t":"SEA","p":"433587","n":"Felix Hernandez"},{"t":"MIN","p":"472551","n":"Fernando Abad"},{"t":"SF","p":"425507","n":"Fernando Cabrera"},{"t":"LAA","p":"430588","n":"Fernando Nieve"},{"t":"LAD","p":"445010","n":"Fernando Perez"},{"t":"SD","p":"407845","n":"Fernando Rodney"},{"t":"OAK","p":"451775","n":"Fernando Rodriguez"},{"t":"LAA","p":"477569","n":"Fernando Salas"},{"t":"PIT","p":"465041","n":"Francisco Cervelli"},{"t":"SF","p":"425510","n":"Francisco Cruceta"},{"t":"CLE","p":"596019","n":"Francisco Lindor"},{"t":"PIT","p":"434538","n":"Francisco Liriano"},{"t":"BAL","p":"501317","n":"Francisco Peguero"},{"t":"BAL","p":"506747","n":"Francisco Pena"},{"t":"LAA","p":"477557","n":"Francisco Rodriguez"},{"t":"DET","p":"408061","n":"Francisco Rodriguez"},{"t":"CHC","p":"499107","n":"Francisley Bueno"},{"t":"SD","p":"571057","n":"Frank Garces"},{"t":"PHI","p":"497807","n":"Frank Herrmann"},{"t":"MIA","p":"469097","n":"Frank Mata"},{"t":"LAD","p":"593423","n":"Frankie Montas"},{"t":"SEA","p":"429711","n":"Franklin Gutierrez"},{"t":"TOR","p":"462985","n":"Franklin Morales"},{"t":"ATL","p":"518692","n":"Freddie Freeman"},{"t":"PHI","p":"520471","n":"Freddy Galvis"},{"t":"LAD","p":"150119","n":"Freddy Garcia"},{"t":"TB","p":"430686","n":"Freddy Guzman"},{"t":"LAD","p":"547820","n":"Fu-Te Ni"},{"t":"SD","p":"446547","n":"Gabe Suarez"},{"t":"MIL","p":"594555","n":"Garin Cecchini"},{"t":"NYY","p":"434540","n":"Garrett Jones"},{"t":"LAA","p":"572070","n":"Garrett Richards"},{"t":"LAA","p":"518502","n":"Gary Brown"},{"t":"HOU","p":"400008","n":"Gary Majewski"},{"t":"NYY","p":"596142","n":"Gary Sanchez"},{"t":"TOR","p":"425856","n":"Gavin Floyd"},{"t":"SF","p":"457910","n":"Geno Espineli"},{"t":"SF","p":"502004","n":"George Kontos"},{"t":"SF","p":"435459","n":"George Kottaras"},{"t":"HOU","p":"543807","n":"George Springer"},{"t":"LAA","p":"434567","n":"Geovany Soto"},{"t":"ARI","p":"408042","n":"Gerald Laird"},{"t":"COL","p":"467827","n":"Gerardo Parra"},{"t":"COL","p":"282594","n":"Geronimo Gil"},{"t":"PIT","p":"543037","n":"Gerrit Cole"},{"t":"MIA","p":"519317","n":"Giancarlo Stanton"},{"t":"MIA","p":"444041","n":"Gil Velazquez"},{"t":"WSH","p":"461829","n":"Gio Gonzalez"},{"t":"CHC","p":"543803","n":"Giovanni Soto"},{"t":"CLE","p":"570482","n":"Giovanny Urshela"},{"t":"MIN","p":"450282","n":"Glen Perkins"},{"t":"COL","p":"542674","n":"Gonzalez Germen"},{"t":"ATL","p":"493596","n":"Gordon Beckham"},{"t":"SF","p":"491676","n":"Gorkys Hernandez"},{"t":"TB","p":"429713","n":"Grady Sizemore"},{"t":"TB","p":"346797","n":"Grant Balfour"},{"t":"CLE","p":"643302","n":"Grant Fink"},{"t":"SF","p":"502205","n":"Grant Green"},{"t":"NYY","p":"595885","n":"Greg Bird"},{"t":"PHI","p":"457566","n":"Greg Burke"},{"t":"STL","p":"594824","n":"Greg Garcia"},{"t":"MIL","p":"449172","n":"Greg Golson"},{"t":"KC","p":"518813","n":"Greg Holland"},{"t":"LAA","p":"657670","n":"Greg Mahle"},{"t":"SD","p":"453353","n":"Greg Reynolds"},{"t":"ATL","p":"460105","n":"Greg Smith"},{"t":"SF","p":"453923","n":"Gregor Blanco"},{"t":"LAA","p":"463610","n":"Gregorio Petit"},{"t":"PHI","p":"500872","n":"Gregory Infante"},{"t":"PIT","p":"570256","n":"Gregory Polanco"},{"t":"PIT","p":"605317","n":"Guido Knudson"},{"t":"TEX","p":"457517","n":"Guilder Rodriguez"},{"t":"SEA","p":"628338","n":"Guillermo Heredia"},{"t":"CLE","p":"425565","n":"Guillermo Quiroz"},{"t":"BAL","p":"276534","n":"Guillermo Rodriguez"},{"t":"COL","p":"534576","n":"Gus Schlosser"},{"t":"NYM","p":"407860","n":"Gustavo Chacin"},{"t":"COL","p":"435238","n":"Gustavo Molina"},{"t":"TB","p":"474233","n":"Hank Conger"},{"t":"BOS","p":"434670","n":"Hanley Ramirez"},{"t":"NYM","p":"570663","n":"Hansel Robles"},{"t":"TEX","p":"593643","n":"Hanser Alberto"},{"t":"WSH","p":"460648","n":"Harvey Garcia"},{"t":"WSH","p":"425514","n":"Heath Bell"},{"t":"BOS","p":"592390","n":"Heath Hembree"},{"t":"WSH","p":"459932","n":"Hector Ambriz"},{"t":"TOR","p":"430591","n":"Hector Gimenez"},{"t":"SD","p":"467143","n":"Hector Gomez"},{"t":"PHI","p":"593576","n":"Hector Neris"},{"t":"CWS","p":"456051","n":"Hector Noesi"},{"t":"ATL","p":"493343","n":"Hector Olivera"},{"t":"CHC","p":"444468","n":"Hector Rondon"},{"t":"CWS","p":"516949","n":"Hector Sanchez"},{"t":"LAA","p":"502327","n":"Hector Santiago"},{"t":"OAK","p":"506693","n":"Henderson Alvarez"},{"t":"ARI","p":"469159","n":"Henry Alberto Rodriguez"},{"t":"BOS","p":"514719","n":"Henry Alejandro Rodriguez"},{"t":"BOS","p":"596064","n":"Henry Owens"},{"t":"BAL","p":"625329","n":"Henry Urrutia"},{"t":"NYM","p":"472421","n":"Heriberto Ruelas"},{"t":"CIN","p":"454975","n":"Hernan Iribarren"},{"t":"MIL","p":"541650","n":"Hernan Perez"},{"t":"PHI","p":"519193","n":"Hilton Richardson"},{"t":"MIL","p":"572744","n":"Hiram Burgos"},{"t":"TEX","p":"596848","n":"Hiram Martinez"},{"t":"LAA","p":"493130","n":"Hiroyuki Kobayashi"},{"t":"SEA","p":"547874","n":"Hisashi Iwakuma"},{"t":"CIN","p":"456701","n":"Homer Bailey"},{"t":"CHC","p":"400141","n":"Horacio Ramirez"},{"t":"LAD","p":"435062","n":"Howie Kendrick"},{"t":"ARI","p":"276521","n":"Humberto Cota"},{"t":"DET","p":"279827","n":"Humberto Quintero"},{"t":"SEA","p":"425539","n":"Hung-Chih Kuo"},{"t":"ATL","p":"543017","n":"Hunter Cervenka"},{"t":"SF","p":"452254","n":"Hunter Pence"},{"t":"SF","p":"519326","n":"Hunter Strickland"},{"t":"LAA","p":"434718","n":"Huston Street"},{"t":"BAL","p":"547957","n":"Hyun Soo Kim"},{"t":"LAD","p":"547943","n":"Hyun-Jin Ryu"},{"t":"TEX","p":"435622","n":"Ian Desmond"},{"t":"KC","p":"453880","n":"Ian Gac"},{"t":"SF","p":"571687","n":"Ian Gardeck"},{"t":"KC","p":"453178","n":"Ian Kennedy"},{"t":"DET","p":"435079","n":"Ian Kinsler"},{"t":"ATL","p":"571871","n":"Ian Krol"},{"t":"LAD","p":"430636","n":"Ian Snell"},{"t":"WSH","p":"456655","n":"Ian Stewart"},{"t":"LAD","p":"621962","n":"Ian Thomas"},{"t":"MIA","p":"400085","n":"Ichiro Suzuki"},{"t":"TEX","p":"477195","n":"Ike Davis"},{"t":"CIN","p":"458252","n":"Irving Falu"},{"t":"CIN","p":"474443","n":"Ivan De Jesus Jr."},{"t":"NYY","p":"467100","n":"Ivan Nova"},{"t":"WSH","p":"121358","n":"Ivan Rodriguez"},{"t":"TOR","p":"457918","n":"J.A. Happ"},{"t":"CWS","p":"543776","n":"J.B. Shuck"},{"t":"KC","p":"400268","n":"J.C. Boscan"},{"t":"CLE","p":"240694","n":"J.C. Romero"},{"t":"DET","p":"502110","n":"J.D. Martinez"},{"t":"BAL","p":"429666","n":"J.J. Hardy"},{"t":"CIN","p":"543331","n":"J.J. Hoover"},{"t":"PHI","p":"450317","n":"J.P. Arencibia"},{"t":"LAD","p":"434442","n":"J.P. Howell"},{"t":"MIN","p":"543242","n":"J.R. Graham"},{"t":"MIA","p":"592663","n":"J.T. Realmuto"},{"t":"SD","p":"518466","n":"Jabari Blash"},{"t":"ATL","p":"607054","n":"Jace Peterson"},{"t":"CHC","p":"605333","n":"Jack Leathersich"},{"t":"BOS","p":"598265","n":"Jackie Bradley Jr."},{"t":"COL","p":"519425","n":"Jackson Williams"},{"t":"NYM","p":"594798","n":"Jacob deGrom"},{"t":"NYY","p":"605338","n":"Jacob Lindgren"},{"t":"CWS","p":"545363","n":"Jacob Turner"},{"t":"NYY","p":"453056","n":"Jacoby Ellsbury"},{"t":"TB","p":"150242","n":"Jae Weong Seo"},{"t":"TB","p":"543094","n":"Jaff Decker"},{"t":"STL","p":"448802","n":"Jaime Garcia"},{"t":"COL","p":"457453","n":"Jair Jurrjens"},{"t":"CWS","p":"446003","n":"Jairo Asencio"},{"t":"COL","p":"545064","n":"Jairo Diaz"},{"t":"CHC","p":"453562","n":"Jake Arrieta"},{"t":"ARI","p":"545332","n":"Jake Barrett"},{"t":"DET","p":"502010","n":"Jake Brigham"},{"t":"CHC","p":"594772","n":"Jake Buchanan"},{"t":"TEX","p":"518617","n":"Jake Diekman"},{"t":"SF","p":"572827","n":"Jake Dunning"},{"t":"MIL","p":"518653","n":"Jake Elmore"},{"t":"PHI","p":"444844","n":"Jake Fox"},{"t":"TB","p":"572876","n":"Jake Goebbert"},{"t":"ARI","p":"571875","n":"Jake Lamb"},{"t":"HOU","p":"545350","n":"Jake Marisnick"},{"t":"COL","p":"459429","n":"Jake McGee"},{"t":"TB","p":"543606","n":"Jake Odorizzi"},{"t":"SF","p":"408241","n":"Jake Peavy"},{"t":"CWS","p":"502593","n":"Jake Petricka"},{"t":"OAK","p":"519295","n":"Jake Smolinski"},{"t":"PIT","p":"592802","n":"Jake Thompson"},{"t":"COL","p":"446901","n":"James Houser"},{"t":"TEX","p":"571825","n":"James Jones"},{"t":"SD","p":"425766","n":"James Loney"},{"t":"DET","p":"543510","n":"James McCann"},{"t":"SEA","p":"572020","n":"James Paxton"},{"t":"NYY","p":"572021","n":"James Pazos"},{"t":"PHI","p":"460701","n":"James Russell"},{"t":"SD","p":"448306","n":"James Shields"},{"t":"SF","p":"657605","n":"Jameson Henning"},{"t":"ARI","p":"457449","n":"Jamie Romak"},{"t":"HOU","p":"515189","n":"Japhet Amador"},{"t":"PIT","p":"453172","n":"Jared Hughes"},{"t":"MIA","p":"543054","n":"Jarred Cosart"},{"t":"CLE","p":"459439","n":"Jarrett Grube"},{"t":"SF","p":"592620","n":"Jarrett Parker"},{"t":"KC","p":"502481","n":"Jarrod Dyson"},{"t":"OAK","p":"519105","n":"Jarrod Parker"},{"t":"DET","p":"457454","n":"Jarrod Saltalamacchia"},{"t":"TOR","p":"460072","n":"Jason Berken"},{"t":"ARI","p":"430652","n":"Jason Bourgeois"},{"t":"HOU","p":"488771","n":"Jason Castro"},{"t":"ATL","p":"430630","n":"Jason Frasor"},{"t":"BAL","p":"592329","n":"Jason Garcia"},{"t":"ATL","p":"276351","n":"Jason Grilli"},{"t":"COL","p":"543261","n":"Jason Gurka"},{"t":"CHC","p":"434628","n":"Jason Hammel"},{"t":"CHC","p":"518792","n":"Jason Heyward"},{"t":"CLE","p":"543401","n":"Jason Kipnis"},{"t":"CIN","p":"150302","n":"Jason Marquis"},{"t":"COL","p":"435400","n":"Jason Motte"},{"t":"OAK","p":"445095","n":"Jason Pridie"},{"t":"PIT","p":"595386","n":"Jason Rogers"},{"t":"KC","p":"450306","n":"Jason Vargas"},{"t":"CHC","p":"595879","n":"Javier Baez"},{"t":"SF","p":"425657","n":"Javier Lopez"},{"t":"NYM","p":"123609","n":"Javier Valentin"},{"t":"MIA","p":"134320","n":"Javier Vazquez"},{"t":"LAA","p":"457915","n":"Javy Guerra"},{"t":"ATL","p":"117919","n":"Javy Lopez"},{"t":"CIN","p":"457803","n":"Jay Bruce"},{"t":"SD","p":"543351","n":"Jay Jackson"},{"t":"MIL","p":"488776","n":"Jaye Chapman"},{"t":"PHI","p":"434624","n":"Jayson Nix"},{"t":"WSH","p":"150029","n":"Jayson Werth"},{"t":"CIN","p":"500724","n":"JC Ramirez"},{"t":"CHC","p":"466948","n":"Jean Machi"},{"t":"ARI","p":"516416","n":"Jean Segura"},{"t":"PHI","p":"491646","n":"Jeanmar Gomez"},{"t":"OAK","p":"476704","n":"Jed Lowrie"},{"t":"STL","p":"576397","n":"Jedd Gyorko"},{"t":"MIA","p":"425557","n":"Jeff Baker"},{"t":"BAL","p":"542924","n":"Jeff Beliveau"},{"t":"LAD","p":"430831","n":"Jeff Bennett"},{"t":"COL","p":"488703","n":"Jeff Bianchi"},{"t":"DET","p":"594815","n":"Jeff Ferrell"},{"t":"TOR","p":"433585","n":"Jeff Francis"},{"t":"ATL","p":"425796","n":"Jeff Francoeur"},{"t":"SD","p":"572943","n":"Jeff Ibarra"},{"t":"SF","p":"571862","n":"Jeff Kobernus"},{"t":"PIT","p":"502046","n":"Jeff Locke"},{"t":"CLE","p":"453249","n":"Jeff Manship"},{"t":"CIN","p":"457812","n":"Jeff Marquez"},{"t":"MIA","p":"425772","n":"Jeff Mathis"},{"t":"SF","p":"502188","n":"Jeff Samardzija"},{"t":"LAA","p":"527043","n":"Jefry Marte"},{"t":"SD","p":"457789","n":"Jemile Weeks"},{"t":"NYM","p":"516769","n":"Jenrry Mejia"},{"t":"PHI","p":"595191","n":"Jerad Eickhoff"},{"t":"LAA","p":"450308","n":"Jered Weaver"},{"t":"SF","p":"346793","n":"Jeremy Affeldt"},{"t":"SD","p":"425386","n":"Jeremy Guthrie"},{"t":"STL","p":"571757","n":"Jeremy Hazelbaker"},{"t":"STL","p":"458550","n":"Jeremy Hefner"},{"t":"PHI","p":"476451","n":"Jeremy Hellickson"},{"t":"MIL","p":"456662","n":"Jeremy Horst"},{"t":"MIL","p":"502026","n":"Jeremy Jeffress"},{"t":"CIN","p":"543079","n":"Jermaine Curtis"},{"t":"PHI","p":"425532","n":"Jerome Williams"},{"t":"NYM","p":"460283","n":"Jerry Blevins"},{"t":"WSH","p":"435539","n":"Jerry Owens"},{"t":"CWS","p":"543742","n":"Jerry Sands"},{"t":"BOS","p":"519357","n":"Jess Todd"},{"t":"ATL","p":"592145","n":"Jesse Biddle"},{"t":"TOR","p":"445926","n":"Jesse Chavez"},{"t":"OAK","p":"534910","n":"Jesse Hahn"},{"t":"CLE","p":"542583","n":"Jesus Aguilar"},{"t":"COL","p":"400125","n":"Jesus Colome"},{"t":"PHI","p":"667337","n":"Jesus De Los Santos"},{"t":"CIN","p":"445984","n":"Jesus Delgado"},{"t":"TB","p":"440351","n":"Jesus Feliciano"},{"t":"MIA","p":"435520","n":"Jesus Flores"},{"t":"CHC","p":"461882","n":"Jesus Guzman"},{"t":"SD","p":"451639","n":"Jesus Lopez"},{"t":"TOR","p":"524968","n":"Jesus Montero"},{"t":"SEA","p":"491696","n":"Jesus Sucre"},{"t":"LAA","p":"542908","n":"Jett Bandy"},{"t":"NYM","p":"544727","n":"Jeurys Familia"},{"t":"TB","p":"501697","n":"Jhan Marinez"},{"t":"WSH","p":"500207","n":"Jhonatan Solano"},{"t":"STL","p":"425509","n":"Jhonny Peralta"},{"t":"ATL","p":"468504","n":"Jhoulys Chacin"},{"t":"LAA","p":"596847","n":"Ji-Man Choi"},{"t":"PIT","p":"543188","n":"Jim Fuller"},{"t":"NYM","p":"449104","n":"Jim Henderson"},{"t":"ATL","p":"462382","n":"Jim Johnson"},{"t":"MIL","p":"461848","n":"Jim Miller"},{"t":"MIL","p":"519076","n":"Jimmy Nelson"},{"t":"BAL","p":"517370","n":"Jimmy Paredes"},{"t":"CWS","p":"276519","n":"Jimmy Rollins"},{"t":"MIA","p":"457456","n":"Jo-Jo Reyes"},{"t":"KC","p":"465657","n":"Joakim Soria"},{"t":"ARI","p":"435078","n":"Joaquin Arias"},{"t":"SEA","p":"276542","n":"Joaquin Benoit"},{"t":"CLE","p":"501955","n":"Joba Chamberlain"},{"t":"LAD","p":"592626","n":"Joc Pederson"},{"t":"SEA","p":"346847","n":"Joe Beimel"},{"t":"MIN","p":"501994","n":"Joe Benson"},{"t":"TOR","p":"607352","n":"Joe Biagini"},{"t":"LAD","p":"430599","n":"Joe Blanton"},{"t":"BOS","p":"523260","n":"Joe Kelly"},{"t":"MIN","p":"408045","n":"Joe Mauer"},{"t":"CHC","p":"517451","n":"Joe Ortiz"},{"t":"SF","p":"605412","n":"Joe Panik"},{"t":"CIN","p":"519110","n":"Joe Paterson"},{"t":"WSH","p":"605452","n":"Joe Ross"},{"t":"SEA","p":"434578","n":"Joe Saunders"},{"t":"HOU","p":"623159","n":"Joe Sclafani"},{"t":"LAA","p":"501925","n":"Joe Smith"},{"t":"LAD","p":"491159","n":"Joe Thatcher"},{"t":"SEA","p":"543921","n":"Joe Wieland"},{"t":"SEA","p":"407908","n":"Joel Peralta"},{"t":"TOR","p":"334492","n":"Joel Pineiro"},{"t":"CLE","p":"542994","n":"Joey Butler"},{"t":"TEX","p":"608336","n":"Joey Gallo"},{"t":"BAL","p":"572073","n":"Joey Rickard"},{"t":"BAL","p":"519345","n":"Joey Terdoslavich"},{"t":"CIN","p":"458015","n":"Joey Votto"},{"t":"TOR","p":"276371","n":"Johan Santana"},{"t":"OAK","p":"446099","n":"John Axford"},{"t":"SEA","p":"434633","n":"John Baker"},{"t":"PIT","p":"435624","n":"John Bowker"},{"t":"BOS","p":"607405","n":"John Cornely"},{"t":"CWS","p":"433579","n":"John Danks"},{"t":"MIL","p":"518655","n":"John Ely"},{"t":"ATL","p":"607231","n":"John Gant"},{"t":"STL","p":"518713","n":"John Gast"},{"t":"PHI","p":"452105","n":"John Hester"},{"t":"DET","p":"543308","n":"John Hicks"},{"t":"PIT","p":"458720","n":"John Holdzkom"},{"t":"PIT","p":"444379","n":"John Jaso"},{"t":"CHC","p":"407793","n":"John Lackey"},{"t":"CIN","p":"543424","n":"John Lamb"},{"t":"KC","p":"458709","n":"John Lannan"},{"t":"DET","p":"439664","n":"John Lindsey"},{"t":"DET","p":"460055","n":"John Mayberry Jr."},{"t":"MIN","p":"571974","n":"John Ryan Murphy"},{"t":"NYY","p":"592127","n":"Johnny Barbato"},{"t":"SF","p":"456501","n":"Johnny Cueto"},{"t":"CLE","p":"113028","n":"Johnny Damon"},{"t":"LAA","p":"543213","n":"Johnny Giavotella"},{"t":"SD","p":"518782","n":"Johnny Hellweg"},{"t":"NYM","p":"476192","n":"Johnny Monell"},{"t":"PIT","p":"132660","n":"Jolbert Cabrera"},{"t":"SD","p":"457754","n":"Jon Edwards"},{"t":"COL","p":"592351","n":"Jon Gray"},{"t":"SD","p":"445055","n":"Jon Jay"},{"t":"SD","p":"425484","n":"Jon Leicester"},{"t":"CHC","p":"452657","n":"Jon Lester"},{"t":"MIA","p":"456899","n":"Jon Link"},{"t":"CIN","p":"621209","n":"Jon Moscot"},{"t":"HOU","p":"572138","n":"Jon Singleton"},{"t":"MIA","p":"452293","n":"Jonathan Albaladejo"},{"t":"PHI","p":"660620","n":"Jonathan Arauz"},{"t":"SEA","p":"608167","n":"Jonathan Aro"},{"t":"STL","p":"455009","n":"Jonathan Broxton"},{"t":"NYY","p":"502409","n":"Jonathan Diaz"},{"t":"CHC","p":"468406","n":"Jonathan Herrera"},{"t":"MIL","p":"518960","n":"Jonathan Lucroy"},{"t":"WSH","p":"449097","n":"Jonathan Papelbon"},{"t":"CHC","p":"543643","n":"Jonathan Pettibone"},{"t":"CIN","p":"456043","n":"Jonathan Sanchez"},{"t":"BAL","p":"570731","n":"Jonathan Schoop"},{"t":"MIL","p":"542340","n":"Jonathan Villar"},{"t":"PIT","p":"477003","n":"Jonathon Niese"},{"t":"KC","p":"430404","n":"Jonny Gomes"},{"t":"TEX","p":"458668","n":"Jordan Danks"},{"t":"COL","p":"543475","n":"Jordan Lyles"},{"t":"TB","p":"467099","n":"Jordan Norberto"},{"t":"CIN","p":"457574","n":"Jordan Pacheco"},{"t":"LAD","p":"457788","n":"Jordan Schafer"},{"t":"STL","p":"477229","n":"Jordan Walden"},{"t":"DET","p":"519455","n":"Jordan Zimmermann"},{"t":"DET","p":"518170","n":"Jordany Valdespin"},{"t":"PIT","p":"474568","n":"Jordy Mercer"},{"t":"LAA","p":"408305","n":"Jorge Cantu"},{"t":"COL","p":"407822","n":"Jorge De La Rosa"},{"t":"MIA","p":"501529","n":"Jorge De Leon"},{"t":"MIL","p":"605347","n":"Jorge Lopez"},{"t":"MIN","p":"593871","n":"Jorge Polanco"},{"t":"PIT","p":"504083","n":"Jorge Rondon"},{"t":"CHC","p":"624585","n":"Jorge Soler"},{"t":"MIA","p":"407901","n":"Jorge Sosa"},{"t":"CWS","p":"547989","n":"Jose Abreu"},{"t":"HOU","p":"514888","n":"Jose Altuve"},{"t":"LAA","p":"501625","n":"Jose Alvarez"},{"t":"CIN","p":"461766","n":"Jose Arredondo"},{"t":"LAD","p":"448857","n":"Jose Ascanio"},{"t":"TOR","p":"430832","n":"Jose Bautista"},{"t":"MIN","p":"621244","n":"Jose Berrios"},{"t":"WSH","p":"425489","n":"Jose Castillo"},{"t":"ARI","p":"542585","n":"Jose Cisnero"},{"t":"TB","p":"468429","n":"Jose Constanza"},{"t":"TEX","p":"425747","n":"Jose Contreras"},{"t":"HOU","p":"112903","n":"Jose Cruz"},{"t":"CIN","p":"473265","n":"Jose De La Torre"},{"t":"NYY","p":"517059","n":"Jose De Paula"},{"t":"SD","p":"523848","n":"Jose Dominguez"},{"t":"MIA","p":"605228","n":"Jose Fernandez"},{"t":"DET","p":"578428","n":"Jose Iglesias"},{"t":"KC","p":"469804","n":"Jose Jimenez"},{"t":"WSH","p":"446653","n":"Jose Lobaton"},{"t":"PIT","p":"150197","n":"Jose Macias"},{"t":"CIN","p":"467726","n":"Jose Mijares"},{"t":"TB","p":"150040","n":"Jose Molina"},{"t":"ARI","p":"516655","n":"Jose Nivar"},{"t":"COL","p":"514639","n":"Jose Ortega"},{"t":"CIN","p":"606299","n":"Jose Peraza"},{"t":"SD","p":"517369","n":"Jose Pirela"},{"t":"CWS","p":"500779","n":"Jose Quintana"},{"t":"CLE","p":"608070","n":"Jose Ramirez"},{"t":"ATL","p":"542432","n":"Jose Ramirez"},{"t":"COL","p":"408314","n":"Jose Reyes"},{"t":"NYM","p":"121696","n":"Jose Santiago"},{"t":"LAD","p":"467798","n":"Jose Tabata"},{"t":"SD","p":"600526","n":"Jose Torres"},{"t":"MIA","p":"570632","n":"Jose Urena"},{"t":"DET","p":"572308","n":"Jose Valdez"},{"t":"BOS","p":"451990","n":"Jose Valdez"},{"t":"NYM","p":"123610","n":"Jose Valentin"},{"t":"WSH","p":"407878","n":"Jose Valverde"},{"t":"HOU","p":"407842","n":"Jose Veras"},{"t":"WSH","p":"452775","n":"Joseph Dunigan"},{"t":"SD","p":"458679","n":"Josh Bell"},{"t":"ARI","p":"518567","n":"Josh Collmenter"},{"t":"TOR","p":"518626","n":"Josh Donaldson"},{"t":"NYM","p":"572831","n":"Josh Edgin"},{"t":"HOU","p":"451661","n":"Josh Fields"},{"t":"PHI","p":"435222","n":"Josh Fields"},{"t":"TEX","p":"285078","n":"Josh Hamilton"},{"t":"PIT","p":"543281","n":"Josh Harrison"},{"t":"SD","p":"435178","n":"Josh Johnson"},{"t":"LAD","p":"518865","n":"Josh Judy"},{"t":"TB","p":"518961","n":"Josh Lueke"},{"t":"SF","p":"592612","n":"Josh Osich"},{"t":"ATL","p":"489189","n":"Josh Outman"},{"t":"OAK","p":"572033","n":"Josh Phegley"},{"t":"DET","p":"572389","n":"Josh Prince"},{"t":"LAD","p":"502051","n":"Josh Ravin"},{"t":"OAK","p":"502210","n":"Josh Reddick"},{"t":"OAK","p":"446044","n":"Josh Rodriguez"},{"t":"MIL","p":"502158","n":"Josh Roenicke"},{"t":"BOS","p":"592710","n":"Josh Rutledge"},{"t":"SD","p":"543744","n":"Josh Satin"},{"t":"CIN","p":"595001","n":"Josh Smith"},{"t":"TOR","p":"489365","n":"Josh Thole"},{"t":"CLE","p":"458708","n":"Josh Tomlin"},{"t":"CWS","p":"476205","n":"Josh Wall"},{"t":"WSH","p":"444882","n":"Josh Whitesell"},{"t":"DET","p":"425543","n":"Josh Wilson"},{"t":"LAA","p":"473646","n":"Josh Zeid"},{"t":"MIL","p":"500887","n":"Josmil Pinto"},{"t":"TEX","p":"456784","n":"Joucer Martinez"},{"t":"WSH","p":"408226","n":"Juan Brito"},{"t":"MIA","p":"623979","n":"Juan Caballero"},{"t":"MIN","p":"518542","n":"Juan Centeno"},{"t":"PIT","p":"501726","n":"Juan Diaz"},{"t":"CIN","p":"544269","n":"Juan Duran"},{"t":"STL","p":"113845","n":"Juan Encarnacion"},{"t":"TB","p":"464433","n":"Juan Francisco"},{"t":"WSH","p":"434641","n":"Juan Gutierrez"},{"t":"LAD","p":"462089","n":"Juan Jaime"},{"t":"NYM","p":"501571","n":"Juan Lagares"},{"t":"TB","p":"506673","n":"Juan Miranda"},{"t":"PIT","p":"504379","n":"Juan Nicasio"},{"t":"TOR","p":"517062","n":"Juan Pablo Oramas"},{"t":"TEX","p":"448722","n":"Juan Pablo Perez"},{"t":"CHC","p":"543633","n":"Juan Perez"},{"t":"LAD","p":"585671","n":"Juan Ramon Noriega"},{"t":"LAA","p":"346799","n":"Juan Rincon"},{"t":"ARI","p":"407487","n":"Juan Rivera"},{"t":"CLE","p":"346874","n":"Juan Uribe"},{"t":"WSH","p":"123118","n":"Julian Tavarez"},{"t":"BAL","p":"474865","n":"Julio Borbon"},{"t":"ARI","p":"451546","n":"Julio DePaula"},{"t":"ATL","p":"527054","n":"Julio Teheran"},{"t":"CIN","p":"471822","n":"Jumbo Diaz"},{"t":"PIT","p":"628356","n":"Jung Ho Kang"},{"t":"BOS","p":"547749","n":"Junichi Tazawa"},{"t":"MIL","p":"448855","n":"Junior Guerra"},{"t":"TOR","p":"516809","n":"Junior Lake"},{"t":"TEX","p":"595777","n":"Jurickson Profar"},{"t":"MIA","p":"571506","n":"Justin Bour"},{"t":"TB","p":"451629","n":"Justin Christian"},{"t":"SEA","p":"518603","n":"Justin De Fratus"},{"t":"SEA","p":"430683","n":"Justin Germano"},{"t":"CHC","p":"518748","n":"Justin Grimm"},{"t":"MIN","p":"408311","n":"Justin Huber"},{"t":"TB","p":"476123","n":"Justin Marks"},{"t":"BOS","p":"475416","n":"Justin Masterson"},{"t":"BOS","p":"452239","n":"Justin Maxwell"},{"t":"COL","p":"502522","n":"Justin Miller"},{"t":"COL","p":"408047","n":"Justin Morneau"},{"t":"MIA","p":"592593","n":"Justin Nicolino"},{"t":"TEX","p":"448605","n":"Justin Ruggiano"},{"t":"SD","p":"451088","n":"Justin Sellers"},{"t":"TOR","p":"475253","n":"Justin Smoak"},{"t":"KC","p":"573212","n":"Justin Trapp"},{"t":"LAD","p":"457759","n":"Justin Turner"},{"t":"DET","p":"457708","n":"Justin Upton"},{"t":"DET","p":"434378","n":"Justin Verlander"},{"t":"DET","p":"458677","n":"Justin Wilson"},{"t":"LAA","p":"592230","n":"Kaleb Cowart"},{"t":"TEX","p":"511628","n":"Kalian Sams"},{"t":"CWS","p":"434180","n":"Kameron Loe"},{"t":"ATL","p":"444427","n":"Kanekoa Texeira"},{"t":"PHI","p":"114588","n":"Karim Garcia"},{"t":"COL","p":"430565","n":"Kazuo Matsui"},{"t":"STL","p":"572751","n":"Keith Butler"},{"t":"ARI","p":"594857","n":"Keith Hessler"},{"t":"SF","p":"605509","n":"Kelby Tomlinson"},{"t":"ATL","p":"430637","n":"Kelly Johnson"},{"t":"KC","p":"516969","n":"Kelvin Herrera"},{"t":"CWS","p":"459376","n":"Kelvin Jimenez"},{"t":"WSH","p":"451136","n":"Kelvin Perez"},{"t":"HOU","p":"571704","n":"Ken Giles"},{"t":"PHI","p":"594977","n":"Ken Roberts"},{"t":"OAK","p":"608665","n":"Kendall Graveman"},{"t":"MIA","p":"572309","n":"Kendry Flores"},{"t":"KC","p":"434778","n":"Kendrys Morales"},{"t":"LAD","p":"445276","n":"Kenley Jansen"},{"t":"MIN","p":"573627","n":"Kennys Vargas"},{"t":"LAD","p":"628317","n":"Kenta Maeda"},{"t":"MIL","p":"542979","n":"Keon Broxton"},{"t":"TEX","p":"605309","n":"Keone Kela"},{"t":"SEA","p":"606466","n":"Ketel Marte"},{"t":"CWS","p":"607345","n":"Kevan Smith"},{"t":"HOU","p":"502087","n":"Kevin Chapman"},{"t":"PHI","p":"429781","n":"Kevin Correia"},{"t":"SF","p":"435623","n":"Kevin Frandsen"},{"t":"BAL","p":"592332","n":"Kevin Gausman"},{"t":"SEA","p":"276514","n":"Kevin Gregg"},{"t":"MIN","p":"448178","n":"Kevin Jepsen"},{"t":"TB","p":"595281","n":"Kevin Kiermaier"},{"t":"WSH","p":"543503","n":"Kevin Mattison"},{"t":"MIL","p":"527044","n":"Kevin Moscatel"},{"t":"TOR","p":"607680","n":"Kevin Pillar"},{"t":"NYM","p":"608700","n":"Kevin Plawecki"},{"t":"SD","p":"534812","n":"Kevin Quackenbush"},{"t":"STL","p":"543779","n":"Kevin Siegrist"},{"t":"OAK","p":"460128","n":"Kevin Whelan"},{"t":"CIN","p":"572102","n":"Keyvius Sampson"},{"t":"OAK","p":"501981","n":"Khris Davis"},{"t":"MIA","p":"451500","n":"Kila Ka'aihue"},{"t":"NYY","p":"489446","n":"Kirby Yates"},{"t":"MIL","p":"543590","n":"Kirk Nieuwenhuis"},{"t":"BOS","p":"493157","n":"Koji Uehara"},{"t":"LAA","p":"594777","n":"Kole Calhoun"},{"t":"STL","p":"543939","n":"Kolten Wong"},{"t":"PHI","p":"425542","n":"Koyie Hill"},{"t":"CHC","p":"592178","n":"Kris Bryant"},{"t":"KC","p":"450665","n":"Kris Medlen"},{"t":"CHC","p":"502117","n":"Kristopher Negron"},{"t":"MIN","p":"435559","n":"Kurt Suzuki"},{"t":"MIA","p":"607457","n":"Kyle Barraclough"},{"t":"SF","p":"452035","n":"Kyle Blanks"},{"t":"CLE","p":"641490","n":"Kyle Crockett"},{"t":"NYY","p":"434678","n":"Kyle Davies"},{"t":"ARI","p":"475138","n":"Kyle Drabek"},{"t":"HOU","p":"150035","n":"Kyle Farnsworth"},{"t":"MIN","p":"502043","n":"Kyle Gibson"},{"t":"CHC","p":"543294","n":"Kyle Hendricks"},{"t":"LAD","p":"543340","n":"Kyle Hudson"},{"t":"LAA","p":"452718","n":"Kyle Kendrick"},{"t":"LAA","p":"605323","n":"Kyle Kubitza"},{"t":"PIT","p":"543456","n":"Kyle Lobstein"},{"t":"MIL","p":"346798","n":"Kyle Lohse"},{"t":"TB","p":"519015","n":"Kyle McPherson"},{"t":"CIN","p":"592621","n":"Kyle Parker"},{"t":"DET","p":"594986","n":"Kyle Ryan"},{"t":"CHC","p":"656941","n":"Kyle Schwarber"},{"t":"SEA","p":"572122","n":"Kyle Seager"},{"t":"CIN","p":"543788","n":"Kyle Skipworth"},{"t":"CIN","p":"592835","n":"Kyle Waldrop"},{"t":"TEX","p":"493117","n":"Kyuji Fujikawa"},{"t":"BAL","p":"543321","n":"L.J. Hoes"},{"t":"STL","p":"458681","n":"Lance Lynn"},{"t":"HOU","p":"621121","n":"Lance McCullers"},{"t":"TOR","p":"453368","n":"Lance Zawadzki"},{"t":"NYY","p":"572669","n":"Lane Adams"},{"t":"LAD","p":"502249","n":"Lars Anderson"},{"t":"DET","p":"516684","n":"Lendy Castillo"},{"t":"ARI","p":"449820","n":"Leo Rosales"},{"t":"SD","p":"599998","n":"Leonel Campos"},{"t":"SEA","p":"547982","n":"Leonys Martin"},{"t":"TB","p":"493306","n":"Leslie Anderson"},{"t":"KC","p":"500902","n":"Lester Oliveros"},{"t":"CWS","p":"544725","n":"Leury Garcia"},{"t":"BAL","p":"217915","n":"Lew Ford"},{"t":"ATL","p":"465015","n":"Leyson Septimo"},{"t":"OAK","p":"521230","n":"Liam Hendriks"},{"t":"PHI","p":"578568","n":"Lino Martinez"},{"t":"LAD","p":"570810","n":"Lisalverto Bonilla"},{"t":"MIN","p":"592244","n":"Logan Darnell"},{"t":"TB","p":"523253","n":"Logan Forsythe"},{"t":"DET","p":"434137","n":"Logan Kensing"},{"t":"TB","p":"489149","n":"Logan Morrison"},{"t":"WSH","p":"502582","n":"Logan Schafer"},{"t":"NYM","p":"548337","n":"Logan Verrett"},{"t":"CHC","p":"543894","n":"Logan Watkins"},{"t":"CLE","p":"502082","n":"Lonnie Chisenhall"},{"t":"LAD","p":"150311","n":"Lorenzo Barcelo"},{"t":"KC","p":"456715","n":"Lorenzo Cain"},{"t":"LAA","p":"453974","n":"Lou Marson"},{"t":"LAD","p":"488786","n":"Louis Coleman"},{"t":"NYM","p":"446263","n":"Lucas Duda"},{"t":"DET","p":"449173","n":"Lucas Harrell"},{"t":"LAA","p":"476595","n":"Lucas Luetge"},{"t":"NYY","p":"458501","n":"Luis Alfonso Cruz"},{"t":"NYY","p":"407821","n":"Luis Alfonso Garcia"},{"t":"ARI","p":"649860","n":"Luis Anthony Collazo"},{"t":"LAA","p":"425904","n":"Luis Antonio Rodriguez"},{"t":"LAD","p":"501593","n":"Luis Avilan"},{"t":"TOR","p":"425646","n":"Luis Ayala"},{"t":"NYY","p":"570666","n":"Luis Cessa"},{"t":"CHC","p":"543071","n":"Luis Cruz"},{"t":"ARI","p":"519508","n":"Luis De La Cruz"},{"t":"CIN","p":"470516","n":"Luis Durango"},{"t":"NYM","p":"292294","n":"Luis Figueroa"},{"t":"PHI","p":"472610","n":"Luis Garcia"},{"t":"LAA","p":"434682","n":"Luis Hernandez"},{"t":"TOR","p":"455921","n":"Luis Jimenez"},{"t":"BOS","p":"499864","n":"Luis Jimenez"},{"t":"BOS","p":"446208","n":"Luis Martinez"},{"t":"MIN","p":"275928","n":"Luis Matos"},{"t":"HOU","p":"435402","n":"Luis Maza"},{"t":"KC","p":"434669","n":"Luis Mendoza"},{"t":"LAA","p":"428642","n":"Luis Montanez"},{"t":"SD","p":"606131","n":"Luis Perdomo"},{"t":"TOR","p":"469802","n":"Luis Perez"},{"t":"SEA","p":"596143","n":"Luis Sardinas"},{"t":"NYY","p":"622663","n":"Luis Severino"},{"t":"CIN","p":"407880","n":"Luis Terrero"},{"t":"MIN","p":"407899","n":"Luis Ugueto"},{"t":"HOU","p":"472528","n":"Luis Valbuena"},{"t":"BAL","p":"150430","n":"Luis Vizcaino"},{"t":"DET","p":"450192","n":"Luke Carlin"},{"t":"HOU","p":"502381","n":"Luke Gregerson"},{"t":"KC","p":"460024","n":"Luke Hochevar"},{"t":"TOR","p":"471863","n":"Luke Hughes"},{"t":"TEX","p":"592426","n":"Luke Jackson"},{"t":"TB","p":"571912","n":"Luke Maile"},{"t":"BOS","p":"452215","n":"Luke Montz"},{"t":"DET","p":"446367","n":"Luke Putkonen"},{"t":"TOR","p":"432928","n":"Luke Scott"},{"t":"DET","p":"519302","n":"Luke Sommer"},{"t":"SF","p":"607776","n":"Mac Williamson"},{"t":"SF","p":"518516","n":"Madison Bumgarner"},{"t":"TOR","p":"430895","n":"Maicer Izturis"},{"t":"CWS","p":"521055","n":"Maikel Cleto"},{"t":"PHI","p":"596748","n":"Maikel Franco"},{"t":"ATL","p":"605480","n":"Mallex Smith"},{"t":"NYM","p":"407924","n":"Manny Acosta"},{"t":"ATL","p":"544365","n":"Manny Banuelos"},{"t":"COL","p":"466918","n":"Manny Corpas"},{"t":"WSH","p":"434668","n":"Manny Delcarmen"},{"t":"BAL","p":"592518","n":"Manny Machado"},{"t":"CHC","p":"448159","n":"Manny Parra"},{"t":"MIL","p":"444489","n":"Manny Pina"},{"t":"NYM","p":"571868","n":"Marc Krauss"},{"t":"OAK","p":"519240","n":"Marc Rzepczynski"},{"t":"MIA","p":"542303","n":"Marcell Ozuna"},{"t":"CHC","p":"456150","n":"Marco Carrillo"},{"t":"TOR","p":"462136","n":"Marco Estrada"},{"t":"STL","p":"594835","n":"Marco Gonzales"},{"t":"BOS","p":"593523","n":"Marco Hernandez"},{"t":"SF","p":"340192","n":"Marco Scutaro"},{"t":"SD","p":"456496","n":"Marcos Mateo"},{"t":"STL","p":"502281","n":"Marcus Hatley"},{"t":"OAK","p":"543760","n":"Marcus Semien"},{"t":"TOR","p":"573186","n":"Marcus Stroman"},{"t":"PHI","p":"571786","n":"Mario Hollands"},{"t":"OAK","p":"123603","n":"Mario Valdez"},{"t":"OAK","p":"592192","n":"Mark Canha"},{"t":"MIN","p":"523648","n":"Mark Hamburger"},{"t":"DET","p":"450275","n":"Mark Lowe"},{"t":"PIT","p":"453343","n":"Mark Melancon"},{"t":"COL","p":"448602","n":"Mark Reynolds"},{"t":"NYY","p":"407893","n":"Mark Teixeira"},{"t":"BAL","p":"444432","n":"Mark Trumbo"},{"t":"CLE","p":"407781","n":"Marlon Byrd"},{"t":"ATL","p":"650361","n":"Marquis Riley"},{"t":"MIL","p":"455117","n":"Martin Maldonado"},{"t":"TEX","p":"527048","n":"Martin Perez"},{"t":"MIA","p":"445988","n":"Martin Prado"},{"t":"HOU","p":"503556","n":"Marwin Gonzalez"},{"t":"NYY","p":"547888","n":"Masahiro Tanaka"},{"t":"TEX","p":"474226","n":"Mason Tobin"},{"t":"NYY","p":"592863","n":"Mason Williams"},{"t":"CWS","p":"502009","n":"Mat Latos"},{"t":"STL","p":"571431","n":"Matt Adams"},{"t":"CWS","p":"458006","n":"Matt Albers"},{"t":"TB","p":"542882","n":"Matt Andriese"},{"t":"OAK","p":"518408","n":"Matt Angle"},{"t":"BOS","p":"598264","n":"Matt Barnes"},{"t":"WSH","p":"279571","n":"Matt Belisle"},{"t":"PIT","p":"607305","n":"Matt Benedict"},{"t":"STL","p":"621199","n":"Matt Bowman"},{"t":"DET","p":"571510","n":"Matt Boyd"},{"t":"ARI","p":"501936","n":"Matt Buschmann"},{"t":"SF","p":"430912","n":"Matt Cain"},{"t":"ARI","p":"448165","n":"Matt Capps"},{"t":"STL","p":"572761","n":"Matt Carpenter"},{"t":"OAK","p":"454998","n":"Matt Carson"},{"t":"CHC","p":"518558","n":"Matt Clark"},{"t":"CWS","p":"571602","n":"Matt Davidson"},{"t":"WSH","p":"544925","n":"Matt den Dekker"},{"t":"TOR","p":"518625","n":"Matt Dominguez"},{"t":"SF","p":"622110","n":"Matt Duffy"},{"t":"HOU","p":"592274","n":"Matt Duffy"},{"t":"PIT","p":"425651","n":"Matt Ford"},{"t":"MIL","p":"490063","n":"Matt Garza"},{"t":"WSH","p":"594840","n":"Matt Grace"},{"t":"TOR","p":"518755","n":"Matt Hague"},{"t":"PHI","p":"457448","n":"Matt Harrison"},{"t":"NYM","p":"518774","n":"Matt Harvey"},{"t":"STL","p":"407812","n":"Matt Holliday"},{"t":"PIT","p":"459964","n":"Matt Joyce"},{"t":"SD","p":"461314","n":"Matt Kemp"},{"t":"CWS","p":"434637","n":"Matt Lindstrom"},{"t":"CIN","p":"543483","n":"Matt Magill"},{"t":"ATL","p":"621408","n":"Matt Marksberry"},{"t":"OAK","p":"473724","n":"Matt McBride"},{"t":"TB","p":"519043","n":"Matt Moore"},{"t":"CHC","p":"444875","n":"Matt Murton"},{"t":"ARI","p":"431166","n":"Matt Pagnozzi"},{"t":"ARI","p":"519186","n":"Matt Reynolds"},{"t":"LAA","p":"533167","n":"Matt Shoemaker"},{"t":"ARI","p":"592781","n":"Matt Stites"},{"t":"CHC","p":"519333","n":"Matt Szczur"},{"t":"SD","p":"407819","n":"Matt Thornton"},{"t":"NYY","p":"595441","n":"Matt Tracy"},{"t":"ATL","p":"449168","n":"Matt Tuiasosopo"},{"t":"LAD","p":"519411","n":"Matt West"},{"t":"BAL","p":"446308","n":"Matt Wieters"},{"t":"ATL","p":"605538","n":"Matt Wisler"},{"t":"CWS","p":"500909","n":"Mauricio Robles"},{"t":"MIN","p":"596146","n":"Max Kepler"},{"t":"OAK","p":"571970","n":"Max Muncy"},{"t":"KC","p":"445615","n":"Max Ramirez"},{"t":"WSH","p":"453286","n":"Max Scherzer"},{"t":"HOU","p":"545358","n":"Max Stassi"},{"t":"SEA","p":"515052","n":"Mayckol Guaipe"},{"t":"CWS","p":"466320","n":"Melky Cabrera"},{"t":"TOR","p":"444859","n":"Melky Mesa"},{"t":"DET","p":"542235","n":"Melvin Mercedes"},{"t":"SD","p":"425834","n":"Melvin Upton Jr."},{"t":"LAD","p":"608672","n":"Micah Johnson"},{"t":"MIL","p":"518468","n":"Michael Blazek"},{"t":"TOR","p":"456422","n":"Michael Bourn"},{"t":"MIN","p":"476601","n":"Michael Bowden"},{"t":"CLE","p":"488726","n":"Michael Brantley"},{"t":"CLE","p":"574831","n":"Michael Choice"},{"t":"NYM","p":"624424","n":"Michael Conforto"},{"t":"DET","p":"453273","n":"Michael Crotta"},{"t":"NYM","p":"150212","n":"Michael Cuddyer"},{"t":"HOU","p":"593140","n":"Michael Feliz"},{"t":"DET","p":"605242","n":"Michael Fulmer"},{"t":"WSH","p":"283166","n":"Michael Gonzalez"},{"t":"MIL","p":"457779","n":"Michael Kirkman"},{"t":"ATL","p":"543409","n":"Michael Kohn"},{"t":"CIN","p":"547179","n":"Michael Lorenzen"},{"t":"PHI","p":"592527","n":"Michael Mariot"},{"t":"CLE","p":"492841","n":"Michael Martinez"},{"t":"TEX","p":"502374","n":"Michael McKenry"},{"t":"LAA","p":"571954","n":"Michael Monster"},{"t":"PIT","p":"434604","n":"Michael Morse"},{"t":"NYY","p":"501381","n":"Michael Pineda"},{"t":"MIL","p":"605439","n":"Michael Reed"},{"t":"TEX","p":"607706","n":"Michael Roth"},{"t":"TOR","p":"459431","n":"Michael Saunders"},{"t":"WSH","p":"572191","n":"Michael Taylor"},{"t":"MIN","p":"543859","n":"Michael Tonkin"},{"t":"STL","p":"608379","n":"Michael Wacha"},{"t":"LAD","p":"493547","n":"Mickey Storey"},{"t":"PHI","p":"646057","n":"Miguel Alfredo Gonzalez"},{"t":"KC","p":"602083","n":"Miguel Almonte"},{"t":"DET","p":"408234","n":"Miguel Cabrera"},{"t":"COL","p":"612434","n":"Miguel Castro"},{"t":"CWS","p":"456068","n":"Miguel Gonzalez"},{"t":"DET","p":"544838","n":"Miguel Gonzalez"},{"t":"CHC","p":"471083","n":"Miguel Montero"},{"t":"SF","p":"400018","n":"Miguel Olivo"},{"t":"MIA","p":"500743","n":"Miguel Rojas"},{"t":"MIN","p":"593934","n":"Miguel Sano"},{"t":"STL","p":"462515","n":"Miguel Socolovich"},{"t":"MIA","p":"123173","n":"Miguel Tejada"},{"t":"LAD","p":"430606","n":"Mike Adams"},{"t":"DET","p":"449107","n":"Mike Aviles"},{"t":"SEA","p":"488689","n":"Mike Baxter"},{"t":"BAL","p":"506988","n":"Mike Belfiore"},{"t":"LAD","p":"502211","n":"Mike Bolsinger"},{"t":"SF","p":"458678","n":"Mike Broadway"},{"t":"BAL","p":"455077","n":"Mike Carp"},{"t":"DET","p":"453941","n":"Mike Cervenak"},{"t":"CIN","p":"453068","n":"Mike Costanzo"},{"t":"MIA","p":"445197","n":"Mike Dunn"},{"t":"LAA","p":"455091","n":"Mike Ekstrom"},{"t":"HOU","p":"571666","n":"Mike Fiers"},{"t":"ATL","p":"592314","n":"Mike Foltynewicz"},{"t":"ARI","p":"408312","n":"Mike Jacobs"},{"t":"SF","p":"592464","n":"Mike Kickham"},{"t":"STL","p":"502190","n":"Mike Leake"},{"t":"SD","p":"453454","n":"Mike McCoy"},{"t":"KC","p":"501985","n":"Mike Minor"},{"t":"SEA","p":"543557","n":"Mike Montgomery"},{"t":"LAA","p":"573046","n":"Mike Morin"},{"t":"KC","p":"519058","n":"Mike Moustakas"},{"t":"CLE","p":"435063","n":"Mike Napoli"},{"t":"CHC","p":"595349","n":"Mike O'Neill"},{"t":"SD","p":"592609","n":"Mike Olt"},{"t":"DET","p":"460059","n":"Mike Pelfrey"},{"t":"LAA","p":"545361","n":"Mike Trout"},{"t":"CIN","p":"444125","n":"Mike Wilson"},{"t":"BAL","p":"605541","n":"Mike Wright"},{"t":"SEA","p":"572287","n":"Mike Zunino"},{"t":"TB","p":"543484","n":"Mikie Mahtook"},{"t":"BOS","p":"444444","n":"Mitch Atkins"},{"t":"STL","p":"518771","n":"Mitch Harris"},{"t":"TEX","p":"519048","n":"Mitch Moreland"},{"t":"NYM","p":"452676","n":"Mitch Talbot"},{"t":"ATL","p":"459939","n":"Mitchell Boggs"},{"t":"NYM","p":"110189","n":"Moises Alou"},{"t":"MIA","p":"501213","n":"Moises Sierra"},{"t":"BOS","p":"605141","n":"Mookie Betts"},{"t":"CHC","p":"493128","n":"Munenori Kawasaki"},{"t":"BAL","p":"571710","n":"Mychal Givens"},{"t":"BAL","p":"502264","n":"Nate Adcock"},{"t":"WSH","p":"474384","n":"Nate Freiman"},{"t":"CWS","p":"518858","n":"Nate Jones"},{"t":"WSH","p":"434661","n":"Nate McLouth"},{"t":"DET","p":"435625","n":"Nate Schierholtz"},{"t":"NYY","p":"543135","n":"Nathan Eovaldi"},{"t":"SEA","p":"501992","n":"Nathan Karns"},{"t":"LAA","p":"425840","n":"Neal Cotts"},{"t":"MIA","p":"596331","n":"Nefi Ogando"},{"t":"PIT","p":"491703","n":"Neftali Feliz"},{"t":"WSH","p":"519304","n":"Neftali Soto"},{"t":"CHC","p":"519166","n":"Neil Ramirez"},{"t":"TB","p":"474599","n":"Neil Wagner"},{"t":"NYM","p":"435522","n":"Neil Walker"},{"t":"SEA","p":"443558","n":"Nelson Cruz"},{"t":"ARI","p":"150153","n":"Nelson Figueroa"},{"t":"NYM","p":"502213","n":"Nevin Ashley"},{"t":"ARI","p":"605113","n":"Nick Ahmed"},{"t":"LAA","p":"502544","n":"Nick Buss"},{"t":"DET","p":"592206","n":"Nick Castellanos"},{"t":"CIN","p":"543023","n":"Nick Christiani"},{"t":"SD","p":"452783","n":"Nick Evans"},{"t":"TB","p":"545338","n":"Nick Franklin"},{"t":"NYY","p":"580792","n":"Nick Goody"},{"t":"MIN","p":"572889","n":"Nick Greenwood"},{"t":"CLE","p":"444935","n":"Nick Hagadone"},{"t":"COL","p":"460026","n":"Nick Hundley"},{"t":"ATL","p":"455976","n":"Nick Markakis"},{"t":"CLE","p":"543488","n":"Nick Maronde"},{"t":"TEX","p":"607259","n":"Nick Martinez"},{"t":"WSH","p":"434665","n":"Nick Masset"},{"t":"SD","p":"519082","n":"Nick Noonan"},{"t":"OAK","p":"346857","n":"Nick Punto"},{"t":"NYY","p":"592705","n":"Nick Rumbelow"},{"t":"NYY","p":"430897","n":"Nick Swisher"},{"t":"TEX","p":"519344","n":"Nick Tepesch"},{"t":"LAA","p":"607374","n":"Nick Tropeano"},{"t":"SEA","p":"543883","n":"Nick Vincent"},{"t":"MIA","p":"621295","n":"Nick Wittgren"},{"t":"NYM","p":"462962","n":"Niuman Romero"},{"t":"NYM","p":"592789","n":"Noah Syndergaard"},{"t":"BOS","p":"598287","n":"Noe Ramirez"},{"t":"COL","p":"571448","n":"Nolan Arenado"},{"t":"BAL","p":"460099","n":"Nolan Reimold"},{"t":"TEX","p":"608577","n":"Nomar Mazara"},{"t":"SEA","p":"493114","n":"Norichika Aoki"},{"t":"CLE","p":"460579","n":"Nyjer Morgan"},{"t":"DET","p":"136734","n":"Octavio Dotel"},{"t":"WSH","p":"136602","n":"Odalis Perez"},{"t":"BAL","p":"628333","n":"Odrisamer Despaigne"},{"t":"PHI","p":"546318","n":"Odubel Herrera"},{"t":"BAL","p":"543118","n":"Oliver Drake"},{"t":"WSH","p":"424144","n":"Oliver Perez"},{"t":"KC","p":"408299","n":"Omar Infante"},{"t":"COL","p":"435560","n":"Omar Quintanilla"},{"t":"CWS","p":"607162","n":"Onelki Garcia"},{"t":"KC","p":"593525","n":"Orlando Calixte"},{"t":"ARI","p":"591712","n":"Oscar Hernandez"},{"t":"PHI","p":"425854","n":"Oscar Robles"},{"t":"MIA","p":"400073","n":"Oscar Salazar"},{"t":"BOS","p":"425629","n":"Oscar Villarreal"},{"t":"MIN","p":"542455","n":"Oswaldo Arcia"},{"t":"BAL","p":"501954","n":"Ozzie Martinez"},{"t":"WSH","p":"502208","n":"P.J. Walters"},{"t":"BOS","p":"467055","n":"Pablo Sandoval"},{"t":"ATL","p":"572089","n":"Paco Rodriguez"},{"t":"MIN","p":"534737","n":"Pat Dean"},{"t":"BOS","p":"572990","n":"Pat Light"},{"t":"TOR","p":"519003","n":"Pat McCoy"},{"t":"MIL","p":"435619","n":"Pat Misch"},{"t":"HOU","p":"450212","n":"Pat Neshek"},{"t":"TOR","p":"519381","n":"Pat Venditte"},{"t":"ARI","p":"571578","n":"Patrick Corbin"},{"t":"TEX","p":"623182","n":"Patrick Kivlehan"},{"t":"MIA","p":"518560","n":"Paul Clemens"},{"t":"ARI","p":"502671","n":"Paul Goldschmidt"},{"t":"BAL","p":"457926","n":"Paul Janish"},{"t":"KC","p":"449181","n":"Paulo Orlando"},{"t":"BAL","p":"476883","n":"Pedro Alvarez"},{"t":"LAD","p":"520980","n":"Pedro Baez"},{"t":"BAL","p":"474039","n":"Pedro Beato"},{"t":"TEX","p":"465674","n":"Pedro Ciriaco"},{"t":"STL","p":"408230","n":"Pedro Feliciano"},{"t":"KC","p":"150268","n":"Pedro Feliz"},{"t":"PIT","p":"465753","n":"Pedro Florimon"},{"t":"COL","p":"517060","n":"Pedro Hernandez"},{"t":"WSH","p":"600474","n":"Pedro Severino"},{"t":"CHC","p":"467008","n":"Pedro Strop"},{"t":"TEX","p":"123597","n":"Pedro Valdes"},{"t":"CIN","p":"543881","n":"Pedro Villarreal"},{"t":"OAK","p":"501638","n":"Pedro Viola"},{"t":"NYY","p":"518902","n":"Pete Kozma"},{"t":"MIL","p":"434681","n":"Pete Orr"},{"t":"PHI","p":"488721","n":"Peter Bourjos"},{"t":"KC","p":"493247","n":"Peter Moylan"},{"t":"ARI","p":"598284","n":"Peter O'Brien"},{"t":"NYY","p":"457435","n":"Phil Coke"},{"t":"ARI","p":"594838","n":"Phil Gosselin"},{"t":"MIN","p":"461833","n":"Phil Hughes"},{"t":"TEX","p":"572947","n":"Phil Irwin"},{"t":"TOR","p":"644394","n":"Phil Kish"},{"t":"TEX","p":"607309","n":"Phil Klein"},{"t":"CWS","p":"518418","n":"Phillippe Aumont"},{"t":"MIA","p":"135784","n":"Placido Polanco"},{"t":"MIA","p":"502011","n":"Preston Claiborne"},{"t":"DET","p":"543258","n":"Preston Guilmet"},{"t":"HOU","p":"605512","n":"Preston Tucker"},{"t":"TEX","p":"425902","n":"Prince Fielder"},{"t":"LAA","p":"450641","n":"Quintin Berry"},{"t":"TOR","p":"285079","n":"R.A. Dickey"},{"t":"OAK","p":"571439","n":"R.J. Alvarez"},{"t":"STL","p":"449881","n":"R.J. Swindle"},{"t":"PIT","p":"467785","n":"Radhames Liz"},{"t":"COL","p":"429783","n":"Rafael Betancourt"},{"t":"DET","p":"503569","n":"Rafael Dolis"},{"t":"KC","p":"279577","n":"Rafael Furcal"},{"t":"WSH","p":"514669","n":"Rafael Martin"},{"t":"NYM","p":"606160","n":"Rafael Montero"},{"t":"LAA","p":"542364","n":"Rafael Ortega"},{"t":"SEA","p":"460370","n":"Rafael Perez"},{"t":"TOR","p":"400089","n":"Rafael Soriano"},{"t":"COL","p":"501255","n":"Rafael Ynoa"},{"t":"CIN","p":"607257","n":"Raffy Lopez"},{"t":"CIN","p":"628452","n":"Raisel Iglesias"},{"t":"CLE","p":"434658","n":"Rajai Davis"},{"t":"MIL","p":"118947","n":"Ramiro Mendoza"},{"t":"SF","p":"455369","n":"Ramiro Pena"},{"t":"BOS","p":"459371","n":"Ramon A. Ramirez"},{"t":"CIN","p":"541608","n":"Ramon Cabrera"},{"t":"KC","p":"425792","n":"Ramon Castro"},{"t":"MIL","p":"570717","n":"Ramon Flores"},{"t":"KC","p":"150421","n":"Ramon Hernandez"},{"t":"TOR","p":"150009","n":"Ramon Ortiz"},{"t":"LAA","p":"430673","n":"Ramon Ramirez"},{"t":"TOR","p":"421124","n":"Ramon Santiago"},{"t":"LAD","p":"470462","n":"Ramon Troncoso"},{"t":"STL","p":"545341","n":"Randal Grichuk"},{"t":"ARI","p":"517414","n":"Randall Delgado"},{"t":"TOR","p":"329092","n":"Randy Choate"},{"t":"COL","p":"625600","n":"Randy Reyes"},{"t":"NYY","p":"457859","n":"Randy Ruiz"},{"t":"DET","p":"150116","n":"Randy Wolf"},{"t":"MIA","p":"612272","n":"Raudel Lazo"},{"t":"KC","p":"609275","n":"Raul Mondesi"},{"t":"TB","p":"408232","n":"Ray Olmedo"},{"t":"LAD","p":"572017","n":"Red Patterson"},{"t":"WSH","p":"407862","n":"Reed Johnson"},{"t":"ATL","p":"458582","n":"Reid Brignac"},{"t":"COL","p":"407813","n":"Rene Reyes"},{"t":"NYM","p":"425784","n":"Rene Rivera"},{"t":"MIN","p":"459434","n":"Rene Tosoni"},{"t":"STL","p":"430594","n":"Renyel Pinto"},{"t":"CHC","p":"571521","n":"Rex Brothers"},{"t":"LAA","p":"519071","n":"Rey Navarro"},{"t":"KC","p":"571681","n":"Reymond Fuentes"},{"t":"HOU","p":"462480","n":"Rhiner Cruz"},{"t":"NYM","p":"595996","n":"Ricardo Jacquez"},{"t":"OAK","p":"448179","n":"Rich Hill"},{"t":"TB","p":"572128","n":"Richie Shaffer"},{"t":"BOS","p":"519144","n":"Rick Porcello"},{"t":"ARI","p":"430001","n":"Rickie Weeks Jr."},{"t":"NYM","p":"133342","n":"Ricky Ledee"},{"t":"MIN","p":"445060","n":"Ricky Nolasco"},{"t":"SF","p":"460069","n":"Ricky Romero"},{"t":"LAD","p":"592596","n":"Rico Noel"},{"t":"SEA","p":"542963","n":"Rob Brantly"},{"t":"LAA","p":"519169","n":"Rob Rasmussen"},{"t":"NYY","p":"608701","n":"Rob Refsnyder"},{"t":"PIT","p":"543746","n":"Rob Scahill"},{"t":"ATL","p":"543942","n":"Rob Wooten"},{"t":"SD","p":"572362","n":"Robbie Erlin"},{"t":"CLE","p":"543257","n":"Robbie Grossman"},{"t":"ARI","p":"592662","n":"Robbie Ray"},{"t":"BOS","p":"543726","n":"Robbie Ross Jr."},{"t":"MIA","p":"435180","n":"Robert Andino"},{"t":"LAD","p":"518533","n":"Robert Carson"},{"t":"TEX","p":"445193","n":"Robert Coello"},{"t":"SD","p":"594888","n":"Robert Kral"},{"t":"NYY","p":"120415","n":"Robert Perez"},{"t":"CIN","p":"596112","n":"Robert Stephenson"},{"t":"TOR","p":"433584","n":"Roberto Hernandez"},{"t":"TOR","p":"532077","n":"Roberto Osuna"},{"t":"CLE","p":"547379","n":"Roberto Perez"},{"t":"SEA","p":"429664","n":"Robinson Cano"},{"t":"TEX","p":"455139","n":"Robinson Chirinos"},{"t":"CLE","p":"434565","n":"Robinson Tejeda"},{"t":"TOR","p":"433697","n":"Robinzon Diaz"},{"t":"SD","p":"502570","n":"Rocky Gale"},{"t":"PHI","p":"150438","n":"Rodrigo Lopez"},{"t":"BOS","p":"606273","n":"Roenis Elias"},{"t":"NYM","p":"465668","n":"Roger Bernadina"},{"t":"LAA","p":"523261","n":"Roger Kieschnick"},{"t":"KC","p":"430638","n":"Roman Colon"},{"t":"BOS","p":"542669","n":"Roman Mendez"},{"t":"LAD","p":"454972","n":"Romulo Sanchez"},{"t":"BOS","p":"430613","n":"Ronald Belisario"},{"t":"NYY","p":"591720","n":"Ronald Torreyes"},{"t":"PHI","p":"150071","n":"Ronnie Belliard"},{"t":"SF","p":"430592","n":"Ronny Cedeno"},{"t":"DET","p":"425661","n":"Ronny Paulino"},{"t":"CLE","p":"446321","n":"Ross Detwiler"},{"t":"CIN","p":"456027","n":"Ross Ohlendorf"},{"t":"LAD","p":"548389","n":"Ross Stripling"},{"t":"TEX","p":"448693","n":"Ross Wolf"},{"t":"TEX","p":"596059","n":"Rougned Odor"},{"t":"LAD","p":"429981","n":"Roy Corcoran"},{"t":"ARI","p":"523989","n":"Rubby De La Rosa"},{"t":"CIN","p":"430905","n":"Ruben Gotay"},{"t":"WSH","p":"150288","n":"Ruben Mateo"},{"t":"CWS","p":"121252","n":"Ruben Rivera"},{"t":"STL","p":"514913","n":"Ruben Tejada"},{"t":"COL","p":"502168","n":"Rudy Owens"},{"t":"BOS","p":"628329","n":"Rusney Castillo"},{"t":"PHI","p":"444453","n":"Russ Canzler"},{"t":"TOR","p":"431145","n":"Russell Martin"},{"t":"MIL","p":"460075","n":"Ryan Braun"},{"t":"TB","p":"592166","n":"Ryan Brett"},{"t":"SD","p":"488748","n":"Ryan Buchter"},{"t":"SEA","p":"475857","n":"Ryan Cook"},{"t":"LAD","p":"572810","n":"Ryan Dennick"},{"t":"OAK","p":"623430","n":"Ryan Dull"},{"t":"BAL","p":"475247","n":"Ryan Flaherty"},{"t":"TOR","p":"572365","n":"Ryan Goins"},{"t":"BOS","p":"452672","n":"Ryan Hanigan"},{"t":"PHI","p":"429667","n":"Ryan Howard"},{"t":"PHI","p":"474249","n":"Ryan Jackson"},{"t":"CHC","p":"501888","n":"Ryan Kalish"},{"t":"ATL","p":"502462","n":"Ryan Kelly"},{"t":"BOS","p":"534606","n":"Ryan LaMarre"},{"t":"ATL","p":"543432","n":"Ryan Lavarnway"},{"t":"SF","p":"489067","n":"Ryan Lollis"},{"t":"OAK","p":"425492","n":"Ryan Madson"},{"t":"CIN","p":"458919","n":"Ryan Mattheus"},{"t":"MIN","p":"594951","n":"Ryan O'Rourke"},{"t":"PHI","p":"543617","n":"Ryan O'Sullivan"},{"t":"DET","p":"543634","n":"Ryan Perry"},{"t":"MIN","p":"519151","n":"Ryan Pressly"},{"t":"COL","p":"430605","n":"Ryan Raburn"},{"t":"MIA","p":"474256","n":"Ryan Reid"},{"t":"OAK","p":"440251","n":"Ryan Roberts"},{"t":"CLE","p":"489262","n":"Ryan Rohlinger"},{"t":"CIN","p":"434884","n":"Ryan Rowland-Smith"},{"t":"TEX","p":"607387","n":"Ryan Rua"},{"t":"TEX","p":"595005","n":"Ryan Strausborger"},{"t":"TOR","p":"572193","n":"Ryan Tepera"},{"t":"LAA","p":"489400","n":"Ryan Verdugo"},{"t":"PIT","p":"285064","n":"Ryan Vogelsong"},{"t":"TB","p":"444436","n":"Ryan Webb"},{"t":"ATL","p":"543901","n":"Ryan Weber"},{"t":"ARI","p":"572253","n":"Ryan Wheeler"},{"t":"WSH","p":"475582","n":"Ryan Zimmerman"},{"t":"MIL","p":"542642","n":"Rymer Liriano"},{"t":"MIL","p":"123415","n":"Salomon Torres"},{"t":"KC","p":"521692","n":"Salvador Perez"},{"t":"TEX","p":"473879","n":"Sam Dyson"},{"t":"MIL","p":"518693","n":"Sam Freeman"},{"t":"OAK","p":"453539","n":"Sam Fuld"},{"t":"LAD","p":"459967","n":"Sam LeCure"},{"t":"STL","p":"592815","n":"Sam Tuivailala"},{"t":"HOU","p":"463645","n":"Sammy Gervacio"},{"t":"WSH","p":"519301","n":"Sammy Solis"},{"t":"BAL","p":"465679","n":"Samuel Deduno"},{"t":"BOS","p":"506702","n":"Sandy Leon"},{"t":"SF","p":"466459","n":"Sandy Rosario"},{"t":"SF","p":"433586","n":"Santiago Casilla"},{"t":"CLE","p":"346800","n":"Saul Rivera"},{"t":"MIL","p":"571697","n":"Scooter Gennett"},{"t":"KC","p":"518397","n":"Scott Alexander"},{"t":"MIN","p":"425786","n":"Scott Atchison"},{"t":"LAD","p":"435044","n":"Scott Baker"},{"t":"CHC","p":"488683","n":"Scott Barnes"},{"t":"CWS","p":"453222","n":"Scott Carroll"},{"t":"TOR","p":"571577","n":"Scott Copeland"},{"t":"TOR","p":"539438","n":"Scott Diamond"},{"t":"SD","p":"455092","n":"Scott Elbert"},{"t":"HOU","p":"444857","n":"Scott Feldman"},{"t":"LAD","p":"431148","n":"Scott Kazmir"},{"t":"PHI","p":"455949","n":"Scott Mathieson"},{"t":"BAL","p":"543518","n":"Scott McGough"},{"t":"STL","p":"445599","n":"Scott Moore"},{"t":"COL","p":"623184","n":"Scott Oberg"},{"t":"NYM","p":"456499","n":"Scott Patterson"},{"t":"ARI","p":"446488","n":"Scott Rice"},{"t":"CIN","p":"594988","n":"Scott Schebler"},{"t":"WSH","p":"502003","n":"Scott Sizemore"},{"t":"SD","p":"607087","n":"Scott Snodgress"},{"t":"LAD","p":"475100","n":"Scott Van Slyke"},{"t":"ATL","p":"430634","n":"Sean Burnett"},{"t":"OAK","p":"448281","n":"Sean Doolittle"},{"t":"NYM","p":"543219","n":"Sean Gilmartin"},{"t":"BAL","p":"488936","n":"Sean Halton"},{"t":"ATL","p":"453527","n":"Sean Kazmar"},{"t":"ARI","p":"648498","n":"Sean Mahley"},{"t":"OAK","p":"640455","n":"Sean Manaea"},{"t":"CIN","p":"445156","n":"Sean Marshall"},{"t":"MIL","p":"543594","n":"Sean Nolin"},{"t":"BOS","p":"457711","n":"Sean O'Sullivan"},{"t":"PIT","p":"446481","n":"Sean Rodriguez"},{"t":"HOU","p":"465065","n":"Sergio Escalona"},{"t":"BOS","p":"592911","n":"Sergio Espinosa"},{"t":"TB","p":"503941","n":"Sergio Perez"},{"t":"SF","p":"489265","n":"Sergio Romo"},{"t":"NYY","p":"435045","n":"Sergio Santos"},{"t":"CIN","p":"452168","n":"Sergio Valenzuela"},{"t":"STL","p":"595307","n":"Seth Maness"},{"t":"SD","p":"519229","n":"Seth Rosin"},{"t":"SEA","p":"452234","n":"Seth Smith"},{"t":"ATL","p":"664480","n":"Seth Webster"},{"t":"STL","p":"493200","n":"Seung Hwan Oh"},{"t":"PHI","p":"605894","n":"Severino Gonzalez"},{"t":"ATL","p":"623406","n":"Shae Simmons"},{"t":"MIN","p":"463017","n":"Shairon Martis"},{"t":"DET","p":"572888","n":"Shane Greene"},{"t":"CWS","p":"469834","n":"Shane Lindsay"},{"t":"MIL","p":"451089","n":"Shane Peterson"},{"t":"LAA","p":"453203","n":"Shane Robinson"},{"t":"CHC","p":"425664","n":"Shane Victorino"},{"t":"CLE","p":"451788","n":"Shaun Marcum"},{"t":"CLE","p":"542888","n":"Shawn Armstrong"},{"t":"NYM","p":"115094","n":"Shawn Green"},{"t":"DET","p":"429718","n":"Shawn Hill"},{"t":"WSH","p":"518875","n":"Shawn Kelley"},{"t":"SEA","p":"502523","n":"Shawn O'Malley"},{"t":"TEX","p":"474521","n":"Shawn Tolleson"},{"t":"ARI","p":"571946","n":"Shelby Miller"},{"t":"TEX","p":"425783","n":"Shin-Soo Choo"},{"t":"BOS","p":"493160","n":"Shunsuke Watanabe"},{"t":"ARI","p":"611093","n":"Silvino Bracho"},{"t":"COL","p":"501563","n":"Simon Castro"},{"t":"SD","p":"435401","n":"Skip Schumaker"},{"t":"NYY","p":"571761","n":"Slade Heathcott"},{"t":"ARI","p":"593647","n":"Socrates Brito"},{"t":"OAK","p":"543243","n":"Sonny Gray"},{"t":"CHC","p":"607359","n":"Spencer Patton"},{"t":"NYY","p":"516770","n":"Starlin Castro"},{"t":"PIT","p":"516782","n":"Starling Marte"},{"t":"SEA","p":"552662","n":"Stefen Romero"},{"t":"WSH","p":"452220","n":"Stephen Drew"},{"t":"CHC","p":"543155","n":"Stephen Fife"},{"t":"STL","p":"572039","n":"Stephen Piscotty"},{"t":"MIN","p":"543668","n":"Stephen Pryor"},{"t":"WSH","p":"544931","n":"Stephen Strasburg"},{"t":"OAK","p":"519390","n":"Stephen Vogt"},{"t":"SEA","p":"571467","n":"Steve Baron"},{"t":"SEA","p":"518553","n":"Steve Cishek"},{"t":"SEA","p":"502182","n":"Steve Clevenger"},{"t":"CIN","p":"447755","n":"Steve Delabar"},{"t":"TB","p":"544993","n":"Steve Geltz"},{"t":"SEA","p":"489002","n":"Steve Johnson"},{"t":"CWS","p":"543459","n":"Steve Lombardozzi"},{"t":"TB","p":"456665","n":"Steve Pearce"},{"t":"BAL","p":"476270","n":"Steve Tolleson"},{"t":"SF","p":"452722","n":"Steven Lerud"},{"t":"NYM","p":"571927","n":"Steven Matz"},{"t":"DET","p":"570615","n":"Steven Moya"},{"t":"SF","p":"595345","n":"Steven Okert"},{"t":"TB","p":"519306","n":"Steven Souza Jr."},{"t":"BOS","p":"453214","n":"Steven Wright"},{"t":"NYM","p":"516935","n":"Stolmy Pimentel"},{"t":"ATL","p":"516970","n":"Sugar Ray Marimon"},{"t":"BAL","p":"519008","n":"T.J. McFarland"},{"t":"SEA","p":"592836","n":"Taijuan Walker"},{"t":"WSH","p":"543699","n":"Tanner Roark"},{"t":"TEX","p":"489294","n":"Tanner Scheppers"},{"t":"PHI","p":"605227","n":"Taylor Featherston"},{"t":"WSH","p":"592398","n":"Taylor Hill"},{"t":"WSH","p":"518863","n":"Taylor Jordan"},{"t":"MIL","p":"543380","n":"Taylor Jungmann"},{"t":"MIN","p":"573124","n":"Taylor Rogers"},{"t":"CHC","p":"460003","n":"Taylor Teagarden"},{"t":"OAK","p":"543853","n":"Taylor Thompson"},{"t":"KC","p":"605253","n":"Terrance Gore"},{"t":"DET","p":"519403","n":"Thad Weber"},{"t":"DET","p":"474494","n":"Thomas Field"},{"t":"CIN","p":"534947","n":"Tim Adleman"},{"t":"TB","p":"542921","n":"Tim Beckham"},{"t":"KC","p":"525768","n":"Tim Collins"},{"t":"STL","p":"608641","n":"Tim Cooney"},{"t":"MIL","p":"457422","n":"Tim Dillard"},{"t":"CHC","p":"543148","n":"Tim Federowicz"},{"t":"SF","p":"218596","n":"Tim Hudson"},{"t":"SF","p":"453311","n":"Tim Lincecum"},{"t":"CIN","p":"543532","n":"Tim Melville"},{"t":"ARI","p":"431162","n":"Tim Stauffer"},{"t":"CLE","p":"543334","n":"TJ House"},{"t":"ATL","p":"434298","n":"Todd Coffey"},{"t":"LAA","p":"592239","n":"Todd Cunningham"},{"t":"CWS","p":"453943","n":"Todd Frazier"},{"t":"BAL","p":"445170","n":"Todd Redmond"},{"t":"SEA","p":"650851","n":"Tom de Blok"},{"t":"CLE","p":"452733","n":"Tom Gorzelanny"},{"t":"MIA","p":"543408","n":"Tom Koehler"},{"t":"COL","p":"608596","n":"Tom Murphy"},{"t":"TEX","p":"452666","n":"Tom Wilhelmsen"},{"t":"COL","p":"120416","n":"Tomas Perez"},{"t":"MIA","p":"542513","n":"Tomas Telis"},{"t":"SF","p":"462102","n":"Tommy Hanson"},{"t":"CLE","p":"488984","n":"Tommy Hunter"},{"t":"CWS","p":"592454","n":"Tommy Kahnle"},{"t":"CHC","p":"600303","n":"Tommy La Stella"},{"t":"BOS","p":"518927","n":"Tommy Layne"},{"t":"MIA","p":"523265","n":"Tommy Medica"},{"t":"MIN","p":"543548","n":"Tommy Milone"},{"t":"STL","p":"502054","n":"Tommy Pham"},{"t":"SF","p":"473234","n":"Tony Abreu"},{"t":"TEX","p":"501817","n":"Tony Barnette"},{"t":"WSH","p":"542999","n":"Tony Campana"},{"t":"CIN","p":"571561","n":"Tony Cingrani"},{"t":"KC","p":"488810","n":"Tony Cruz"},{"t":"WSH","p":"448242","n":"Tony Gwynn Jr."},{"t":"CWS","p":"430640","n":"Tony Pena Jr."},{"t":"TOR","p":"506997","n":"Tony Sanchez"},{"t":"HOU","p":"448609","n":"Tony Sipp"},{"t":"PIT","p":"453265","n":"Tony Watson"},{"t":"COL","p":"547172","n":"Tony Wolters"},{"t":"SEA","p":"543964","n":"Tony Zych"},{"t":"CLE","p":"538506","n":"Toru Murata"},{"t":"MIA","p":"429715","n":"Travis Blackley"},{"t":"NYM","p":"518595","n":"Travis d'Arnaud"},{"t":"LAD","p":"458239","n":"Travis Denker"},{"t":"CWS","p":"448170","n":"Travis Ishikawa"},{"t":"SD","p":"608671","n":"Travis Jankowski"},{"t":"BOS","p":"543768","n":"Travis Shaw"},{"t":"KC","p":"501983","n":"Travis Snider"},{"t":"STL","p":"502023","n":"Travis Tartamella"},{"t":"CHC","p":"475243","n":"Travis Wood"},{"t":"LAD","p":"572204","n":"Trayce Thompson"},{"t":"DET","p":"477054","n":"Trayvon Robinson"},{"t":"WSH","p":"607208","n":"Trea Turner"},{"t":"ARI","p":"469721","n":"Trent Oeltjen"},{"t":"CLE","p":"545333","n":"Trevor Bauer"},{"t":"SF","p":"623143","n":"Trevor Brown"},{"t":"CHC","p":"502239","n":"Trevor Cahill"},{"t":"WSH","p":"641627","n":"Trevor Gott"},{"t":"MIN","p":"543507","n":"Trevor May"},{"t":"MIN","p":"461858","n":"Trevor Plouffe"},{"t":"STL","p":"572096","n":"Trevor Rosenthal"},{"t":"COL","p":"596115","n":"Trevor Story"},{"t":"PIT","p":"657022","n":"Trey Supak"},{"t":"MIA","p":"461856","n":"Troy Patton"},{"t":"TOR","p":"453064","n":"Troy Tulowitzki"},{"t":"TOR","p":"518972","n":"Trystan Magnuson"},{"t":"MIN","p":"457292","n":"Tsuyoshi Nishioka"},{"t":"CHC","p":"493159","n":"Tsuyoshi Wada"},{"t":"CIN","p":"571466","n":"Tucker Barnhart"},{"t":"ARI","p":"488912","n":"Tuffy Gosewisch"},{"t":"SF","p":"621389","n":"Ty Blach"},{"t":"COL","p":"542881","n":"Tyler Anderson"},{"t":"COL","p":"543022","n":"Tyler Chatwood"},{"t":"ARI","p":"461325","n":"Tyler Clippard"},{"t":"NYY","p":"543031","n":"Tyler Cloyd"},{"t":"DET","p":"607385","n":"Tyler Collins"},{"t":"CWS","p":"502125","n":"Tyler Colvin"},{"t":"MIL","p":"572788","n":"Tyler Cravy"},{"t":"MIN","p":"608648","n":"Tyler Duffey"},{"t":"ATL","p":"452095","n":"Tyler Flowers"},{"t":"PHI","p":"595963","n":"Tyler Goeddel"},{"t":"CIN","p":"534627","n":"Tyler Holt"},{"t":"OAK","p":"502285","n":"Tyler Ladendorf"},{"t":"STL","p":"544928","n":"Tyler Lyons"},{"t":"COL","p":"554431","n":"Tyler Matzek"},{"t":"ATL","p":"489138","n":"Tyler Moore"},{"t":"CLE","p":"571980","n":"Tyler Naquin"},{"t":"NYY","p":"621397","n":"Tyler Olson"},{"t":"PHI","p":"543629","n":"Tyler Pastornicky"},{"t":"CWS","p":"573135","n":"Tyler Saladino"},{"t":"LAA","p":"572140","n":"Tyler Skaggs"},{"t":"MIL","p":"592804","n":"Tyler Thornburg"},{"t":"ARI","p":"621281","n":"Tyler Wagner"},{"t":"HOU","p":"643603","n":"Tyler White"},{"t":"BAL","p":"592869","n":"Tyler Wilson"},{"t":"LAD","p":"445204","n":"Tyson Brummett"},{"t":"SD","p":"475115","n":"Tyson Ross"},{"t":"BAL","p":"434622","n":"Ubaldo Jimenez"},{"t":"BAL","p":"474699","n":"Vance Worley"},{"t":"NYM","p":"502195","n":"Vic Black"},{"t":"LAD","p":"407874","n":"Victor Alvarez"},{"t":"MIL","p":"466339","n":"Victor Garate"},{"t":"STL","p":"469690","n":"Victor Marte"},{"t":"DET","p":"400121","n":"Victor Martinez"},{"t":"COL","p":"651009","n":"Victor Monteagudo"},{"t":"SEA","p":"573064","n":"Vidal Nuno"},{"t":"SF","p":"476570","n":"Vin Mazzaro"},{"t":"NYM","p":"572714","n":"Vince Belnome"},{"t":"PHI","p":"592826","n":"Vince Velasquez"},{"t":"NYY","p":"502260","n":"Vinnie Pestano"},{"t":"CWS","p":"457130","n":"Vinny Rottino"},{"t":"KC","p":"451584","n":"Wade Davis"},{"t":"TOR","p":"453281","n":"Wade LeBlanc"},{"t":"SEA","p":"489119","n":"Wade Miley"},{"t":"WSH","p":"471183","n":"Waldis Joaquin"},{"t":"SD","p":"477581","n":"Walter Silva"},{"t":"HOU","p":"434643","n":"Wandy Rodriguez"},{"t":"SEA","p":"607090","n":"Wayne Taylor"},{"t":"MIL","p":"623913","n":"Wei-Chung Wang"},{"t":"MIA","p":"612672","n":"Wei-Yin Chen"},{"t":"ARI","p":"456078","n":"Welington Castillo"},{"t":"BOS","p":"449079","n":"Wesley Wright"},{"t":"MIN","p":"425656","n":"Wil Ledezma"},{"t":"SD","p":"571976","n":"Wil Myers"},{"t":"ATL","p":"408242","n":"Wil Nieves"},{"t":"MIN","p":"541600","n":"Wilfredo Tovar"},{"t":"COL","p":"501647","n":"Wilin Rosario"},{"t":"TOR","p":"446868","n":"Wilkin Castillo"},{"t":"MIN","p":"457133","n":"Wilkin Ramirez"},{"t":"NYY","p":"516853","n":"Wilking Rodriguez"},{"t":"HOU","p":"501789","n":"Will Harris"},{"t":"MIL","p":"519025","n":"Will Middlebrooks"},{"t":"WSH","p":"349193","n":"Will Ohman"},{"t":"MIL","p":"519293","n":"Will Smith"},{"t":"PHI","p":"461416","n":"Will Venable"},{"t":"BOS","p":"571035","n":"William Cuevas"},{"t":"ATL","p":"554234","n":"Williams Perez"},{"t":"TOR","p":"458974","n":"Willie Collazo"},{"t":"BAL","p":"136400","n":"Willis Otanez"},{"t":"KC","p":"430838","n":"Willy Taveras"},{"t":"WSH","p":"594694","n":"Wilmer Difo"},{"t":"NYM","p":"527038","n":"Wilmer Flores"},{"t":"TB","p":"400140","n":"Wilson Betemit"},{"t":"WSH","p":"467092","n":"Wilson Ramos"},{"t":"TOR","p":"446641","n":"Wilton Lopez"},{"t":"SEA","p":"276377","n":"Wily Mo Pena"},{"t":"MIL","p":"503449","n":"Wily Peralta"},{"t":"CIN","p":"434605","n":"Wladimir Balentien"},{"t":"BOS","p":"593428","n":"Xander Bogaerts"},{"t":"BAL","p":"542897","n":"Xavier Avery"},{"t":"TB","p":"458584","n":"Xavier Cedeno"},{"t":"MIA","p":"489305","n":"Xavier Scruggs"},{"t":"MIL","p":"592680","n":"Yadiel Rivera"},{"t":"STL","p":"425877","n":"Yadier Molina"},{"t":"CLE","p":"543228","n":"Yan Gomes"},{"t":"SD","p":"500208","n":"Yangervis Solarte"},{"t":"LAD","p":"624577","n":"Yasiel Puig"},{"t":"LAD","p":"518735","n":"Yasmani Grandal"},{"t":"ARI","p":"630111","n":"Yasmany Tomas"},{"t":"MIL","p":"553872","n":"Yhonathan Barrios"},{"t":"LAD","p":"554340","n":"Yimi Garcia"},{"t":"PHI","p":"470279","n":"Yoel Hernandez"},{"t":"NYM","p":"493316","n":"Yoenis Cespedes"},{"t":"PHI","p":"500721","n":"Yoervis Medina"},{"t":"COL","p":"456071","n":"Yohan Flande"},{"t":"KC","p":"464416","n":"Yohan Pino"},{"t":"OAK","p":"475174","n":"Yonder Alonso"},{"t":"KC","p":"570649","n":"Yordano Ventura"},{"t":"MIN","p":"434590","n":"Yorman Bazardo"},{"t":"CIN","p":"550298","n":"Yorman Rodriguez"},{"t":"CHC","p":"150275","n":"Yorvit Torrealba"},{"t":"BAL","p":"451596","n":"Yovani Gallardo"},{"t":"TEX","p":"506433","n":"Yu Darvish"},{"t":"LAA","p":"488862","n":"Yunel Escobar"},{"t":"LAA","p":"493337","n":"Yunesky Maya"},{"t":"MIL","p":"435358","n":"Yuniesky Betancourt"},{"t":"NYY","p":"436913","n":"Yurendell de Caster"},{"t":"WSH","p":"433589","n":"Yusmeiro Petit"},{"t":"ARI","p":"657205","n":"Zac Curtis"},{"t":"CHC","p":"573127","n":"Zac Rosscup"},{"t":"BAL","p":"502154","n":"Zach Britton"},{"t":"MIL","p":"605200","n":"Zach Davies"},{"t":"CWS","p":"435043","n":"Zach Duke"},{"t":"LAD","p":"545346","n":"Zach Lee"},{"t":"MIA","p":"518963","n":"Zach Lutz"},{"t":"CLE","p":"502083","n":"Zach McAllister"},{"t":"BAL","p":"452061","n":"Zach Phillips"},{"t":"CWS","p":"474029","n":"Zach Putnam"},{"t":"LAA","p":"543819","n":"Zach Stewart"},{"t":"LAD","p":"595025","n":"Zach Walters"},{"t":"CIN","p":"446359","n":"Zack Cozart"},{"t":"ARI","p":"643327","n":"Zack Godley"},{"t":"ARI","p":"425844","n":"Zack Greinke"},{"t":"MIL","p":"572958","n":"Zack Jones"},{"t":"SD","p":"434564","n":"Zack Segovia"},{"t":"NYM","p":"554430","n":"Zack Wheeler"},{"t":"BOS","p":"543809","n":"Zeke Spruill"},{"t":"ATL","p":"501660","n":"Zoilo Almonte"}]}},"team_all":{"queryResults":{"created":"2016-05-08T20:58:09","totalSize":"30","row":[{"phone_number":"(410) 685-9800","venue_name":"Oriole Park at Camden Yards","franchise_code":"MLA","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Baltimore","city":"Baltimore","name_display_full":"Baltimore Orioles","spring_league_abbrev":"GL","time_zone_alt":"America/New_York","sport_id":"1","venue_id":"2","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"American League","league_id":"103","name_abbrev":"BAL","address_province":"","bis_team_code":"BAL","league":"AL","spring_league":"GL","base_url":"orioles.mlb.com","address_zip":"21201","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"ET","address_line1":"333 West Camden Street","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"ALE","sport_abbrev":"MLB","name_display_short":"Baltimore","team_id":"110","active_sw":"Y","address_intl":"N","state":"MD","address_country":"","mlb_org_abbrev":"","division":"E","name":"Orioles","team_code":"bal","sport_code_name":"MLB","website_url":"orioles.com","first_year_of_play":"1954","league_abbrev":"AL","name_display_long":"Baltimore Orioles","store_url":"baltimore.orioles.mlb.com","name_short":"Baltimore","address_state":"MD","division_full":"American League East","spring_league_full":"Grapefruit League","address":"333 West Camden Street&#xa;Baltimore, MD&#x9;21201","name_display_brief":"Orioles","file_code":"bal","division_id":"201","spring_league_id":"115","venue_short":"Oriole Park"},{"phone_number":"(617) 267-9440","venue_name":"Fenway Park","franchise_code":"BOS","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Boston","city":"Boston","name_display_full":"Boston Red Sox","spring_league_abbrev":"GL","time_zone_alt":"America/New_York","sport_id":"1","venue_id":"3","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"American League","league_id":"103","name_abbrev":"BOS","address_province":"","bis_team_code":"BOS","league":"AL","spring_league":"GL","base_url":"redsox.mlb.com","address_zip":"2215","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"ET","address_line1":"4 Yawkey Way","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"ALE","sport_abbrev":"MLB","name_display_short":"Boston","team_id":"111","active_sw":"Y","address_intl":"N","state":"MA","address_country":"","mlb_org_abbrev":"","division":"E","name":"Red Sox","team_code":"bos","sport_code_name":"MLB","website_url":"redsox.com","first_year_of_play":"1901","league_abbrev":"AL","name_display_long":"Boston Red Sox","store_url":"boston.redsox.mlb.com","name_short":"Boston","address_state":"MA","division_full":"American League East","spring_league_full":"Grapefruit League","address":"4 Yawkey Way&#xa;Boston, MA&#x9;2215","name_display_brief":"Red Sox","file_code":"bos","division_id":"201","spring_league_id":"115","venue_short":""},{"phone_number":"(312) 674-1000","venue_name":"U.S. Cellular Field","franchise_code":"CHA","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Chicago","city":"Chicago","name_display_full":"Chicago White Sox","spring_league_abbrev":"CL","time_zone_alt":"America/Chicago","sport_id":"1","venue_id":"4","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"American League","league_id":"103","name_abbrev":"CWS","address_province":"","bis_team_code":"CWS","league":"AL","spring_league":"CL","base_url":"whitesox.mlb.com","address_zip":"60616","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"CT","address_line1":"333 West 35th Street","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"ALC","sport_abbrev":"MLB","name_display_short":"Chi White Sox","team_id":"145","active_sw":"Y","address_intl":"N","state":"IL","address_country":"","mlb_org_abbrev":"","division":"C","name":"White Sox","team_code":"cha","sport_code_name":"MLB","website_url":"whitesox.com","first_year_of_play":"1901","league_abbrev":"AL","name_display_long":"Chicago White Sox","store_url":"chicago.whitesox.mlb.com","name_short":"Chicago","address_state":"IL","division_full":"American League Central","spring_league_full":"Cactus League","address":"333 West 35th Street&#xa;Chicago, IL&#x9;60616","name_display_brief":"White Sox","file_code":"cws","division_id":"202","spring_league_id":"114","venue_short":""},{"phone_number":"(216) 420-4200","venue_name":"Progressive Field","franchise_code":"CLE","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Cleveland","city":"Cleveland","name_display_full":"Cleveland Indians","spring_league_abbrev":"CL","time_zone_alt":"America/New_York","sport_id":"1","venue_id":"5","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"American League","league_id":"103","name_abbrev":"CLE","address_province":"","bis_team_code":"CLE","league":"AL","spring_league":"CL","base_url":"indians.mlb.com","address_zip":"44115","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"ET","address_line1":"2401 Ontario Street","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"ALC","sport_abbrev":"MLB","name_display_short":"Cleveland","team_id":"114","active_sw":"Y","address_intl":"N","state":"OH","address_country":"","mlb_org_abbrev":"","division":"C","name":"Indians","team_code":"cle","sport_code_name":"MLB","website_url":"indians.com","first_year_of_play":"1901","league_abbrev":"AL","name_display_long":"Cleveland Indians","store_url":"cleveland.indians.mlb.com","name_short":"Cleveland","address_state":"OH","division_full":"American League Central","spring_league_full":"Cactus League","address":"2401 Ontario Street&#xa;Cleveland, OH&#x9;44115","name_display_brief":"Indians","file_code":"cle","division_id":"202","spring_league_id":"114","venue_short":""},{"phone_number":"(313) 471-2000","venue_name":"Comerica Park","franchise_code":"DET","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Detroit","city":"Detroit","name_display_full":"Detroit Tigers","spring_league_abbrev":"GL","time_zone_alt":"America/New_York","sport_id":"1","venue_id":"2394","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"American League","league_id":"103","name_abbrev":"DET","address_province":"","bis_team_code":"DET","league":"AL","spring_league":"GL","base_url":"tigers.mlb.com","address_zip":"48201","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"ET","address_line1":"2100 Woodward Avenue","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"ALC","sport_abbrev":"MLB","name_display_short":"Detroit","team_id":"116","active_sw":"Y","address_intl":"N","state":"MI","address_country":"","mlb_org_abbrev":"","division":"C","name":"Tigers","team_code":"det","sport_code_name":"MLB","website_url":"tigers.com","first_year_of_play":"1901","league_abbrev":"AL","name_display_long":"Detroit Tigers","store_url":"detroit.tigers.mlb.com","name_short":"Detroit","address_state":"MI","division_full":"American League Central","spring_league_full":"Grapefruit League","address":"2100 Woodward Avenue&#xa;Detroit, MI&#x9;48201","name_display_brief":"Tigers","file_code":"det","division_id":"202","spring_league_id":"115","venue_short":""},{"phone_number":"(713) 259-8000","venue_name":"Minute Maid Park","franchise_code":"HOU","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Houston","city":"Houston","name_display_full":"Houston Astros","spring_league_abbrev":"GL","time_zone_alt":"America/Chicago","sport_id":"1","venue_id":"2392","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"American League","league_id":"103","name_abbrev":"HOU","address_province":"","bis_team_code":"HOU","league":"AL","spring_league":"GL","base_url":"astros.mlb.com","address_zip":"77002","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"CT","address_line1":"501 Crawford Street","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"ALW","sport_abbrev":"MLB","name_display_short":"Houston","team_id":"117","active_sw":"Y","address_intl":"N","state":"TX","address_country":"","mlb_org_abbrev":"","division":"W","name":"Astros","team_code":"hou","sport_code_name":"MLB","website_url":"astros.com","first_year_of_play":"1962","league_abbrev":"AL","name_display_long":"Houston Astros","store_url":"houston.astros.mlb.com","name_short":"Houston","address_state":"TX","division_full":"American League West","spring_league_full":"Grapefruit League","address":"501 Crawford Street&#xa;Houston, TX&#x9;77002","name_display_brief":"Astros","file_code":"hou","division_id":"200","spring_league_id":"115","venue_short":""},{"phone_number":"(816) 921-8000","venue_name":"Kauffman Stadium","franchise_code":"KCA","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Kansas City","city":"Kansas City","name_display_full":"Kansas City Royals","spring_league_abbrev":"CL","time_zone_alt":"America/Chicago","sport_id":"1","venue_id":"7","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"American League","league_id":"103","name_abbrev":"KC","address_province":"","bis_team_code":"KC","league":"AL","spring_league":"CL","base_url":"royals.mlb.com","address_zip":"64129","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"CT","address_line1":"One Royal Way","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"ALC","sport_abbrev":"MLB","name_display_short":"Kansas City","team_id":"118","active_sw":"Y","address_intl":"N","state":"MO","address_country":"","mlb_org_abbrev":"","division":"C","name":"Royals","team_code":"kca","sport_code_name":"MLB","website_url":"royals.com","first_year_of_play":"1969","league_abbrev":"AL","name_display_long":"Kansas City Royals","store_url":"kansascity.royals.mlb.com","name_short":"Kansas City","address_state":"MO","division_full":"American League Central","spring_league_full":"Cactus League","address":"One Royal Way&#xa;Kansas City, MO&#x9;64129","name_display_brief":"Royals","file_code":"kc","division_id":"202","spring_league_id":"114","venue_short":""},{"phone_number":"(714) 940-2000","venue_name":"Angel Stadium of Anaheim","franchise_code":"LAA","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Anaheim","city":"Anaheim","name_display_full":"Los Angeles Angels","spring_league_abbrev":"CL","time_zone_alt":"America/Los_Angeles","sport_id":"1","venue_id":"1","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"American League","league_id":"103","name_abbrev":"LAA","address_province":"","bis_team_code":"CAL","league":"AL","spring_league":"CL","base_url":"angels.mlb.com","address_zip":"92806","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"PT","address_line1":"2000 Gene Autry Way","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"ALW","sport_abbrev":"MLB","name_display_short":"LA Angels","team_id":"108","active_sw":"Y","address_intl":"N","state":"CA","address_country":"","mlb_org_abbrev":"","division":"W","name":"Angels","team_code":"ana","sport_code_name":"MLB","website_url":"angels.com","first_year_of_play":"2005","league_abbrev":"AL","name_display_long":"Los Angeles Angels of Anaheim","store_url":"losangeles.angels.mlb.com","name_short":"Los Angeles","address_state":"CA","division_full":"American League West","spring_league_full":"Cactus League","address":"2000 Gene Autry Way&#xa;Anaheim, CA&#x9;92806","name_display_brief":"Angels","file_code":"ana","division_id":"200","spring_league_id":"114","venue_short":"Angel Stadium"},{"phone_number":"(612) 659-3400","venue_name":"Target Field","franchise_code":"WS1","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Minneapolis","city":"Minneapolis","name_display_full":"Minnesota Twins","spring_league_abbrev":"GL","time_zone_alt":"America/Chicago","sport_id":"1","venue_id":"3312","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"American League","league_id":"103","name_abbrev":"MIN","address_province":"","bis_team_code":"MIN","league":"AL","spring_league":"GL","base_url":"twins.mlb.com","address_zip":"55403","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"CT","address_line1":"1 Twins Way","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"ALC","sport_abbrev":"MLB","name_display_short":"Minnesota","team_id":"142","active_sw":"Y","address_intl":"N","state":"MN","address_country":"","mlb_org_abbrev":"","division":"C","name":"Twins","team_code":"min","sport_code_name":"MLB","website_url":"twinsbaseball.com","first_year_of_play":"1961","league_abbrev":"AL","name_display_long":"Minnesota Twins","store_url":"minnesota.twins.mlb.com","name_short":"Minnesota","address_state":"MN","division_full":"American League Central","spring_league_full":"Grapefruit League","address":"1 Twins Way&#xa;Minneapolis, MN&#x9;55403","name_display_brief":"Twins","file_code":"min","division_id":"202","spring_league_id":"115","venue_short":""},{"phone_number":"(718) 293-4300","venue_name":"Yankee Stadium","franchise_code":"BLA","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Bronx","city":"Bronx","name_display_full":"New York Yankees","spring_league_abbrev":"GL","time_zone_alt":"America/New_York","sport_id":"1","venue_id":"3313","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"American League","league_id":"103","name_abbrev":"NYY","address_province":"","bis_team_code":"NYY","league":"AL","spring_league":"GL","base_url":"yankees.mlb.com","address_zip":"10451","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"ET","address_line1":"One East 161st Street","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"ALE","sport_abbrev":"MLB","name_display_short":"NY Yankees","team_id":"147","active_sw":"Y","address_intl":"N","state":"NY","address_country":"","mlb_org_abbrev":"","division":"E","name":"Yankees","team_code":"nya","sport_code_name":"MLB","website_url":"yankees.com","first_year_of_play":"1903","league_abbrev":"AL","name_display_long":"New York Yankees","store_url":"newyork.yankees.mlb.com","name_short":"New York","address_state":"NY","division_full":"American League East","spring_league_full":"Grapefruit League","address":"One East 161st Street&#xa;Bronx, NY&#x9;10451","name_display_brief":"Yankees","file_code":"nyy","division_id":"201","spring_league_id":"115","venue_short":""},{"phone_number":"(510) 638-4900","venue_name":"Oakland Coliseum","franchise_code":"PHA","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Oakland","city":"Oakland","name_display_full":"Oakland Athletics","spring_league_abbrev":"CL","time_zone_alt":"America/Los_Angeles","sport_id":"1","venue_id":"10","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"American League","league_id":"103","name_abbrev":"OAK","address_province":"","bis_team_code":"OAK","league":"AL","spring_league":"CL","base_url":"athletics.mlb.com","address_zip":"94621","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"PT","address_line1":"7000 Coliseum Way","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"ALW","sport_abbrev":"MLB","name_display_short":"Oakland","team_id":"133","active_sw":"Y","address_intl":"N","state":"CA","address_country":"","mlb_org_abbrev":"","division":"W","name":"Athletics","team_code":"oak","sport_code_name":"MLB","website_url":"athletics.com","first_year_of_play":"1968","league_abbrev":"AL","name_display_long":"Oakland Athletics","store_url":"oakland.athletics.mlb.com","name_short":"Oakland","address_state":"CA","division_full":"American League West","spring_league_full":"Cactus League","address":"7000 Coliseum Way&#xa;Oakland, CA&#x9;94621","name_display_brief":"Athletics","file_code":"oak","division_id":"200","spring_league_id":"114","venue_short":""},{"phone_number":"(206) 346-4000","venue_name":"Safeco Field","franchise_code":"SEA","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Seattle","city":"Seattle","name_display_full":"Seattle Mariners","spring_league_abbrev":"CL","time_zone_alt":"America/Los_Angeles","sport_id":"1","venue_id":"680","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"American League","league_id":"103","name_abbrev":"SEA","address_province":"","bis_team_code":"SEA","league":"AL","spring_league":"CL","base_url":"mariners.mlb.com","address_zip":"98104","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"PT","address_line1":"P.O. Box 4100","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"ALW","sport_abbrev":"MLB","name_display_short":"Seattle","team_id":"136","active_sw":"Y","address_intl":"N","state":"WA","address_country":"","mlb_org_abbrev":"","division":"W","name":"Mariners","team_code":"sea","sport_code_name":"MLB","website_url":"mariners.com","first_year_of_play":"1977","league_abbrev":"AL","name_display_long":"Seattle Mariners","store_url":"seattle.mariners.mlb.com","name_short":"Seattle","address_state":"WA","division_full":"American League West","spring_league_full":"Cactus League","address":"P.O. Box 4100&#xa;Seattle, WA&#x9;98104","name_display_brief":"Mariners","file_code":"sea","division_id":"200","spring_league_id":"114","venue_short":""},{"phone_number":"(727) 825-3137","venue_name":"Tropicana Field","franchise_code":"TBA","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"St. Petersburg","city":"Tampa Bay","name_display_full":"Tampa Bay Rays","spring_league_abbrev":"GL","time_zone_alt":"America/New_York","sport_id":"1","venue_id":"12","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"American League","league_id":"103","name_abbrev":"TB","address_province":"","bis_team_code":"TB","league":"AL","spring_league":"GL","base_url":"rays.mlb.com","address_zip":"33705","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"ET","address_line1":"One Tropicana Drive","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"ALE","sport_abbrev":"MLB","name_display_short":"Tampa Bay","team_id":"139","active_sw":"Y","address_intl":"N","state":"FL","address_country":"","mlb_org_abbrev":"","division":"E","name":"Rays","team_code":"tba","sport_code_name":"MLB","website_url":"raysbaseball.com","first_year_of_play":"1998","league_abbrev":"AL","name_display_long":"Tampa Bay Rays","store_url":"tampabay.rays.mlb.com","name_short":"Tampa Bay","address_state":"FL","division_full":"American League East","spring_league_full":"Grapefruit League","address":"One Tropicana Drive&#xa;St. Petersburg, FL&#x9;33705","name_display_brief":"Rays","file_code":"tb","division_id":"201","spring_league_id":"115","venue_short":""},{"phone_number":"(817) 273-5222","venue_name":"Globe Life Park in Arlington","franchise_code":"WS2","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Arlington","city":"Arlington","name_display_full":"Texas Rangers","spring_league_abbrev":"CL","time_zone_alt":"America/Chicago","sport_id":"1","venue_id":"13","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"American League","league_id":"103","name_abbrev":"TEX","address_province":"","bis_team_code":"TEX","league":"AL","spring_league":"CL","base_url":"rangers.mlb.com","address_zip":"76011","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"CT","address_line1":"1000 Ballpark Way","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"ALW","sport_abbrev":"MLB","name_display_short":"Texas","team_id":"140","active_sw":"Y","address_intl":"N","state":"TX","address_country":"","mlb_org_abbrev":"","division":"W","name":"Rangers","team_code":"tex","sport_code_name":"MLB","website_url":"texasrangers.com","first_year_of_play":"1972","league_abbrev":"AL","name_display_long":"Texas Rangers","store_url":"texas.rangers.mlb.com","name_short":"Texas","address_state":"TX","division_full":"American League West","spring_league_full":"Cactus League","address":"1000 Ballpark Way&#xa;Arlington, TX&#x9;76011","name_display_brief":"Rangers","file_code":"tex","division_id":"200","spring_league_id":"114","venue_short":"Globe Life Park"},{"phone_number":"(416) 341-1000","venue_name":"Rogers Centre","franchise_code":"TOR","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Toronto","city":"Toronto","name_display_full":"Toronto Blue Jays","spring_league_abbrev":"GL","time_zone_alt":"America/New_York","sport_id":"1","venue_id":"14","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"American League","league_id":"103","name_abbrev":"TOR","address_province":"Ontario","bis_team_code":"TOR","league":"AL","spring_league":"GL","base_url":"bluejays.mlb.com","address_zip":"M5V1J1","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"ET","address_line1":"1 Blue Jays Way, Suite 3200","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"ALE","sport_abbrev":"MLB","name_display_short":"Toronto","team_id":"141","active_sw":"Y","address_intl":"Y","state":"ON","address_country":"Canada","mlb_org_abbrev":"","division":"E","name":"Blue Jays","team_code":"tor","sport_code_name":"MLB","website_url":"bluejays.com","first_year_of_play":"1977","league_abbrev":"AL","name_display_long":"Toronto Blue Jays","store_url":"toronto.bluejays.mlb.com","name_short":"Toronto","address_state":"","division_full":"American League East","spring_league_full":"Grapefruit League","address":"1 Blue Jays Way, Suite 3200&#xa;Toronto, Ontario, Canada&#xa;M5V1J1","name_display_brief":"Blue Jays","file_code":"tor","division_id":"201","spring_league_id":"115","venue_short":""},{"phone_number":"(602) 462-6500","venue_name":"Chase Field","franchise_code":"ARI","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Phoenix","city":"Phoenix","name_display_full":"Arizona Diamondbacks","spring_league_abbrev":"CL","time_zone_alt":"America/Phoenix","sport_id":"1","venue_id":"15","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"National League","league_id":"104","name_abbrev":"ARI","address_province":"","bis_team_code":"ARI","league":"NL","spring_league":"CL","base_url":"dbacks.mlb.com","address_zip":"85004","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"MST","address_line1":"401 East Jefferson Street","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"NLW","sport_abbrev":"MLB","name_display_short":"Arizona","team_id":"109","active_sw":"Y","address_intl":"N","state":"AZ","address_country":"","mlb_org_abbrev":"","division":"W","name":"D-backs","team_code":"ari","sport_code_name":"MLB","website_url":"dbacks.com","first_year_of_play":"1998","league_abbrev":"NL","name_display_long":"Arizona Diamondbacks","store_url":"arizona.diamondbacks.mlb.com","name_short":"Arizona","address_state":"AZ","division_full":"National League West","spring_league_full":"Cactus League","address":"401 East Jefferson Street&#xa;Phoenix, AZ&#x9;85004","name_display_brief":"D-backs","file_code":"ari","division_id":"203","spring_league_id":"114","venue_short":""},{"phone_number":"(404) 522-7630","venue_name":"Turner Field","franchise_code":"BS1","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Atlanta","city":"Atlanta","name_display_full":"Atlanta Braves","spring_league_abbrev":"GL","time_zone_alt":"America/New_York","sport_id":"1","venue_id":"16","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"National League","league_id":"104","name_abbrev":"ATL","address_province":"","bis_team_code":"ATL","league":"NL","spring_league":"GL","base_url":"braves.mlb.com","address_zip":"30315","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"ET","address_line1":"755 Hank Aaron Drive","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"NLE","sport_abbrev":"MLB","name_display_short":"Atlanta","team_id":"144","active_sw":"Y","address_intl":"N","state":"GA","address_country":"","mlb_org_abbrev":"","division":"E","name":"Braves","team_code":"atl","sport_code_name":"MLB","website_url":"braves.com","first_year_of_play":"1966","league_abbrev":"NL","name_display_long":"Atlanta Braves","store_url":"atlanta.braves.mlb.com","name_short":"Atlanta","address_state":"GA","division_full":"National League East","spring_league_full":"Grapefruit League","address":"755 Hank Aaron Drive&#xa;Atlanta, GA&#x9;30315","name_display_brief":"Braves","file_code":"atl","division_id":"204","spring_league_id":"115","venue_short":""},{"phone_number":"(773) 404-2827","venue_name":"Wrigley Field","franchise_code":"CH2","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Chicago","city":"Chicago","name_display_full":"Chicago Cubs","spring_league_abbrev":"CL","time_zone_alt":"America/Chicago","sport_id":"1","venue_id":"17","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"National League","league_id":"104","name_abbrev":"CHC","address_province":"","bis_team_code":"CHI","league":"NL","spring_league":"CL","base_url":"cubs.mlb.com","address_zip":"60613-4397","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"CT","address_line1":"1060 West Addison","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"NLC","sport_abbrev":"MLB","name_display_short":"Chi Cubs","team_id":"112","active_sw":"Y","address_intl":"N","state":"IL","address_country":"","mlb_org_abbrev":"","division":"C","name":"Cubs","team_code":"chn","sport_code_name":"MLB","website_url":"cubs.com","first_year_of_play":"1876","league_abbrev":"NL","name_display_long":"Chicago Cubs","store_url":"chicago.cubs.mlb.com","name_short":"Chicago","address_state":"IL","division_full":"National League Central","spring_league_full":"Cactus League","address":"1060 West Addison&#xa;Chicago, IL&#x9;60613-4397","name_display_brief":"Cubs","file_code":"chc","division_id":"205","spring_league_id":"114","venue_short":""},{"phone_number":"(513) 765-7000","venue_name":"Great American Ball Park","franchise_code":"CN2","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Cincinnati","city":"Cincinnati","name_display_full":"Cincinnati Reds","spring_league_abbrev":"CL","time_zone_alt":"America/New_York","sport_id":"1","venue_id":"2602","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"National League","league_id":"104","name_abbrev":"CIN","address_province":"","bis_team_code":"CIN","league":"NL","spring_league":"CL","base_url":"reds.mlb.com","address_zip":"45202-4109","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"ET","address_line1":"100 Main Street","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"NLC","sport_abbrev":"MLB","name_display_short":"Cincinnati","team_id":"113","active_sw":"Y","address_intl":"N","state":"OH","address_country":"","mlb_org_abbrev":"","division":"C","name":"Reds","team_code":"cin","sport_code_name":"MLB","website_url":"reds.com","first_year_of_play":"1890","league_abbrev":"NL","name_display_long":"Cincinnati Reds","store_url":"cincinnati.reds.mlb.com","name_short":"Cincinnati","address_state":"OH","division_full":"National League Central","spring_league_full":"Cactus League","address":"100 Main Street&#xa;Cincinnati, OH&#x9;45202-4109","name_display_brief":"Reds","file_code":"cin","division_id":"205","spring_league_id":"114","venue_short":""},{"phone_number":"(303) 292-0200","venue_name":"Coors Field","franchise_code":"COL","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Denver","city":"Denver","name_display_full":"Colorado Rockies","spring_league_abbrev":"CL","time_zone_alt":"America/Denver","sport_id":"1","venue_id":"19","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"National League","league_id":"104","name_abbrev":"COL","address_province":"","bis_team_code":"COL","league":"NL","spring_league":"CL","base_url":"rockies.mlb.com","address_zip":"80205-2000","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"MT","address_line1":"2001 Blake Street","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"NLW","sport_abbrev":"MLB","name_display_short":"Colorado","team_id":"115","active_sw":"Y","address_intl":"N","state":"CO","address_country":"","mlb_org_abbrev":"","division":"W","name":"Rockies","team_code":"col","sport_code_name":"MLB","website_url":"rockies.com","first_year_of_play":"1993","league_abbrev":"NL","name_display_long":"Colorado Rockies","store_url":"colorado.rockies.mlb.com","name_short":"Colorado","address_state":"CO","division_full":"National League West","spring_league_full":"Cactus League","address":"2001 Blake Street&#xa;Denver, CO&#x9;80205-2000","name_display_brief":"Rockies","file_code":"col","division_id":"203","spring_league_id":"114","venue_short":""},{"phone_number":"(323) 224-1500","venue_name":"Dodger Stadium","franchise_code":"BR3","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Los Angeles","city":"Los Angeles","name_display_full":"Los Angeles Dodgers","spring_league_abbrev":"CL","time_zone_alt":"America/Los_Angeles","sport_id":"1","venue_id":"22","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"National League","league_id":"104","name_abbrev":"LAD","address_province":"","bis_team_code":"LA","league":"NL","spring_league":"CL","base_url":"dodgers.mlb.com","address_zip":"90012-1199","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"PT","address_line1":"1000 Vin Scully Avenue","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"NLW","sport_abbrev":"MLB","name_display_short":"LA Dodgers","team_id":"119","active_sw":"Y","address_intl":"N","state":"CA","address_country":"","mlb_org_abbrev":"","division":"W","name":"Dodgers","team_code":"lan","sport_code_name":"MLB","website_url":"dodgers.com","first_year_of_play":"1958","league_abbrev":"NL","name_display_long":"Los Angeles Dodgers","store_url":"losangeles.dodgers.mlb.com","name_short":"Los Angeles","address_state":"CA","division_full":"National League West","spring_league_full":"Cactus League","address":"1000 Vin Scully Avenue&#xa;Los Angeles, CA&#x9;90012-1199","name_display_brief":"Dodgers","file_code":"la","division_id":"203","spring_league_id":"114","venue_short":""},{"phone_number":"","venue_name":"Marlins Park","franchise_code":"FLO","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Miami","city":"Miami","name_display_full":"Miami Marlins","spring_league_abbrev":"GL","time_zone_alt":"America/New_York","sport_id":"1","venue_id":"4169","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"National League","league_id":"104","name_abbrev":"MIA","address_province":"","bis_team_code":"FLA","league":"NL","spring_league":"GL","base_url":"marlins.mlb.com","address_zip":"33125","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"ET","address_line1":"501 Marlins Way","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"NLE","sport_abbrev":"MLB","name_display_short":"Miami","team_id":"146","active_sw":"Y","address_intl":"N","state":"FL","address_country":"USA","mlb_org_abbrev":"","division":"E","name":"Marlins","team_code":"mia","sport_code_name":"MLB","website_url":"marlins.com","first_year_of_play":"1993","league_abbrev":"NL","name_display_long":"Miami Marlins","store_url":"miami.marlins.mlb.com","name_short":"Miami","address_state":"FL","division_full":"National League East","spring_league_full":"Grapefruit League","address":"501 Marlins Way&#xa;Miami, FL&#x9;33125","name_display_brief":"Marlins","file_code":"mia","division_id":"204","spring_league_id":"115","venue_short":""},{"phone_number":"(414) 902-4400","venue_name":"Miller Park","franchise_code":"SE1","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Milwaukee","city":"Milwaukee","name_display_full":"Milwaukee Brewers","spring_league_abbrev":"CL","time_zone_alt":"America/Chicago","sport_id":"1","venue_id":"32","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"National League","league_id":"104","name_abbrev":"MIL","address_province":"","bis_team_code":"MIL","league":"NL","spring_league":"CL","base_url":"brewers.mlb.com","address_zip":"53214","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"CT","address_line1":"One Brewers Way","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"NLC","sport_abbrev":"MLB","name_display_short":"Milwaukee","team_id":"158","active_sw":"Y","address_intl":"N","state":"WI","address_country":"","mlb_org_abbrev":"","division":"C","name":"Brewers","team_code":"mil","sport_code_name":"MLB","website_url":"brewers.com","first_year_of_play":"1998","league_abbrev":"NL","name_display_long":"Milwaukee Brewers","store_url":"milwaukee.brewers.mlb.com","name_short":"Milwaukee","address_state":"WI","division_full":"National League Central","spring_league_full":"Cactus League","address":"One Brewers Way&#xa;Milwaukee, WI&#x9;53214","name_display_brief":"Brewers","file_code":"mil","division_id":"205","spring_league_id":"114","venue_short":""},{"phone_number":"(718) 507-6387","venue_name":"Citi Field","franchise_code":"NYN","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Flushing","city":"New York","name_display_full":"New York Mets","spring_league_abbrev":"GL","time_zone_alt":"America/New_York","sport_id":"1","venue_id":"3289","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"National League","league_id":"104","name_abbrev":"NYM","address_province":"","bis_team_code":"NY","league":"NL","spring_league":"GL","base_url":"mets.mlb.com","address_zip":"11368","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"ET","address_line1":"Citi Field","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"NLE","sport_abbrev":"MLB","name_display_short":"NY Mets","team_id":"121","active_sw":"Y","address_intl":"N","state":"NY","address_country":"","mlb_org_abbrev":"","division":"E","name":"Mets","team_code":"nyn","sport_code_name":"MLB","website_url":"mets.com","first_year_of_play":"1962","league_abbrev":"NL","name_display_long":"New York Mets","store_url":"newyork.mets.mlb.com","name_short":"New York","address_state":"NY","division_full":"National League East","spring_league_full":"Grapefruit League","address":"Citi Field&#xa;Flushing, NY&#x9;11368","name_display_brief":"Mets","file_code":"nym","division_id":"204","spring_league_id":"115","venue_short":""},{"phone_number":"(215) 463-6000","venue_name":"Citizens Bank Park","franchise_code":"WOR","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Philadelphia","city":"Philadelphia","name_display_full":"Philadelphia Phillies","spring_league_abbrev":"GL","time_zone_alt":"America/New_York","sport_id":"1","venue_id":"2681","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"National League","league_id":"104","name_abbrev":"PHI","address_province":"","bis_team_code":"PHI","league":"NL","spring_league":"GL","base_url":"phillies.mlb.com","address_zip":"19148","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"ET","address_line1":"One Citizens Bank Way","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"NLE","sport_abbrev":"MLB","name_display_short":"Philadelphia","team_id":"143","active_sw":"Y","address_intl":"N","state":"PA","address_country":"","mlb_org_abbrev":"","division":"E","name":"Phillies","team_code":"phi","sport_code_name":"MLB","website_url":"phillies.com","first_year_of_play":"1883","league_abbrev":"NL","name_display_long":"Philadelphia Phillies","store_url":"philadelphia.phillies.mlb.com","name_short":"Philadelphia","address_state":"PA","division_full":"National League East","spring_league_full":"Grapefruit League","address":"One Citizens Bank Way&#xa;Philadelphia, PA&#x9;19148","name_display_brief":"Phillies","file_code":"phi","division_id":"204","spring_league_id":"115","venue_short":""},{"phone_number":"(412) 323-5000","venue_name":"PNC Park","franchise_code":"PT1","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Pittsburgh","city":"Pittsburgh","name_display_full":"Pittsburgh Pirates","spring_league_abbrev":"GL","time_zone_alt":"America/New_York","sport_id":"1","venue_id":"31","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"National League","league_id":"104","name_abbrev":"PIT","address_province":"","bis_team_code":"PIT","league":"NL","spring_league":"GL","base_url":"pirates.mlb.com","address_zip":"15212","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"ET","address_line1":"115 Federal Street","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"NLC","sport_abbrev":"MLB","name_display_short":"Pittsburgh","team_id":"134","active_sw":"Y","address_intl":"N","state":"PA","address_country":"","mlb_org_abbrev":"","division":"C","name":"Pirates","team_code":"pit","sport_code_name":"MLB","website_url":"pirates.com","first_year_of_play":"1887","league_abbrev":"NL","name_display_long":"Pittsburgh Pirates","store_url":"pittsburgh.pirates.mlb.com","name_short":"Pittsburgh","address_state":"PA","division_full":"National League Central","spring_league_full":"Grapefruit League","address":"115 Federal Street&#xa;Pittsburgh, PA&#x9;15212","name_display_brief":"Pirates","file_code":"pit","division_id":"205","spring_league_id":"115","venue_short":""},{"phone_number":"(619) 795-5000","venue_name":"Petco Park","franchise_code":"SDN","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"San Diego","city":"San Diego","name_display_full":"San Diego Padres","spring_league_abbrev":"CL","time_zone_alt":"America/Los_Angeles","sport_id":"1","venue_id":"2680","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"National League","league_id":"104","name_abbrev":"SD","address_province":"","bis_team_code":"SD","league":"NL","spring_league":"CL","base_url":"padres.mlb.com","address_zip":"92101","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"PT","address_line1":"100 Park Boulevard","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"NLW","sport_abbrev":"MLB","name_display_short":"San Diego","team_id":"135","active_sw":"Y","address_intl":"N","state":"CA","address_country":"","mlb_org_abbrev":"","division":"W","name":"Padres","team_code":"sdn","sport_code_name":"MLB","website_url":"padres.com","first_year_of_play":"1969","league_abbrev":"NL","name_display_long":"San Diego Padres","store_url":"sandiego.padres.mlb.com","name_short":"San Diego","address_state":"CA","division_full":"National League West","spring_league_full":"Cactus League","address":"100 Park Boulevard&#xa;San Diego, CA&#x9;92101","name_display_brief":"Padres","file_code":"sd","division_id":"203","spring_league_id":"114","venue_short":""},{"phone_number":"(415) 972-2000","venue_name":"AT&T Park","franchise_code":"TRN","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"San Francisco","city":"San Francisco","name_display_full":"San Francisco Giants","spring_league_abbrev":"CL","time_zone_alt":"America/Los_Angeles","sport_id":"1","venue_id":"2395","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"National League","league_id":"104","name_abbrev":"SF","address_province":"","bis_team_code":"SF","league":"NL","spring_league":"CL","base_url":"giants.mlb.com","address_zip":"94107","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"PT","address_line1":"24 Willie Mays Plaza","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"NLW","sport_abbrev":"MLB","name_display_short":"San Francisco","team_id":"137","active_sw":"Y","address_intl":"N","state":"CA","address_country":"","mlb_org_abbrev":"","division":"W","name":"Giants","team_code":"sfn","sport_code_name":"MLB","website_url":"sfgiants.com","first_year_of_play":"1958","league_abbrev":"NL","name_display_long":"San Francisco Giants","store_url":"sanfrancisco.giants.mlb.com","name_short":"San Francisco","address_state":"CA","division_full":"National League West","spring_league_full":"Cactus League","address":"24 Willie Mays Plaza&#xa;San Francisco, CA&#x9;94107","name_display_brief":"Giants","file_code":"sf","division_id":"203","spring_league_id":"114","venue_short":""},{"phone_number":"(314) 345-9600","venue_name":"Busch Stadium","franchise_code":"SL4","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"St. Louis","city":"St. Louis","name_display_full":"St. Louis Cardinals","spring_league_abbrev":"GL","time_zone_alt":"America/Chicago","sport_id":"1","venue_id":"2889","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"National League","league_id":"104","name_abbrev":"STL","address_province":"","bis_team_code":"STL","league":"NL","spring_league":"GL","base_url":"cardinals.mlb.com","address_zip":"63102","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"CT","address_line1":"700 Clark Street","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"NLC","sport_abbrev":"MLB","name_display_short":"St. Louis","team_id":"138","active_sw":"Y","address_intl":"N","state":"MO","address_country":"","mlb_org_abbrev":"","division":"C","name":"Cardinals","team_code":"sln","sport_code_name":"MLB","website_url":"cardinals.com","first_year_of_play":"1892","league_abbrev":"NL","name_display_long":"St. Louis Cardinals","store_url":"stlouis.cardinals.mlb.com","name_short":"St. Louis","address_state":"MO","division_full":"National League Central","spring_league_full":"Grapefruit League","address":"700 Clark Street&#xa;St. Louis, MO&#x9;63102","name_display_brief":"Cardinals","file_code":"stl","division_id":"205","spring_league_id":"115","venue_short":""},{"phone_number":"(202) 349-0400","venue_name":"Nationals Park","franchise_code":"MON","sport_full":"Major League Baseball","all_star_sw":"N","sport_code":"mlb","address_city":"Washington","city":"Washington","name_display_full":"Washington Nationals","spring_league_abbrev":"GL","time_zone_alt":"America/New_York","sport_id":"1","venue_id":"3309","mlb_org_id":"","mlb_org":"","last_year_of_play":"","league_full":"National League","league_id":"104","name_abbrev":"WSH","address_province":"","bis_team_code":"MON","league":"NL","spring_league":"GL","base_url":"nationals.mlb.com","address_zip":"20003-1507","sport_code_display":"Major League Baseball","mlb_org_short":"","time_zone":"ET","address_line1":"1500 South Capitol Street, SE","mlb_org_brief":"","address_line2":"","address_line3":"","division_abbrev":"NLE","sport_abbrev":"MLB","name_display_short":"Washington","team_id":"120","active_sw":"Y","address_intl":"N","state":"DC","address_country":"","mlb_org_abbrev":"","division":"E","name":"Nationals","team_code":"was","sport_code_name":"MLB","website_url":"nationals.com","first_year_of_play":"2005","league_abbrev":"NL","name_display_long":"Washington Nationals","store_url":"washington.nationals.mlb.com","name_short":"Washington","address_state":"DC","division_full":"National League East","spring_league_full":"Grapefruit League","address":"1500 South Capitol Street, SE&#xa;Washington, DC&#x9;20003-1507","name_display_brief":"Nationals","file_code":"was","division_id":"204","spring_league_id":"115","venue_short":""}]}}}};exports.default=playerId;
 
 /***/ },
-/* 358 */
+/* 364 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35959,15 +36103,19 @@
 
 	var _reactRedux = __webpack_require__(159);
 
-	var _actions = __webpack_require__(184);
+	var _actions = __webpack_require__(188);
 
-	var _PlayersContainer = __webpack_require__(359);
+	var _PlayersContainer = __webpack_require__(365);
 
 	var _PlayersContainer2 = _interopRequireDefault(_PlayersContainer);
 
-	var _Search = __webpack_require__(362);
+	var _Search = __webpack_require__(368);
 
 	var _Search2 = _interopRequireDefault(_Search);
+
+	var _SearchSelect = __webpack_require__(487);
+
+	var _SearchSelect2 = _interopRequireDefault(_SearchSelect);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -36024,9 +36172,9 @@
 	                _react2.default.createElement(
 	                    'h1',
 	                    null,
-	                    'Players'
+	                    'Player Tracker'
 	                ),
-	                _react2.default.createElement(_Search2.default, null),
+	                _react2.default.createElement(_SearchSelect2.default, null),
 	                _react2.default.createElement(_PlayersContainer2.default, null)
 	            );
 	        }
@@ -36036,7 +36184,7 @@
 	}(_react2.default.Component);
 
 	/*******************************************************************
-	 * 
+	 *
 	 * Redux
 	 *
 	 ******************************************************************/
@@ -36068,7 +36216,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(App);
 
 /***/ },
-/* 359 */
+/* 365 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36083,7 +36231,7 @@
 
 	var _reactRedux = __webpack_require__(159);
 
-	var _Players = __webpack_require__(360);
+	var _Players = __webpack_require__(366);
 
 	var _Players2 = _interopRequireDefault(_Players);
 
@@ -36113,7 +36261,7 @@
 	exports.default = PlayersContainer;
 
 /***/ },
-/* 360 */
+/* 366 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36128,7 +36276,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Player = __webpack_require__(361);
+	var _Player = __webpack_require__(367);
 
 	var _Player2 = _interopRequireDefault(_Player);
 
@@ -36171,7 +36319,7 @@
 	exports.default = Players;
 
 /***/ },
-/* 361 */
+/* 367 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36188,7 +36336,7 @@
 
 	var _reactRedux = __webpack_require__(159);
 
-	var _actions = __webpack_require__(184);
+	var _actions = __webpack_require__(188);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -36305,7 +36453,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Player);
 
 /***/ },
-/* 362 */
+/* 368 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36322,13 +36470,13 @@
 
 	var _reactRedux = __webpack_require__(159);
 
-	var _reactAutocomplete = __webpack_require__(363);
+	var _reactAutocomplete = __webpack_require__(369);
 
 	var _reactAutocomplete2 = _interopRequireDefault(_reactAutocomplete);
 
-	var _autocomplete = __webpack_require__(369);
+	var _autocomplete = __webpack_require__(375);
 
-	var _actions = __webpack_require__(184);
+	var _actions = __webpack_require__(188);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -36454,15 +36602,15 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Search);
 
 /***/ },
-/* 363 */
+/* 369 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(364);
+	module.exports = __webpack_require__(370);
 
 /***/ },
-/* 364 */
+/* 370 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -36470,8 +36618,8 @@
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var React = __webpack_require__(1);
-	var lodash = __webpack_require__(365);
-	var scrollIntoView = __webpack_require__(366);
+	var lodash = __webpack_require__(371);
+	var scrollIntoView = __webpack_require__(372);
 
 	var _debugStates = [];
 
@@ -36812,7 +36960,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 365 */
+/* 371 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
@@ -36829,7 +36977,7 @@
 	  var undefined;
 
 	  /** Used as the semantic version number. */
-	  var VERSION = '4.12.0';
+	  var VERSION = '4.13.0';
 
 	  /** Used as the size to enable large array optimizations. */
 	  var LARGE_ARRAY_SIZE = 200;
@@ -36933,7 +37081,7 @@
 	  /** Used to match property names within property paths. */
 	  var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
 	      reIsPlainProp = /^\w*$/,
-	      rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]/g;
+	      rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(\.|\[\])(?:\4|$))/g;
 
 	  /**
 	   * Used to match `RegExp`
@@ -37066,7 +37214,7 @@
 	    'Function', 'Int8Array', 'Int16Array', 'Int32Array', 'Map', 'Math', 'Object',
 	    'Promise', 'Reflect', 'RegExp', 'Set', 'String', 'Symbol', 'TypeError',
 	    'Uint8Array', 'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap',
-	    '_', 'clearTimeout', 'isFinite', 'parseInt', 'setTimeout'
+	    '_', 'isFinite', 'parseInt', 'setTimeout'
 	  ];
 
 	  /** Used to make template sourceURLs easier to identify. */
@@ -37145,12 +37293,6 @@
 	    '&#96;': '`'
 	  };
 
-	  /** Used to determine if values are of the language type `Object`. */
-	  var objectTypes = {
-	    'function': true,
-	    'object': true
-	  };
-
 	  /** Used to escape characters for inclusion in compiled string literals. */
 	  var stringEscapes = {
 	    '\\': '\\',
@@ -37166,41 +37308,25 @@
 	      freeParseInt = parseInt;
 
 	  /** Detect free variable `exports`. */
-	  var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType)
-	    ? exports
-	    : undefined;
+	  var freeExports = typeof exports == 'object' && exports;
 
 	  /** Detect free variable `module`. */
-	  var freeModule = (objectTypes[typeof module] && module && !module.nodeType)
-	    ? module
-	    : undefined;
+	  var freeModule = freeExports && typeof module == 'object' && module;
 
 	  /** Detect the popular CommonJS extension `module.exports`. */
-	  var moduleExports = (freeModule && freeModule.exports === freeExports)
-	    ? freeExports
-	    : undefined;
+	  var moduleExports = freeModule && freeModule.exports === freeExports;
 
 	  /** Detect free variable `global` from Node.js. */
-	  var freeGlobal = checkGlobal(freeExports && freeModule && typeof global == 'object' && global);
+	  var freeGlobal = checkGlobal(typeof global == 'object' && global);
 
 	  /** Detect free variable `self`. */
-	  var freeSelf = checkGlobal(objectTypes[typeof self] && self);
-
-	  /** Detect free variable `window`. */
-	  var freeWindow = checkGlobal(objectTypes[typeof window] && window);
+	  var freeSelf = checkGlobal(typeof self == 'object' && self);
 
 	  /** Detect `this` as the global object. */
-	  var thisGlobal = checkGlobal(objectTypes[typeof this] && this);
+	  var thisGlobal = checkGlobal(typeof this == 'object' && this);
 
-	  /**
-	   * Used as a reference to the global object.
-	   *
-	   * The `this` value is used if it's the global object to avoid Greasemonkey's
-	   * restricted `window` object, otherwise the `window` object is used.
-	   */
-	  var root = freeGlobal ||
-	    ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) ||
-	      freeSelf || thisGlobal || Function('return this')();
+	  /** Used as a reference to the global object. */
+	  var root = freeGlobal || freeSelf || thisGlobal || Function('return this')();
 
 	  /*--------------------------------------------------------------------------*/
 
@@ -37256,7 +37382,7 @@
 	   * A specialized version of `baseAggregator` for arrays.
 	   *
 	   * @private
-	   * @param {Array} array The array to iterate over.
+	   * @param {Array} [array] The array to iterate over.
 	   * @param {Function} setter The function to set `accumulator` values.
 	   * @param {Function} iteratee The iteratee to transform keys.
 	   * @param {Object} accumulator The initial aggregated object.
@@ -37264,7 +37390,7 @@
 	   */
 	  function arrayAggregator(array, setter, iteratee, accumulator) {
 	    var index = -1,
-	        length = array.length;
+	        length = array ? array.length : 0;
 
 	    while (++index < length) {
 	      var value = array[index];
@@ -37278,13 +37404,13 @@
 	   * iteratee shorthands.
 	   *
 	   * @private
-	   * @param {Array} array The array to iterate over.
+	   * @param {Array} [array] The array to iterate over.
 	   * @param {Function} iteratee The function invoked per iteration.
 	   * @returns {Array} Returns `array`.
 	   */
 	  function arrayEach(array, iteratee) {
 	    var index = -1,
-	        length = array.length;
+	        length = array ? array.length : 0;
 
 	    while (++index < length) {
 	      if (iteratee(array[index], index, array) === false) {
@@ -37299,12 +37425,12 @@
 	   * iteratee shorthands.
 	   *
 	   * @private
-	   * @param {Array} array The array to iterate over.
+	   * @param {Array} [array] The array to iterate over.
 	   * @param {Function} iteratee The function invoked per iteration.
 	   * @returns {Array} Returns `array`.
 	   */
 	  function arrayEachRight(array, iteratee) {
-	    var length = array.length;
+	    var length = array ? array.length : 0;
 
 	    while (length--) {
 	      if (iteratee(array[length], length, array) === false) {
@@ -37319,14 +37445,14 @@
 	   * iteratee shorthands.
 	   *
 	   * @private
-	   * @param {Array} array The array to iterate over.
+	   * @param {Array} [array] The array to iterate over.
 	   * @param {Function} predicate The function invoked per iteration.
 	   * @returns {boolean} Returns `true` if all elements pass the predicate check,
 	   *  else `false`.
 	   */
 	  function arrayEvery(array, predicate) {
 	    var index = -1,
-	        length = array.length;
+	        length = array ? array.length : 0;
 
 	    while (++index < length) {
 	      if (!predicate(array[index], index, array)) {
@@ -37341,13 +37467,13 @@
 	   * iteratee shorthands.
 	   *
 	   * @private
-	   * @param {Array} array The array to iterate over.
+	   * @param {Array} [array] The array to iterate over.
 	   * @param {Function} predicate The function invoked per iteration.
 	   * @returns {Array} Returns the new filtered array.
 	   */
 	  function arrayFilter(array, predicate) {
 	    var index = -1,
-	        length = array.length,
+	        length = array ? array.length : 0,
 	        resIndex = 0,
 	        result = [];
 
@@ -37365,26 +37491,27 @@
 	   * specifying an index to search from.
 	   *
 	   * @private
-	   * @param {Array} array The array to search.
+	   * @param {Array} [array] The array to search.
 	   * @param {*} target The value to search for.
 	   * @returns {boolean} Returns `true` if `target` is found, else `false`.
 	   */
 	  function arrayIncludes(array, value) {
-	    return !!array.length && baseIndexOf(array, value, 0) > -1;
+	    var length = array ? array.length : 0;
+	    return !!length && baseIndexOf(array, value, 0) > -1;
 	  }
 
 	  /**
 	   * This function is like `arrayIncludes` except that it accepts a comparator.
 	   *
 	   * @private
-	   * @param {Array} array The array to search.
+	   * @param {Array} [array] The array to search.
 	   * @param {*} target The value to search for.
 	   * @param {Function} comparator The comparator invoked per element.
 	   * @returns {boolean} Returns `true` if `target` is found, else `false`.
 	   */
 	  function arrayIncludesWith(array, value, comparator) {
 	    var index = -1,
-	        length = array.length;
+	        length = array ? array.length : 0;
 
 	    while (++index < length) {
 	      if (comparator(value, array[index])) {
@@ -37399,13 +37526,13 @@
 	   * shorthands.
 	   *
 	   * @private
-	   * @param {Array} array The array to iterate over.
+	   * @param {Array} [array] The array to iterate over.
 	   * @param {Function} iteratee The function invoked per iteration.
 	   * @returns {Array} Returns the new mapped array.
 	   */
 	  function arrayMap(array, iteratee) {
 	    var index = -1,
-	        length = array.length,
+	        length = array ? array.length : 0,
 	        result = Array(length);
 
 	    while (++index < length) {
@@ -37438,7 +37565,7 @@
 	   * iteratee shorthands.
 	   *
 	   * @private
-	   * @param {Array} array The array to iterate over.
+	   * @param {Array} [array] The array to iterate over.
 	   * @param {Function} iteratee The function invoked per iteration.
 	   * @param {*} [accumulator] The initial value.
 	   * @param {boolean} [initAccum] Specify using the first element of `array` as
@@ -37447,7 +37574,7 @@
 	   */
 	  function arrayReduce(array, iteratee, accumulator, initAccum) {
 	    var index = -1,
-	        length = array.length;
+	        length = array ? array.length : 0;
 
 	    if (initAccum && length) {
 	      accumulator = array[++index];
@@ -37463,7 +37590,7 @@
 	   * iteratee shorthands.
 	   *
 	   * @private
-	   * @param {Array} array The array to iterate over.
+	   * @param {Array} [array] The array to iterate over.
 	   * @param {Function} iteratee The function invoked per iteration.
 	   * @param {*} [accumulator] The initial value.
 	   * @param {boolean} [initAccum] Specify using the last element of `array` as
@@ -37471,7 +37598,7 @@
 	   * @returns {*} Returns the accumulated value.
 	   */
 	  function arrayReduceRight(array, iteratee, accumulator, initAccum) {
-	    var length = array.length;
+	    var length = array ? array.length : 0;
 	    if (initAccum && length) {
 	      accumulator = array[--length];
 	    }
@@ -37486,14 +37613,14 @@
 	   * shorthands.
 	   *
 	   * @private
-	   * @param {Array} array The array to iterate over.
+	   * @param {Array} [array] The array to iterate over.
 	   * @param {Function} predicate The function invoked per iteration.
 	   * @returns {boolean} Returns `true` if any element passes the predicate check,
 	   *  else `false`.
 	   */
 	  function arraySome(array, predicate) {
 	    var index = -1,
-	        length = array.length;
+	        length = array ? array.length : 0;
 
 	    while (++index < length) {
 	      if (predicate(array[index], index, array)) {
@@ -37504,23 +37631,21 @@
 	  }
 
 	  /**
-	   * The base implementation of methods like `_.find` and `_.findKey`, without
-	   * support for iteratee shorthands, which iterates over `collection` using
-	   * `eachFunc`.
+	   * The base implementation of methods like `_.findKey` and `_.findLastKey`,
+	   * without support for iteratee shorthands, which iterates over `collection`
+	   * using `eachFunc`.
 	   *
 	   * @private
 	   * @param {Array|Object} collection The collection to search.
 	   * @param {Function} predicate The function invoked per iteration.
 	   * @param {Function} eachFunc The function to iterate over `collection`.
-	   * @param {boolean} [retKey] Specify returning the key of the found element
-	   *  instead of the element itself.
 	   * @returns {*} Returns the found element or its key, else `undefined`.
 	   */
-	  function baseFind(collection, predicate, eachFunc, retKey) {
+	  function baseFindKey(collection, predicate, eachFunc) {
 	    var result;
 	    eachFunc(collection, function(value, key, collection) {
 	      if (predicate(value, key, collection)) {
-	        result = retKey ? key : value;
+	        result = key;
 	        return false;
 	      }
 	    });
@@ -37534,12 +37659,13 @@
 	   * @private
 	   * @param {Array} array The array to search.
 	   * @param {Function} predicate The function invoked per iteration.
+	   * @param {number} fromIndex The index to search from.
 	   * @param {boolean} [fromRight] Specify iterating from right to left.
 	   * @returns {number} Returns the index of the matched value, else `-1`.
 	   */
-	  function baseFindIndex(array, predicate, fromRight) {
+	  function baseFindIndex(array, predicate, fromIndex, fromRight) {
 	    var length = array.length,
-	        index = fromRight ? length : -1;
+	        index = fromIndex + (fromRight ? 1 : -1);
 
 	    while ((fromRight ? index-- : ++index < length)) {
 	      if (predicate(array[index], index, array)) {
@@ -37847,6 +37973,18 @@
 	  }
 
 	  /**
+	   * Gets the value at `key` of `object`.
+	   *
+	   * @private
+	   * @param {Object} [object] The object to query.
+	   * @param {string} key The key of the property to get.
+	   * @returns {*} Returns the property value.
+	   */
+	  function getValue(object, key) {
+	    return object == null ? undefined : object[key];
+	  }
+
+	  /**
 	   * Gets the index at which the first occurrence of `NaN` is found in `array`.
 	   *
 	   * @private
@@ -37857,7 +37995,7 @@
 	   */
 	  function indexOfNaN(array, fromIndex, fromRight) {
 	    var length = array.length,
-	        index = fromIndex + (fromRight ? 0 : -1);
+	        index = fromIndex + (fromRight ? 1 : -1);
 
 	    while ((fromRight ? index-- : ++index < length)) {
 	      var other = array[index];
@@ -38048,10 +38186,10 @@
 	   * lodash.isFunction(lodash.bar);
 	   * // => true
 	   *
-	   * // Use `context` to mock `Date#getTime` use in `_.now`.
-	   * var mock = _.runInContext({
+	   * // Use `context` to stub `Date#getTime` use in `_.now`.
+	   * var stubbed = _.runInContext({
 	   *   'Date': function() {
-	   *     return { 'getTime': getTimeMock };
+	   *     return { 'getTime': stubGetTime };
 	   *   }
 	   * });
 	   *
@@ -38072,6 +38210,15 @@
 	    var arrayProto = context.Array.prototype,
 	        objectProto = context.Object.prototype,
 	        stringProto = context.String.prototype;
+
+	    /** Used to detect overreaching core-js shims. */
+	    var coreJsData = context['__core-js_shared__'];
+
+	    /** Used to detect methods masquerading as native. */
+	    var maskSrcKey = (function() {
+	      var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');
+	      return uid ? ('Symbol(src)_1.' + uid) : '';
+	    }());
 
 	    /** Used to resolve the decompiled source of functions. */
 	    var funcToString = context.Function.prototype.toString;
@@ -38106,14 +38253,15 @@
 	        Reflect = context.Reflect,
 	        Symbol = context.Symbol,
 	        Uint8Array = context.Uint8Array,
-	        clearTimeout = context.clearTimeout,
 	        enumerate = Reflect ? Reflect.enumerate : undefined,
 	        getOwnPropertySymbols = Object.getOwnPropertySymbols,
 	        iteratorSymbol = typeof (iteratorSymbol = Symbol && Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined,
 	        objectCreate = Object.create,
 	        propertyIsEnumerable = objectProto.propertyIsEnumerable,
-	        setTimeout = context.setTimeout,
 	        splice = arrayProto.splice;
+
+	    /** Built-in method references that are mockable. */
+	    var setTimeout = function(func, wait) { return context.setTimeout.call(root, func, wait); };
 
 	    /* Built-in method references for those with the same name as other `lodash` methods. */
 	    var nativeCeil = Math.ceil,
@@ -38236,19 +38384,21 @@
 	     * `isArrayBuffer`, `isArrayLike`, `isArrayLikeObject`, `isBoolean`,
 	     * `isBuffer`, `isDate`, `isElement`, `isEmpty`, `isEqual`, `isEqualWith`,
 	     * `isError`, `isFinite`, `isFunction`, `isInteger`, `isLength`, `isMap`,
-	     * `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`,
-	     * `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`, `isSafeInteger`,
-	     * `isSet`, `isString`, `isUndefined`, `isTypedArray`, `isWeakMap`, `isWeakSet`,
-	     * `join`, `kebabCase`, `last`, `lastIndexOf`, `lowerCase`, `lowerFirst`,
-	     * `lt`, `lte`, `max`, `maxBy`, `mean`, `meanBy`, `min`, `minBy`, `multiply`,
-	     * `noConflict`, `noop`, `now`, `nth`, `pad`, `padEnd`, `padStart`, `parseInt`,
-	     * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`,
-	     * `runInContext`, `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
-	     * `sortedIndexBy`, `sortedLastIndex`, `sortedLastIndexBy`, `startCase`,
-	     * `startsWith`, `subtract`, `sum`, `sumBy`, `template`, `times`, `toFinite`,
-	     * `toInteger`, `toJSON`, `toLength`, `toLower`, `toNumber`, `toSafeInteger`,
-	     * `toString`, `toUpper`, `trim`, `trimEnd`, `trimStart`, `truncate`, `unescape`,
-	     * `uniqueId`, `upperCase`, `upperFirst`, `value`, and `words`
+	     * `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`,
+	     * `isNumber`, `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`,
+	     * `isSafeInteger`, `isSet`, `isString`, `isUndefined`, `isTypedArray`,
+	     * `isWeakMap`, `isWeakSet`, `join`, `kebabCase`, `last`, `lastIndexOf`,
+	     * `lowerCase`, `lowerFirst`, `lt`, `lte`, `max`, `maxBy`, `mean`, `meanBy`,
+	     * `min`, `minBy`, `multiply`, `noConflict`, `noop`, `now`, `nth`, `pad`,
+	     * `padEnd`, `padStart`, `parseInt`, `pop`, `random`, `reduce`, `reduceRight`,
+	     * `repeat`, `result`, `round`, `runInContext`, `sample`, `shift`, `size`,
+	     * `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`, `sortedLastIndex`,
+	     * `sortedLastIndexBy`, `startCase`, `startsWith`, `stubArray`, `stubFalse`,
+	     * `stubObject`, `stubString`, `stubTrue`, `subtract`, `sum`, `sumBy`,
+	     * `template`, `times`, `toFinite`, `toInteger`, `toJSON`, `toLength`,
+	     * `toLower`, `toNumber`, `toSafeInteger`, `toString`, `toUpper`, `trim`,
+	     * `trimEnd`, `trimStart`, `truncate`, `unescape`, `uniqueId`, `upperCase`,
+	     * `upperFirst`, `value`, and `words`
 	     *
 	     * @name _
 	     * @constructor
@@ -39549,7 +39699,7 @@
 	     * The base implementation of `_.has` without support for deep paths.
 	     *
 	     * @private
-	     * @param {Object} object The object to query.
+	     * @param {Object} [object] The object to query.
 	     * @param {Array|string} key The key to check.
 	     * @returns {boolean} Returns `true` if `key` exists, else `false`.
 	     */
@@ -39557,20 +39707,21 @@
 	      // Avoid a bug in IE 10-11 where objects with a [[Prototype]] of `null`,
 	      // that are composed entirely of index properties, return `false` for
 	      // `hasOwnProperty` checks of them.
-	      return hasOwnProperty.call(object, key) ||
-	        (typeof object == 'object' && key in object && getPrototype(object) === null);
+	      return object != null &&
+	        (hasOwnProperty.call(object, key) ||
+	          (typeof object == 'object' && key in object && getPrototype(object) === null));
 	    }
 
 	    /**
 	     * The base implementation of `_.hasIn` without support for deep paths.
 	     *
 	     * @private
-	     * @param {Object} object The object to query.
+	     * @param {Object} [object] The object to query.
 	     * @param {Array|string} key The key to check.
 	     * @returns {boolean} Returns `true` if `key` exists, else `false`.
 	     */
 	    function baseHasIn(object, key) {
-	      return key in Object(object);
+	      return object != null && key in Object(object);
 	    }
 
 	    /**
@@ -39822,6 +39973,22 @@
 	        }
 	      }
 	      return true;
+	    }
+
+	    /**
+	     * The base implementation of `_.isNative` without bad shim checks.
+	     *
+	     * @private
+	     * @param {*} value The value to check.
+	     * @returns {boolean} Returns `true` if `value` is a native function,
+	     *  else `false`.
+	     */
+	    function baseIsNative(value) {
+	      if (!isObject(value) || isMasked(value)) {
+	        return false;
+	      }
+	      var pattern = (isFunction(value) || isHostObject(value)) ? reIsNative : reIsHostCtor;
+	      return pattern.test(toSource(value));
 	    }
 
 	    /**
@@ -40192,6 +40359,9 @@
 	          length = values.length,
 	          seen = array;
 
+	      if (array === values) {
+	        values = copyArray(values);
+	      }
 	      if (iteratee) {
 	        seen = arrayMap(array, baseUnary(iteratee));
 	      }
@@ -41707,7 +41877,7 @@
 	      var func = Math[methodName];
 	      return function(number, precision) {
 	        number = toNumber(number);
-	        precision = toInteger(precision);
+	        precision = nativeMin(toInteger(precision), 292);
 	        if (precision) {
 	          // Shift with exponential notation to avoid floating-point issues.
 	          // See [MDN](https://mdn.io/round#Examples) for more details.
@@ -42188,11 +42358,14 @@
 	     * @returns {Array} Returns the match data of `object`.
 	     */
 	    function getMatchData(object) {
-	      var result = toPairs(object),
+	      var result = keys(object),
 	          length = result.length;
 
 	      while (length--) {
-	        result[length][2] = isStrictComparable(result[length][1]);
+	        var key = result[length],
+	            value = object[key];
+
+	        result[length] = [key, value, isStrictComparable(value)];
 	      }
 	      return result;
 	    }
@@ -42206,8 +42379,8 @@
 	     * @returns {*} Returns the function if it's native, else `undefined`.
 	     */
 	    function getNative(object, key) {
-	      var value = object[key];
-	      return isNative(value) ? value : undefined;
+	      var value = getValue(object, key);
+	      return baseIsNative(value) ? value : undefined;
 	    }
 
 	    /**
@@ -42236,9 +42409,7 @@
 
 	    // Fallback for IE < 11.
 	    if (!getOwnPropertySymbols) {
-	      getSymbols = function() {
-	        return [];
-	      };
+	      getSymbols = stubArray;
 	    }
 
 	    /**
@@ -42569,6 +42740,26 @@
 	      var data = getData(other);
 	      return !!data && func === data[0];
 	    }
+
+	    /**
+	     * Checks if `func` has its source masked.
+	     *
+	     * @private
+	     * @param {Function} func The function to check.
+	     * @returns {boolean} Returns `true` if `func` is masked, else `false`.
+	     */
+	    function isMasked(func) {
+	      return !!maskSrcKey && (maskSrcKey in func);
+	    }
+
+	    /**
+	     * Checks if `func` is capable of being masked.
+	     *
+	     * @private
+	     * @param {*} value The value to check.
+	     * @returns {boolean} Returns `true` if `func` is maskable, else `false`.
+	     */
+	    var isMaskable = !coreJsData ? stubFalse : isFunction;
 
 	    /**
 	     * Checks if `value` is likely a prototype object.
@@ -42966,8 +43157,8 @@
 	     * @see _.without, _.xor
 	     * @example
 	     *
-	     * _.difference([3, 2, 1], [4, 2]);
-	     * // => [3, 1]
+	     * _.difference([2, 1], [2, 3]);
+	     * // => [1]
 	     */
 	    var difference = rest(function(array, values) {
 	      return isArrayLikeObject(array)
@@ -42992,8 +43183,8 @@
 	     * @returns {Array} Returns the new array of filtered values.
 	     * @example
 	     *
-	     * _.differenceBy([3.1, 2.2, 1.3], [4.4, 2.5], Math.floor);
-	     * // => [3.1, 1.3]
+	     * _.differenceBy([2.1, 1.2], [2.3, 3.4], Math.floor);
+	     * // => [1.2]
 	     *
 	     * // The `_.property` iteratee shorthand.
 	     * _.differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], 'x');
@@ -43245,6 +43436,7 @@
 	     * @param {Array} array The array to search.
 	     * @param {Array|Function|Object|string} [predicate=_.identity]
 	     *  The function invoked per iteration.
+	     * @param {number} [fromIndex=0] The index to search from.
 	     * @returns {number} Returns the index of the found element, else `-1`.
 	     * @example
 	     *
@@ -43269,10 +43461,16 @@
 	     * _.findIndex(users, 'active');
 	     * // => 2
 	     */
-	    function findIndex(array, predicate) {
-	      return (array && array.length)
-	        ? baseFindIndex(array, getIteratee(predicate, 3))
-	        : -1;
+	    function findIndex(array, predicate, fromIndex) {
+	      var length = array ? array.length : 0;
+	      if (!length) {
+	        return -1;
+	      }
+	      var index = fromIndex == null ? 0 : toInteger(fromIndex);
+	      if (index < 0) {
+	        index = nativeMax(length + index, 0);
+	      }
+	      return baseFindIndex(array, getIteratee(predicate, 3), index);
 	    }
 
 	    /**
@@ -43286,6 +43484,7 @@
 	     * @param {Array} array The array to search.
 	     * @param {Array|Function|Object|string} [predicate=_.identity]
 	     *  The function invoked per iteration.
+	     * @param {number} [fromIndex=array.length-1] The index to search from.
 	     * @returns {number} Returns the index of the found element, else `-1`.
 	     * @example
 	     *
@@ -43310,10 +43509,19 @@
 	     * _.findLastIndex(users, 'active');
 	     * // => 0
 	     */
-	    function findLastIndex(array, predicate) {
-	      return (array && array.length)
-	        ? baseFindIndex(array, getIteratee(predicate, 3), true)
-	        : -1;
+	    function findLastIndex(array, predicate, fromIndex) {
+	      var length = array ? array.length : 0;
+	      if (!length) {
+	        return -1;
+	      }
+	      var index = length - 1;
+	      if (fromIndex !== undefined) {
+	        index = toInteger(fromIndex);
+	        index = fromIndex < 0
+	          ? nativeMax(length + index, 0)
+	          : nativeMin(index, length - 1);
+	      }
+	      return baseFindIndex(array, getIteratee(predicate, 3), index, true);
 	    }
 
 	    /**
@@ -43460,11 +43668,11 @@
 	      if (!length) {
 	        return -1;
 	      }
-	      fromIndex = toInteger(fromIndex);
-	      if (fromIndex < 0) {
-	        fromIndex = nativeMax(length + fromIndex, 0);
+	      var index = fromIndex == null ? 0 : toInteger(fromIndex);
+	      if (index < 0) {
+	        index = nativeMax(length + index, 0);
 	      }
-	      return baseIndexOf(array, value, fromIndex);
+	      return baseIndexOf(array, value, index);
 	    }
 
 	    /**
@@ -43499,7 +43707,7 @@
 	     * @returns {Array} Returns the new array of intersecting values.
 	     * @example
 	     *
-	     * _.intersection([2, 1], [4, 2], [1, 2]);
+	     * _.intersection([2, 1], [2, 3]);
 	     * // => [2]
 	     */
 	    var intersection = rest(function(arrays) {
@@ -43525,7 +43733,7 @@
 	     * @returns {Array} Returns the new array of intersecting values.
 	     * @example
 	     *
-	     * _.intersectionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
+	     * _.intersectionBy([2.1, 1.2], [2.3, 3.4], Math.floor);
 	     * // => [2.1]
 	     *
 	     * // The `_.property` iteratee shorthand.
@@ -43655,7 +43863,7 @@
 	        ) + 1;
 	      }
 	      if (value !== value) {
-	        return indexOfNaN(array, index, true);
+	        return indexOfNaN(array, index - 1, true);
 	      }
 	      while (index--) {
 	        if (array[index] === value) {
@@ -43666,7 +43874,7 @@
 	    }
 
 	    /**
-	     * Gets the element at `n` index of `array`. If `n` is negative, the nth
+	     * Gets the element at index `n` of `array`. If `n` is negative, the nth
 	     * element from the end is returned.
 	     *
 	     * @static
@@ -43707,11 +43915,11 @@
 	     * @returns {Array} Returns `array`.
 	     * @example
 	     *
-	     * var array = [1, 2, 3, 1, 2, 3];
+	     * var array = ['a', 'b', 'c', 'a', 'b', 'c'];
 	     *
-	     * _.pull(array, 2, 3);
+	     * _.pull(array, 'a', 'c');
 	     * console.log(array);
-	     * // => [1, 1]
+	     * // => ['b', 'b']
 	     */
 	    var pull = rest(pullAll);
 
@@ -43729,11 +43937,11 @@
 	     * @returns {Array} Returns `array`.
 	     * @example
 	     *
-	     * var array = [1, 2, 3, 1, 2, 3];
+	     * var array = ['a', 'b', 'c', 'a', 'b', 'c'];
 	     *
-	     * _.pullAll(array, [2, 3]);
+	     * _.pullAll(array, ['a', 'c']);
 	     * console.log(array);
-	     * // => [1, 1]
+	     * // => ['b', 'b']
 	     */
 	    function pullAll(array, values) {
 	      return (array && array.length && values && values.length)
@@ -43815,14 +44023,14 @@
 	     * @returns {Array} Returns the new array of removed elements.
 	     * @example
 	     *
-	     * var array = [5, 10, 15, 20];
-	     * var evens = _.pullAt(array, 1, 3);
+	     * var array = ['a', 'b', 'c', 'd'];
+	     * var pulled = _.pullAt(array, [1, 3]);
 	     *
 	     * console.log(array);
-	     * // => [5, 15]
+	     * // => ['a', 'c']
 	     *
-	     * console.log(evens);
-	     * // => [10, 20]
+	     * console.log(pulled);
+	     * // => ['b', 'd']
 	     */
 	    var pullAt = rest(function(array, indexes) {
 	      indexes = baseFlatten(indexes, 1);
@@ -43962,9 +44170,6 @@
 	     *
 	     * _.sortedIndex([30, 50], 40);
 	     * // => 1
-	     *
-	     * _.sortedIndex([4, 5], 4);
-	     * // => 0
 	     */
 	    function sortedIndex(array, value) {
 	      return baseSortedIndex(array, value);
@@ -43987,13 +44192,13 @@
 	     *  into `array`.
 	     * @example
 	     *
-	     * var dict = { 'thirty': 30, 'forty': 40, 'fifty': 50 };
+	     * var objects = [{ 'x': 4 }, { 'x': 5 }];
 	     *
-	     * _.sortedIndexBy(['thirty', 'fifty'], 'forty', _.propertyOf(dict));
-	     * // => 1
+	     * _.sortedIndexBy(objects, { 'x': 4 }, function(o) { return o.x; });
+	     * // => 0
 	     *
 	     * // The `_.property` iteratee shorthand.
-	     * _.sortedIndexBy([{ 'x': 4 }, { 'x': 5 }], { 'x': 4 }, 'x');
+	     * _.sortedIndexBy(objects, { 'x': 4 }, 'x');
 	     * // => 0
 	     */
 	    function sortedIndexBy(array, value, iteratee) {
@@ -44013,8 +44218,8 @@
 	     * @returns {number} Returns the index of the matched value, else `-1`.
 	     * @example
 	     *
-	     * _.sortedIndexOf([1, 1, 2, 2], 2);
-	     * // => 2
+	     * _.sortedIndexOf([4, 5, 5, 5, 6], 5);
+	     * // => 1
 	     */
 	    function sortedIndexOf(array, value) {
 	      var length = array ? array.length : 0;
@@ -44042,8 +44247,8 @@
 	     *  into `array`.
 	     * @example
 	     *
-	     * _.sortedLastIndex([4, 5], 4);
-	     * // => 1
+	     * _.sortedLastIndex([4, 5, 5, 5, 6], 5);
+	     * // => 4
 	     */
 	    function sortedLastIndex(array, value) {
 	      return baseSortedIndex(array, value, true);
@@ -44066,8 +44271,13 @@
 	     *  into `array`.
 	     * @example
 	     *
+	     * var objects = [{ 'x': 4 }, { 'x': 5 }];
+	     *
+	     * _.sortedLastIndexBy(objects, { 'x': 4 }, function(o) { return o.x; });
+	     * // => 1
+	     *
 	     * // The `_.property` iteratee shorthand.
-	     * _.sortedLastIndexBy([{ 'x': 4 }, { 'x': 5 }], { 'x': 4 }, 'x');
+	     * _.sortedLastIndexBy(objects, { 'x': 4 }, 'x');
 	     * // => 1
 	     */
 	    function sortedLastIndexBy(array, value, iteratee) {
@@ -44087,7 +44297,7 @@
 	     * @returns {number} Returns the index of the matched value, else `-1`.
 	     * @example
 	     *
-	     * _.sortedLastIndexOf([1, 1, 2, 2], 2);
+	     * _.sortedLastIndexOf([4, 5, 5, 5, 6], 5);
 	     * // => 3
 	     */
 	    function sortedLastIndexOf(array, value) {
@@ -44327,8 +44537,8 @@
 	     * @returns {Array} Returns the new array of combined values.
 	     * @example
 	     *
-	     * _.union([2, 1], [4, 2], [1, 2]);
-	     * // => [2, 1, 4]
+	     * _.union([2], [1, 2]);
+	     * // => [2, 1]
 	     */
 	    var union = rest(function(arrays) {
 	      return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true));
@@ -44350,8 +44560,8 @@
 	     * @returns {Array} Returns the new array of combined values.
 	     * @example
 	     *
-	     * _.unionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
-	     * // => [2.1, 1.2, 4.3]
+	     * _.unionBy([2.1], [1.2, 2.3], Math.floor);
+	     * // => [2.1, 1.2]
 	     *
 	     * // The `_.property` iteratee shorthand.
 	     * _.unionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
@@ -44458,7 +44668,7 @@
 	     * @returns {Array} Returns the new duplicate free array.
 	     * @example
 	     *
-	     * var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 },  { 'x': 1, 'y': 2 }];
+	     * var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 2 }];
 	     *
 	     * _.uniqWith(objects, _.isEqual);
 	     * // => [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }]
@@ -44553,7 +44763,7 @@
 	     * @see _.difference, _.xor
 	     * @example
 	     *
-	     * _.without([1, 2, 1, 3], 1, 2);
+	     * _.without([2, 1, 2, 3], 1, 2);
 	     * // => [3]
 	     */
 	    var without = rest(function(array, values) {
@@ -44577,8 +44787,8 @@
 	     * @see _.difference, _.without
 	     * @example
 	     *
-	     * _.xor([2, 1], [4, 2]);
-	     * // => [1, 4]
+	     * _.xor([2, 1], [2, 3]);
+	     * // => [1, 3]
 	     */
 	    var xor = rest(function(arrays) {
 	      return baseXor(arrayFilter(arrays, isArrayLikeObject));
@@ -44600,8 +44810,8 @@
 	     * @returns {Array} Returns the new array of filtered values.
 	     * @example
 	     *
-	     * _.xorBy([2.1, 1.2], [4.3, 2.4], Math.floor);
-	     * // => [1.2, 4.3]
+	     * _.xorBy([2.1, 1.2], [2.3, 3.4], Math.floor);
+	     * // => [1.2, 3.4]
 	     *
 	     * // The `_.property` iteratee shorthand.
 	     * _.xorBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
@@ -44834,9 +45044,6 @@
 	     *
 	     * _(object).at(['a[0].b.c', 'a[1]']).value();
 	     * // => [3, 4]
-	     *
-	     * _(['a', 'b', 'c']).at(0, 2).value();
-	     * // => ['a', 'c']
 	     */
 	    var wrapperAt = rest(function(paths) {
 	      paths = baseFlatten(paths, 1);
@@ -45099,6 +45306,7 @@
 	     * _.countBy([6.1, 4.2, 6.3], Math.floor);
 	     * // => { '4': 1, '6': 2 }
 	     *
+	     * // The `_.property` iteratee shorthand.
 	     * _.countBy(['one', 'two', 'three'], 'length');
 	     * // => { '3': 2, '5': 1 }
 	     */
@@ -45204,6 +45412,7 @@
 	     * @param {Array|Object} collection The collection to search.
 	     * @param {Array|Function|Object|string} [predicate=_.identity]
 	     *  The function invoked per iteration.
+	     * @param {number} [fromIndex=0] The index to search from.
 	     * @returns {*} Returns the matched element, else `undefined`.
 	     * @example
 	     *
@@ -45228,13 +45437,10 @@
 	     * _.find(users, 'active');
 	     * // => object for 'barney'
 	     */
-	    function find(collection, predicate) {
-	      predicate = getIteratee(predicate, 3);
-	      if (isArray(collection)) {
-	        var index = baseFindIndex(collection, predicate);
-	        return index > -1 ? collection[index] : undefined;
-	      }
-	      return baseFind(collection, predicate, baseEach);
+	    function find(collection, predicate, fromIndex) {
+	      collection = isArrayLike(collection) ? collection : values(collection);
+	      var index = findIndex(collection, predicate, fromIndex);
+	      return index > -1 ? collection[index] : undefined;
 	    }
 
 	    /**
@@ -45248,6 +45454,7 @@
 	     * @param {Array|Object} collection The collection to search.
 	     * @param {Array|Function|Object|string} [predicate=_.identity]
 	     *  The function invoked per iteration.
+	     * @param {number} [fromIndex=collection.length-1] The index to search from.
 	     * @returns {*} Returns the matched element, else `undefined`.
 	     * @example
 	     *
@@ -45256,13 +45463,10 @@
 	     * });
 	     * // => 3
 	     */
-	    function findLast(collection, predicate) {
-	      predicate = getIteratee(predicate, 3);
-	      if (isArray(collection)) {
-	        var index = baseFindIndex(collection, predicate, true);
-	        return index > -1 ? collection[index] : undefined;
-	      }
-	      return baseFind(collection, predicate, baseEachRight);
+	    function findLast(collection, predicate, fromIndex) {
+	      collection = isArrayLike(collection) ? collection : values(collection);
+	      var index = findLastIndex(collection, predicate, fromIndex);
+	      return index > -1 ? collection[index] : undefined;
 	    }
 
 	    /**
@@ -46020,7 +46224,6 @@
 	     * @static
 	     * @memberOf _
 	     * @since 2.4.0
-	     * @type {Function}
 	     * @category Date
 	     * @returns {number} Returns the timestamp.
 	     * @example
@@ -46028,9 +46231,11 @@
 	     * _.defer(function(stamp) {
 	     *   console.log(_.now() - stamp);
 	     * }, _.now());
-	     * // => Logs the number of milliseconds it took for the deferred function to be invoked.
+	     * // => Logs the number of milliseconds it took for the deferred invocation.
 	     */
-	    var now = Date.now;
+	    function now() {
+	      return Date.now();
+	    }
 
 	    /*------------------------------------------------------------------------*/
 
@@ -46134,7 +46339,7 @@
 	     * The `_.bind.placeholder` value, which defaults to `_` in monolithic builds,
 	     * may be used as a placeholder for partially applied arguments.
 	     *
-	     * **Note:** Unlike native `Function#bind` this method doesn't set the "length"
+	     * **Note:** Unlike native `Function#bind`, this method doesn't set the "length"
 	     * property of bound functions.
 	     *
 	     * @static
@@ -46374,7 +46579,7 @@
 	          maxWait,
 	          result,
 	          timerId,
-	          lastCallTime = 0,
+	          lastCallTime,
 	          lastInvokeTime = 0,
 	          leading = false,
 	          maxing = false,
@@ -46425,7 +46630,7 @@
 	        // Either this is the first call, activity has stopped and we're at the
 	        // trailing edge, the system time has gone backwards and we're treating
 	        // it as the trailing edge, or we've hit the `maxWait` limit.
-	        return (!lastCallTime || (timeSinceLastCall >= wait) ||
+	        return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
 	          (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
 	      }
 
@@ -46439,7 +46644,6 @@
 	      }
 
 	      function trailingEdge(time) {
-	        clearTimeout(timerId);
 	        timerId = undefined;
 
 	        // Only invoke if we have `lastArgs` which means `func` has been
@@ -46452,11 +46656,8 @@
 	      }
 
 	      function cancel() {
-	        if (timerId !== undefined) {
-	          clearTimeout(timerId);
-	        }
-	        lastCallTime = lastInvokeTime = 0;
-	        lastArgs = lastThis = timerId = undefined;
+	        lastInvokeTime = 0;
+	        lastArgs = lastCallTime = lastThis = timerId = undefined;
 	      }
 
 	      function flush() {
@@ -46477,7 +46678,6 @@
 	          }
 	          if (maxing) {
 	            // Handle invocations in a tight loop.
-	            clearTimeout(timerId);
 	            timerId = setTimeout(timerExpired, wait);
 	            return invokeFunc(lastCallTime);
 	          }
@@ -46701,7 +46901,7 @@
 	     *
 	     * var func = _.overArgs(function(x, y) {
 	     *   return [x, y];
-	     * }, square, doubled);
+	     * }, [square, doubled]);
 	     *
 	     * func(9, 3);
 	     * // => [81, 6]
@@ -46818,7 +47018,7 @@
 	     *
 	     * var rearged = _.rearg(function(a, b, c) {
 	     *   return [a, b, c];
-	     * }, 2, 0, 1);
+	     * }, [2, 0, 1]);
 	     *
 	     * rearged('b', 'c', 'a')
 	     * // => ['a', 'b', 'c']
@@ -47457,7 +47657,7 @@
 	     * _.isBuffer(new Uint8Array(2));
 	     * // => false
 	     */
-	    var isBuffer = !Buffer ? constant(false) : function(value) {
+	    var isBuffer = !Buffer ? stubFalse : function(value) {
 	      return value instanceof Buffer;
 	    };
 
@@ -47957,7 +48157,15 @@
 	    }
 
 	    /**
-	     * Checks if `value` is a native function.
+	     * Checks if `value` is a pristine native function.
+	     *
+	     * **Note:** This method can't reliably detect native functions in the
+	     * presence of the `core-js` package because `core-js` circumvents this kind
+	     * of detection. Despite multiple requests, the `core-js` maintainer has made
+	     * it clear: any attempt to fix the detection will be obstructed. As a result,
+	     * we're left with little choice but to throw an error. Unfortunately, this
+	     * also affects packages, like [babel-polyfill](https://www.npmjs.com/package/babel-polyfill),
+	     * which rely on `core-js`.
 	     *
 	     * @static
 	     * @memberOf _
@@ -47975,11 +48183,10 @@
 	     * // => false
 	     */
 	    function isNative(value) {
-	      if (!isObject(value)) {
-	        return false;
+	      if (isMaskable(value)) {
+	        throw new Error('This method is not supported with `core-js`. Try https://github.com/es-shims.');
 	      }
-	      var pattern = (isFunction(value) || isHostObject(value)) ? reIsNative : reIsHostCtor;
-	      return pattern.test(toSource(value));
+	      return baseIsNative(value);
 	    }
 
 	    /**
@@ -48441,7 +48648,7 @@
 	    /**
 	     * Converts `value` to an integer.
 	     *
-	     * **Note:** This function is loosely based on
+	     * **Note:** This method is loosely based on
 	     * [`ToInteger`](http://www.ecma-international.org/ecma-262/6.0/#sec-tointeger).
 	     *
 	     * @static
@@ -48795,9 +49002,6 @@
 	     *
 	     * _.at(object, ['a[0].b.c', 'a[1]']);
 	     * // => [3, 4]
-	     *
-	     * _.at(['a', 'b', 'c'], 0, 2);
-	     * // => ['a', 'c']
 	     */
 	    var at = rest(function(object, paths) {
 	      return baseAt(object, baseFlatten(paths, 1));
@@ -48930,7 +49134,7 @@
 	     * // => 'barney'
 	     */
 	    function findKey(object, predicate) {
-	      return baseFind(object, getIteratee(predicate, 3), baseForOwn, true);
+	      return baseFindKey(object, getIteratee(predicate, 3), baseForOwn);
 	    }
 
 	    /**
@@ -48970,7 +49174,7 @@
 	     * // => 'pebbles'
 	     */
 	    function findLastKey(object, predicate) {
-	      return baseFind(object, getIteratee(predicate, 3), baseForOwnRight, true);
+	      return baseFindKey(object, getIteratee(predicate, 3), baseForOwnRight);
 	    }
 
 	    /**
@@ -49829,15 +50033,16 @@
 	     * An alternative to `_.reduce`; this method transforms `object` to a new
 	     * `accumulator` object which is the result of running each of its own
 	     * enumerable string keyed properties thru `iteratee`, with each invocation
-	     * potentially mutating the `accumulator` object. The iteratee is invoked
-	     * with four arguments: (accumulator, value, key, object). Iteratee functions
-	     * may exit iteration early by explicitly returning `false`.
+	     * potentially mutating the `accumulator` object. If `accumulator` is not
+	     * provided, a new object with the same `[[Prototype]]` will be used. The
+	     * iteratee is invoked with four arguments: (accumulator, value, key, object).
+	     * Iteratee functions may exit iteration early by explicitly returning `false`.
 	     *
 	     * @static
 	     * @memberOf _
 	     * @since 1.3.0
 	     * @category Object
-	     * @param {Array|Object} object The object to iterate over.
+	     * @param {Object} object The object to iterate over.
 	     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
 	     * @param {*} [accumulator] The custom accumulator value.
 	     * @returns {*} Returns the accumulated value.
@@ -50259,7 +50464,7 @@
 	     * @category String
 	     * @param {string} [string=''] The string to search.
 	     * @param {string} [target] The string to search for.
-	     * @param {number} [position=string.length] The position to search from.
+	     * @param {number} [position=string.length] The position to search up to.
 	     * @returns {boolean} Returns `true` if `string` ends with `target`,
 	     *  else `false`.
 	     * @example
@@ -51344,7 +51549,7 @@
 	     *   }
 	     * };
 	     *
-	     * _.bindAll(view, 'onClick');
+	     * _.bindAll(view, ['onClick']);
 	     * jQuery(element).on('click', view.onClick);
 	     * // => Logs 'clicked docs' when clicked.
 	     */
@@ -51425,7 +51630,7 @@
 	     *   { 'user': 'fred',   'age': 40 }
 	     * ];
 	     *
-	     * _.filter(users, _.conforms({ 'age': _.partial(_.gt, _, 38) }));
+	     * _.filter(users, _.conforms({ 'age': function(n) { return n > 38; } }));
 	     * // => [{ 'user': 'fred', 'age': 40 }]
 	     */
 	    function conforms(source) {
@@ -51443,10 +51648,12 @@
 	     * @returns {Function} Returns the new constant function.
 	     * @example
 	     *
-	     * var object = { 'user': 'fred' };
-	     * var getter = _.constant(object);
+	     * var objects = _.times(2, _.constant({ 'a': 1 }));
 	     *
-	     * getter() === object;
+	     * console.log(objects);
+	     * // => [{ 'a': 1 }, { 'a': 1 }]
+	     *
+	     * console.log(objects[0] === objects[1]);
 	     * // => true
 	     */
 	    function constant(value) {
@@ -51473,7 +51680,7 @@
 	     *   return n * n;
 	     * }
 	     *
-	     * var addSquare = _.flow(_.add, square);
+	     * var addSquare = _.flow([_.add, square]);
 	     * addSquare(1, 2);
 	     * // => 9
 	     */
@@ -51496,7 +51703,7 @@
 	     *   return n * n;
 	     * }
 	     *
-	     * var addSquare = _.flowRight(square, _.add);
+	     * var addSquare = _.flowRight([square, _.add]);
 	     * addSquare(1, 2);
 	     * // => 9
 	     */
@@ -51515,7 +51722,7 @@
 	     *
 	     * var object = { 'user': 'fred' };
 	     *
-	     * _.identity(object) === object;
+	     * console.log(_.identity(object) === object);
 	     * // => true
 	     */
 	    function identity(value) {
@@ -51776,8 +51983,7 @@
 	    }
 
 	    /**
-	     * A no-operation function that returns `undefined` regardless of the
-	     * arguments it receives.
+	     * A method that returns `undefined`.
 	     *
 	     * @static
 	     * @memberOf _
@@ -51785,17 +51991,15 @@
 	     * @category Util
 	     * @example
 	     *
-	     * var object = { 'user': 'fred' };
-	     *
-	     * _.noop(object) === undefined;
-	     * // => true
+	     * _.times(2, _.noop);
+	     * // => [undefined, undefined]
 	     */
 	    function noop() {
 	      // No operation performed.
 	    }
 
 	    /**
-	     * Creates a function that gets the argument at `n` index. If `n` is negative,
+	     * Creates a function that gets the argument at index `n`. If `n` is negative,
 	     * the nth argument from the end is returned.
 	     *
 	     * @static
@@ -51834,7 +52038,7 @@
 	     * @returns {Function} Returns the new function.
 	     * @example
 	     *
-	     * var func = _.over(Math.max, Math.min);
+	     * var func = _.over([Math.max, Math.min]);
 	     *
 	     * func(1, 2, 3, 4);
 	     * // => [4, 1]
@@ -51854,7 +52058,7 @@
 	     * @returns {Function} Returns the new function.
 	     * @example
 	     *
-	     * var func = _.overEvery(Boolean, isFinite);
+	     * var func = _.overEvery([Boolean, isFinite]);
 	     *
 	     * func('1');
 	     * // => true
@@ -51880,7 +52084,7 @@
 	     * @returns {Function} Returns the new function.
 	     * @example
 	     *
-	     * var func = _.overSome(Boolean, isFinite);
+	     * var func = _.overSome([Boolean, isFinite]);
 	     *
 	     * func('1');
 	     * // => true
@@ -52028,6 +52232,101 @@
 	    var rangeRight = createRange(true);
 
 	    /**
+	     * A method that returns a new empty array.
+	     *
+	     * @static
+	     * @memberOf _
+	     * @since 4.13.0
+	     * @category Util
+	     * @returns {Array} Returns the new empty array.
+	     * @example
+	     *
+	     * var arrays = _.times(2, _.stubArray);
+	     *
+	     * console.log(arrays);
+	     * // => [[], []]
+	     *
+	     * console.log(arrays[0] === arrays[1]);
+	     * // => false
+	     */
+	    function stubArray() {
+	      return [];
+	    }
+
+	    /**
+	     * A method that returns `false`.
+	     *
+	     * @static
+	     * @memberOf _
+	     * @since 4.13.0
+	     * @category Util
+	     * @returns {boolean} Returns `false`.
+	     * @example
+	     *
+	     * _.times(2, _.stubFalse);
+	     * // => [false, false]
+	     */
+	    function stubFalse() {
+	      return false;
+	    }
+
+	    /**
+	     * A method that returns a new empty object.
+	     *
+	     * @static
+	     * @memberOf _
+	     * @since 4.13.0
+	     * @category Util
+	     * @returns {Object} Returns the new empty object.
+	     * @example
+	     *
+	     * var objects = _.times(2, _.stubObject);
+	     *
+	     * console.log(objects);
+	     * // => [{}, {}]
+	     *
+	     * console.log(objects[0] === objects[1]);
+	     * // => false
+	     */
+	    function stubObject() {
+	      return {};
+	    }
+
+	    /**
+	     * A method that returns an empty string.
+	     *
+	     * @static
+	     * @memberOf _
+	     * @since 4.13.0
+	     * @category Util
+	     * @returns {string} Returns the empty string.
+	     * @example
+	     *
+	     * _.times(2, _.stubString);
+	     * // => ['', '']
+	     */
+	    function stubString() {
+	      return '';
+	    }
+
+	    /**
+	     * A method that returns `true`.
+	     *
+	     * @static
+	     * @memberOf _
+	     * @since 4.13.0
+	     * @category Util
+	     * @returns {boolean} Returns `true`.
+	     * @example
+	     *
+	     * _.times(2, _.stubTrue);
+	     * // => [true, true]
+	     */
+	    function stubTrue() {
+	      return true;
+	    }
+
+	    /**
 	     * Invokes the iteratee `n` times, returning an array of the results of
 	     * each invocation. The iteratee is invoked with one argument; (index).
 	     *
@@ -52043,8 +52342,8 @@
 	     * _.times(3, String);
 	     * // => ['0', '1', '2']
 	     *
-	     *  _.times(4, _.constant(true));
-	     * // => [true, true, true, true]
+	     *  _.times(4, _.constant(0));
+	     * // => [0, 0, 0, 0]
 	     */
 	    function times(n, iteratee) {
 	      n = toInteger(n);
@@ -52080,15 +52379,6 @@
 	     *
 	     * _.toPath('a[0].b.c');
 	     * // => ['a', '0', 'b', 'c']
-	     *
-	     * var path = ['a', 'b', 'c'],
-	     *     newPath = _.toPath(path);
-	     *
-	     * console.log(newPath);
-	     * // => ['a', 'b', 'c']
-	     *
-	     * console.log(path === newPath);
-	     * // => false
 	     */
 	    function toPath(value) {
 	      if (isArray(value)) {
@@ -52727,6 +53017,11 @@
 	    lodash.meanBy = meanBy;
 	    lodash.min = min;
 	    lodash.minBy = minBy;
+	    lodash.stubArray = stubArray;
+	    lodash.stubFalse = stubFalse;
+	    lodash.stubObject = stubObject;
+	    lodash.stubString = stubString;
+	    lodash.stubTrue = stubTrue;
 	    lodash.multiply = multiply;
 	    lodash.nth = nth;
 	    lodash.noConflict = noConflict;
@@ -53033,7 +53328,7 @@
 	  // also prevents errors in cases where Lodash is loaded by a script tag in the
 	  // presence of an AMD loader. See http://requirejs.org/docs/errors.html#mismatch
 	  // for more details. Use `_.noConflict` to remove Lodash from the global object.
-	  (freeWindow || freeSelf || {})._ = _;
+	  (freeSelf || {})._ = _;
 
 	  // Some AMD build optimizers like r.js check for condition patterns like the following:
 	  if (true) {
@@ -53044,11 +53339,9 @@
 	    }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	  }
 	  // Check for `exports` after `define` in case a build optimizer adds an `exports` object.
-	  else if (freeExports && freeModule) {
+	  else if (freeModule) {
 	    // Export for Node.js.
-	    if (moduleExports) {
-	      (freeModule.exports = _)._ = _;
-	    }
+	    (freeModule.exports = _)._ = _;
 	    // Export for CommonJS support.
 	    freeExports._ = _;
 	  }
@@ -53058,20 +53351,20 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(186)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(190)(module), (function() { return this; }())))
 
 /***/ },
-/* 366 */
+/* 372 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(367);
+	module.exports = __webpack_require__(373);
 
 
 /***/ },
-/* 367 */
+/* 373 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var util = __webpack_require__(368);
+	var util = __webpack_require__(374);
 
 	function scrollIntoView(elem, container, config) {
 	  config = config || {};
@@ -53196,7 +53489,7 @@
 
 
 /***/ },
-/* 368 */
+/* 374 */
 /***/ function(module, exports) {
 
 	var RE_NUM = /[\-+]?(?:\d*\.|)\d+(?:[eE][\-+]?\d+|)/.source;
@@ -53633,7 +53926,7 @@
 
 
 /***/ },
-/* 369 */
+/* 375 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -53661,16 +53954,16 @@
 	};
 
 /***/ },
-/* 370 */
+/* 376 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(371);
+	var content = __webpack_require__(377);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(373)(content, {});
+	var update = __webpack_require__(379)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -53687,21 +53980,21 @@
 	}
 
 /***/ },
-/* 371 */
+/* 377 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(372)();
+	exports = module.exports = __webpack_require__(378)();
 	// imports
 
 
 	// module
-	exports.push([module.id, "body {\n  width: 450px;\n  height: 700px; }\n", ""]);
+	exports.push([module.id, "body {\n  width: 450px;\n  height: 700px; }\n\n.players-container {\n  margin-top: 10px; }\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 372 */
+/* 378 */
 /***/ function(module, exports) {
 
 	/*
@@ -53757,7 +54050,7 @@
 
 
 /***/ },
-/* 373 */
+/* 379 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -54006,6 +54299,1848 @@
 		if(oldSrc)
 			URL.revokeObjectURL(oldSrc);
 	}
+
+
+/***/ },
+/* 380 */,
+/* 381 */,
+/* 382 */,
+/* 383 */,
+/* 384 */,
+/* 385 */,
+/* 386 */,
+/* 387 */,
+/* 388 */,
+/* 389 */,
+/* 390 */,
+/* 391 */,
+/* 392 */,
+/* 393 */,
+/* 394 */,
+/* 395 */,
+/* 396 */,
+/* 397 */,
+/* 398 */,
+/* 399 */,
+/* 400 */,
+/* 401 */,
+/* 402 */,
+/* 403 */,
+/* 404 */,
+/* 405 */,
+/* 406 */,
+/* 407 */,
+/* 408 */,
+/* 409 */,
+/* 410 */,
+/* 411 */,
+/* 412 */,
+/* 413 */,
+/* 414 */,
+/* 415 */,
+/* 416 */,
+/* 417 */,
+/* 418 */,
+/* 419 */,
+/* 420 */,
+/* 421 */,
+/* 422 */,
+/* 423 */,
+/* 424 */,
+/* 425 */,
+/* 426 */,
+/* 427 */,
+/* 428 */,
+/* 429 */,
+/* 430 */,
+/* 431 */,
+/* 432 */,
+/* 433 */,
+/* 434 */,
+/* 435 */,
+/* 436 */,
+/* 437 */,
+/* 438 */,
+/* 439 */,
+/* 440 */,
+/* 441 */,
+/* 442 */,
+/* 443 */,
+/* 444 */,
+/* 445 */,
+/* 446 */,
+/* 447 */,
+/* 448 */,
+/* 449 */,
+/* 450 */,
+/* 451 */,
+/* 452 */,
+/* 453 */,
+/* 454 */,
+/* 455 */,
+/* 456 */,
+/* 457 */,
+/* 458 */,
+/* 459 */,
+/* 460 */,
+/* 461 */,
+/* 462 */,
+/* 463 */,
+/* 464 */,
+/* 465 */,
+/* 466 */,
+/* 467 */,
+/* 468 */,
+/* 469 */,
+/* 470 */,
+/* 471 */,
+/* 472 */,
+/* 473 */,
+/* 474 */,
+/* 475 */,
+/* 476 */,
+/* 477 */,
+/* 478 */,
+/* 479 */,
+/* 480 */,
+/* 481 */,
+/* 482 */,
+/* 483 */,
+/* 484 */,
+/* 485 */,
+/* 486 */,
+/* 487 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(159);
+
+	var _autocomplete = __webpack_require__(375);
+
+	var _actions = __webpack_require__(188);
+
+	var _reactSelect = __webpack_require__(488);
+
+	var _reactSelect2 = _interopRequireDefault(_reactSelect);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	/**
+	 * Consider using 'react-virtualized-select' because of the size of
+	 * playerlist
+	 */
+
+	var Search = function (_React$Component) {
+	    _inherits(Search, _React$Component);
+
+	    function Search(props) {
+	        _classCallCheck(this, Search);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Search).call(this, props));
+
+	        _this.selectPlayer = _this.selectPlayer.bind(_this);
+	        _this.state = {
+	            value: ''
+	        };
+	        return _this;
+	    }
+
+	    _createClass(Search, [{
+	        key: 'render',
+	        value: function render() {
+	            // this.props.playerIds is an array of objects.
+	            // t: teamname
+	            // n: player name
+	            // p: player id
+	            return _react2.default.createElement(_reactSelect2.default, {
+	                name: 'player-names',
+	                value: this.state.value,
+	                options: this.props.playerIds,
+	                onChange: this.selectPlayer,
+	                onInputChange: function onInputChange(inputValue) {
+	                    console.log(inputValue);
+	                },
+	                clearable: false,
+	                searchable: true,
+	                labelKey: 'n',
+	                valueKey: 'n'
+	            });
+	        }
+	        /**
+	         * logChange
+	         *
+	         * @param  {[type]} player [description]
+	         * @return {[type]}        [description]
+	         */
+
+	    }, {
+	        key: 'selectPlayer',
+	        value: function selectPlayer(player) {
+	            this.setState({ value: player.n });
+	            if (this.playerExists(player.p)) {
+	                return;
+	            }
+	            this.props.addPlayerObj(player);
+	        }
+	        /**
+	         * playerExists
+	         * Checks playerList for duplicates
+	         * @param  {string}  playerId [id of selected player]
+	         * @return {boolean}          [exists or not]
+	         */
+
+	    }, {
+	        key: 'playerExists',
+	        value: function playerExists(playerId) {
+	            var players = this.props.playerList.players;
+	            var exists = players.some(function (p) {
+	                return playerId === p.p;
+	            });
+	            if (exists) return true;
+	            return false;
+	        }
+	    }, {
+	        key: 'onSelectAddPlayer',
+	        value: function onSelectAddPlayer(playerName, playerObj) {
+	            // add player id to store
+	            console.log(playerName, playerObj);
+	            this.props.addPlayerObj(playerObj);
+	        }
+	    }]);
+
+	    return Search;
+	}(_react2.default.Component);
+
+	var mapStateToProps = function mapStateToProps(state) {
+	    var playerIds = state.playerIds;
+	    var playerList = state.playerList;
+
+	    return {
+	        playerIds: playerIds,
+	        playerList: playerList
+	    };
+	};
+
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	    return {
+	        addPlayerObj: function addPlayerObj(playerObj) {
+	            dispatch((0, _actions.addPlayer)(playerObj));
+	        }
+	    };
+	};
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Search);
+
+/***/ },
+/* 488 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+		value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(158);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _reactInputAutosize = __webpack_require__(489);
+
+	var _reactInputAutosize2 = _interopRequireDefault(_reactInputAutosize);
+
+	var _classnames = __webpack_require__(490);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var _utilsStripDiacritics = __webpack_require__(491);
+
+	var _utilsStripDiacritics2 = _interopRequireDefault(_utilsStripDiacritics);
+
+	var _Async = __webpack_require__(492);
+
+	var _Async2 = _interopRequireDefault(_Async);
+
+	var _Option = __webpack_require__(493);
+
+	var _Option2 = _interopRequireDefault(_Option);
+
+	var _Value = __webpack_require__(494);
+
+	var _Value2 = _interopRequireDefault(_Value);
+
+	function stringifyValue(value) {
+		if (typeof value === 'object') {
+			return JSON.stringify(value);
+		} else {
+			return value;
+		}
+	}
+
+	var stringOrNode = _react2['default'].PropTypes.oneOfType([_react2['default'].PropTypes.string, _react2['default'].PropTypes.node]);
+
+	var Select = _react2['default'].createClass({
+
+		displayName: 'Select',
+
+		propTypes: {
+			addLabelText: _react2['default'].PropTypes.string, // placeholder displayed when you want to add a label on a multi-value input
+			allowCreate: _react2['default'].PropTypes.bool, // whether to allow creation of new entries
+			autoBlur: _react2['default'].PropTypes.bool, // automatically blur the component when an option is selected
+			autofocus: _react2['default'].PropTypes.bool, // autofocus the component on mount
+			autosize: _react2['default'].PropTypes.bool, // whether to enable autosizing or not
+			backspaceRemoves: _react2['default'].PropTypes.bool, // whether backspace removes an item if there is no text input
+			className: _react2['default'].PropTypes.string, // className for the outer element
+			clearAllText: stringOrNode, // title for the "clear" control when multi: true
+			clearValueText: stringOrNode, // title for the "clear" control
+			clearable: _react2['default'].PropTypes.bool, // should it be possible to reset value
+			delimiter: _react2['default'].PropTypes.string, // delimiter to use to join multiple values for the hidden field value
+			disabled: _react2['default'].PropTypes.bool, // whether the Select is disabled or not
+			escapeClearsValue: _react2['default'].PropTypes.bool, // whether escape clears the value when the menu is closed
+			filterOption: _react2['default'].PropTypes.func, // method to filter a single option (option, filterString)
+			filterOptions: _react2['default'].PropTypes.any, // boolean to enable default filtering or function to filter the options array ([options], filterString, [values])
+			ignoreAccents: _react2['default'].PropTypes.bool, // whether to strip diacritics when filtering
+			ignoreCase: _react2['default'].PropTypes.bool, // whether to perform case-insensitive filtering
+			inputProps: _react2['default'].PropTypes.object, // custom attributes for the Input
+			inputRenderer: _react2['default'].PropTypes.func, // returns a custom input component
+			isLoading: _react2['default'].PropTypes.bool, // whether the Select is loading externally or not (such as options being loaded)
+			joinValues: _react2['default'].PropTypes.bool, // joins multiple values into a single form field with the delimiter (legacy mode)
+			labelKey: _react2['default'].PropTypes.string, // path of the label value in option objects
+			matchPos: _react2['default'].PropTypes.string, // (any|start) match the start or entire string when filtering
+			matchProp: _react2['default'].PropTypes.string, // (any|label|value) which option property to filter on
+			menuBuffer: _react2['default'].PropTypes.number, // optional buffer (in px) between the bottom of the viewport and the bottom of the menu
+			menuContainerStyle: _react2['default'].PropTypes.object, // optional style to apply to the menu container
+			menuRenderer: _react2['default'].PropTypes.func, // renders a custom menu with options
+			menuStyle: _react2['default'].PropTypes.object, // optional style to apply to the menu
+			multi: _react2['default'].PropTypes.bool, // multi-value input
+			name: _react2['default'].PropTypes.string, // generates a hidden <input /> tag with this field name for html forms
+			newOptionCreator: _react2['default'].PropTypes.func, // factory to create new options when allowCreate set
+			noResultsText: stringOrNode, // placeholder displayed when there are no matching search results
+			onBlur: _react2['default'].PropTypes.func, // onBlur handler: function (event) {}
+			onBlurResetsInput: _react2['default'].PropTypes.bool, // whether input is cleared on blur
+			onChange: _react2['default'].PropTypes.func, // onChange handler: function (newValue) {}
+			onClose: _react2['default'].PropTypes.func, // fires when the menu is closed
+			onFocus: _react2['default'].PropTypes.func, // onFocus handler: function (event) {}
+			onInputChange: _react2['default'].PropTypes.func, // onInputChange handler: function (inputValue) {}
+			onMenuScrollToBottom: _react2['default'].PropTypes.func, // fires when the menu is scrolled to the bottom; can be used to paginate options
+			onOpen: _react2['default'].PropTypes.func, // fires when the menu is opened
+			onValueClick: _react2['default'].PropTypes.func, // onClick handler for value labels: function (value, event) {}
+			openAfterFocus: _react2['default'].PropTypes.bool, // boolean to enable opening dropdown when focused
+			openOnFocus: _react2['default'].PropTypes.bool, // always open options menu on focus
+			optionClassName: _react2['default'].PropTypes.string, // additional class(es) to apply to the <Option /> elements
+			optionComponent: _react2['default'].PropTypes.func, // option component to render in dropdown
+			optionRenderer: _react2['default'].PropTypes.func, // optionRenderer: function (option) {}
+			options: _react2['default'].PropTypes.array, // array of options
+			placeholder: stringOrNode, // field placeholder, displayed when there's no value
+			required: _react2['default'].PropTypes.bool, // applies HTML5 required attribute when needed
+			resetValue: _react2['default'].PropTypes.any, // value to use when you clear the control
+			scrollMenuIntoView: _react2['default'].PropTypes.bool, // boolean to enable the viewport to shift so that the full menu fully visible when engaged
+			searchable: _react2['default'].PropTypes.bool, // whether to enable searching feature or not
+			simpleValue: _react2['default'].PropTypes.bool, // pass the value to onChange as a simple value (legacy pre 1.0 mode), defaults to false
+			style: _react2['default'].PropTypes.object, // optional style to apply to the control
+			tabIndex: _react2['default'].PropTypes.string, // optional tab index of the control
+			tabSelectsValue: _react2['default'].PropTypes.bool, // whether to treat tabbing out while focused to be value selection
+			value: _react2['default'].PropTypes.any, // initial field value
+			valueComponent: _react2['default'].PropTypes.func, // value component to render
+			valueKey: _react2['default'].PropTypes.string, // path of the label value in option objects
+			valueRenderer: _react2['default'].PropTypes.func, // valueRenderer: function (option) {}
+			wrapperStyle: _react2['default'].PropTypes.object },
+
+		// optional style to apply to the component wrapper
+		statics: { Async: _Async2['default'] },
+
+		getDefaultProps: function getDefaultProps() {
+			return {
+				addLabelText: 'Add "{label}"?',
+				autosize: true,
+				allowCreate: false,
+				backspaceRemoves: true,
+				clearable: true,
+				clearAllText: 'Clear all',
+				clearValueText: 'Clear value',
+				delimiter: ',',
+				disabled: false,
+				escapeClearsValue: true,
+				filterOptions: true,
+				ignoreAccents: true,
+				ignoreCase: true,
+				inputProps: {},
+				isLoading: false,
+				joinValues: false,
+				labelKey: 'label',
+				matchPos: 'any',
+				matchProp: 'any',
+				menuBuffer: 0,
+				multi: false,
+				noResultsText: 'No results found',
+				onBlurResetsInput: true,
+				openAfterFocus: false,
+				optionComponent: _Option2['default'],
+				placeholder: 'Select...',
+				required: false,
+				resetValue: null,
+				scrollMenuIntoView: true,
+				searchable: true,
+				simpleValue: false,
+				tabSelectsValue: true,
+				valueComponent: _Value2['default'],
+				valueKey: 'value'
+			};
+		},
+
+		getInitialState: function getInitialState() {
+			return {
+				inputValue: '',
+				isFocused: false,
+				isLoading: false,
+				isOpen: false,
+				isPseudoFocused: false,
+				required: false
+			};
+		},
+
+		componentWillMount: function componentWillMount() {
+			var valueArray = this.getValueArray(this.props.value);
+
+			if (this.props.required) {
+				this.setState({
+					required: this.handleRequired(valueArray[0], this.props.multi)
+				});
+			}
+		},
+
+		componentDidMount: function componentDidMount() {
+			if (this.props.autofocus) {
+				this.focus();
+			}
+		},
+
+		componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+			var valueArray = this.getValueArray(nextProps.value);
+
+			if (nextProps.required) {
+				this.setState({
+					required: this.handleRequired(valueArray[0], nextProps.multi)
+				});
+			}
+		},
+
+		componentWillUpdate: function componentWillUpdate(nextProps, nextState) {
+			if (nextState.isOpen !== this.state.isOpen) {
+				var handler = nextState.isOpen ? nextProps.onOpen : nextProps.onClose;
+				handler && handler();
+			}
+		},
+
+		componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
+			// focus to the selected option
+			if (this.refs.menu && this.refs.focused && this.state.isOpen && !this.hasScrolledToOption) {
+				var focusedOptionNode = _reactDom2['default'].findDOMNode(this.refs.focused);
+				var menuNode = _reactDom2['default'].findDOMNode(this.refs.menu);
+				menuNode.scrollTop = focusedOptionNode.offsetTop;
+				this.hasScrolledToOption = true;
+			} else if (!this.state.isOpen) {
+				this.hasScrolledToOption = false;
+			}
+
+			if (this._scrollToFocusedOptionOnUpdate && this.refs.focused && this.refs.menu) {
+				this._scrollToFocusedOptionOnUpdate = false;
+				var focusedDOM = _reactDom2['default'].findDOMNode(this.refs.focused);
+				var menuDOM = _reactDom2['default'].findDOMNode(this.refs.menu);
+				var focusedRect = focusedDOM.getBoundingClientRect();
+				var menuRect = menuDOM.getBoundingClientRect();
+				if (focusedRect.bottom > menuRect.bottom || focusedRect.top < menuRect.top) {
+					menuDOM.scrollTop = focusedDOM.offsetTop + focusedDOM.clientHeight - menuDOM.offsetHeight;
+				}
+			}
+			if (this.props.scrollMenuIntoView && this.refs.menuContainer) {
+				var menuContainerRect = this.refs.menuContainer.getBoundingClientRect();
+				if (window.innerHeight < menuContainerRect.bottom + this.props.menuBuffer) {
+					window.scrollBy(0, menuContainerRect.bottom + this.props.menuBuffer - window.innerHeight);
+				}
+			}
+			if (prevProps.disabled !== this.props.disabled) {
+				this.setState({ isFocused: false }); // eslint-disable-line react/no-did-update-set-state
+			}
+		},
+
+		focus: function focus() {
+			if (!this.refs.input) return;
+			this.refs.input.focus();
+
+			if (this.props.openAfterFocus) {
+				this.setState({
+					isOpen: true
+				});
+			}
+		},
+
+		blurInput: function blurInput() {
+			if (!this.refs.input) return;
+			this.refs.input.blur();
+		},
+
+		handleTouchMove: function handleTouchMove(event) {
+			// Set a flag that the view is being dragged
+			this.dragging = true;
+		},
+
+		handleTouchStart: function handleTouchStart(event) {
+			// Set a flag that the view is not being dragged
+			this.dragging = false;
+		},
+
+		handleTouchEnd: function handleTouchEnd(event) {
+			// Check if the view is being dragged, In this case
+			// we don't want to fire the click event (because the user only wants to scroll)
+			if (this.dragging) return;
+
+			// Fire the mouse events
+			this.handleMouseDown(event);
+		},
+
+		handleTouchEndClearValue: function handleTouchEndClearValue(event) {
+			// Check if the view is being dragged, In this case
+			// we don't want to fire the click event (because the user only wants to scroll)
+			if (this.dragging) return;
+
+			// Clear the value
+			this.clearValue(event);
+		},
+
+		handleMouseDown: function handleMouseDown(event) {
+			// if the event was triggered by a mousedown and not the primary
+			// button, or if the component is disabled, ignore it.
+			if (this.props.disabled || event.type === 'mousedown' && event.button !== 0) {
+				return;
+			}
+
+			// prevent default event handlers
+			event.stopPropagation();
+			event.preventDefault();
+
+			// for the non-searchable select, toggle the menu
+			if (!this.props.searchable) {
+				this.focus();
+				return this.setState({
+					isOpen: !this.state.isOpen
+				});
+			}
+
+			if (this.state.isFocused) {
+				// if the input is focused, ensure the menu is open
+				this.setState({
+					isOpen: true,
+					isPseudoFocused: false
+				});
+			} else {
+				// otherwise, focus the input and open the menu
+				this._openAfterFocus = true;
+				this.focus();
+			}
+		},
+
+		handleMouseDownOnArrow: function handleMouseDownOnArrow(event) {
+			// if the event was triggered by a mousedown and not the primary
+			// button, or if the component is disabled, ignore it.
+			if (this.props.disabled || event.type === 'mousedown' && event.button !== 0) {
+				return;
+			}
+			// If the menu isn't open, let the event bubble to the main handleMouseDown
+			if (!this.state.isOpen) {
+				return;
+			}
+			// prevent default event handlers
+			event.stopPropagation();
+			event.preventDefault();
+			// close the menu
+			this.closeMenu();
+		},
+
+		handleMouseDownOnMenu: function handleMouseDownOnMenu(event) {
+			// if the event was triggered by a mousedown and not the primary
+			// button, or if the component is disabled, ignore it.
+			if (this.props.disabled || event.type === 'mousedown' && event.button !== 0) {
+				return;
+			}
+			event.stopPropagation();
+			event.preventDefault();
+
+			this._openAfterFocus = true;
+			this.focus();
+		},
+
+		closeMenu: function closeMenu() {
+			this.setState({
+				isOpen: false,
+				isPseudoFocused: this.state.isFocused && !this.props.multi,
+				inputValue: ''
+			});
+			this.hasScrolledToOption = false;
+		},
+
+		handleInputFocus: function handleInputFocus(event) {
+			var isOpen = this.state.isOpen || this._openAfterFocus || this.props.openOnFocus;
+			if (this.props.onFocus) {
+				this.props.onFocus(event);
+			}
+			this.setState({
+				isFocused: true,
+				isOpen: isOpen
+			});
+			this._openAfterFocus = false;
+		},
+
+		handleInputBlur: function handleInputBlur(event) {
+			if (this.refs.menu && document.activeElement === this.refs.menu) {
+				this.focus();
+				return;
+			}
+
+			if (this.props.onBlur) {
+				this.props.onBlur(event);
+			}
+			var onBlurredState = {
+				isFocused: false,
+				isOpen: false,
+				isPseudoFocused: false
+			};
+			if (this.props.onBlurResetsInput) {
+				onBlurredState.inputValue = '';
+			}
+			this.setState(onBlurredState);
+		},
+
+		handleInputChange: function handleInputChange(event) {
+			var newInputValue = event.target.value;
+			if (this.state.inputValue !== event.target.value && this.props.onInputChange) {
+				var nextState = this.props.onInputChange(newInputValue);
+				// Note: != used deliberately here to catch undefined and null
+				if (nextState != null) {
+					newInputValue = '' + nextState;
+				}
+			}
+			this.setState({
+				isOpen: true,
+				isPseudoFocused: false,
+				inputValue: newInputValue
+			});
+		},
+
+		handleKeyDown: function handleKeyDown(event) {
+			if (this.props.disabled) return;
+			switch (event.keyCode) {
+				case 8:
+					// backspace
+					if (!this.state.inputValue && this.props.backspaceRemoves) {
+						event.preventDefault();
+						this.popValue();
+					}
+					return;
+				case 9:
+					// tab
+					if (event.shiftKey || !this.state.isOpen || !this.props.tabSelectsValue) {
+						return;
+					}
+					this.selectFocusedOption();
+					return;
+				case 13:
+					// enter
+					if (!this.state.isOpen) return;
+					event.stopPropagation();
+					this.selectFocusedOption();
+					break;
+				case 27:
+					// escape
+					if (this.state.isOpen) {
+						this.closeMenu();
+					} else if (this.props.clearable && this.props.escapeClearsValue) {
+						this.clearValue(event);
+					}
+					break;
+				case 38:
+					// up
+					this.focusPreviousOption();
+					break;
+				case 40:
+					// down
+					this.focusNextOption();
+					break;
+				// case 188: // ,
+				// 	if (this.props.allowCreate && this.props.multi) {
+				// 		event.preventDefault();
+				// 		event.stopPropagation();
+				// 		this.selectFocusedOption();
+				// 	} else {
+				// 		return;
+				// 	}
+				// break;
+				default:
+					return;
+			}
+			event.preventDefault();
+		},
+
+		handleValueClick: function handleValueClick(option, event) {
+			if (!this.props.onValueClick) return;
+			this.props.onValueClick(option, event);
+		},
+
+		handleMenuScroll: function handleMenuScroll(event) {
+			if (!this.props.onMenuScrollToBottom) return;
+			var target = event.target;
+
+			if (target.scrollHeight > target.offsetHeight && !(target.scrollHeight - target.offsetHeight - target.scrollTop)) {
+				this.props.onMenuScrollToBottom();
+			}
+		},
+
+		handleRequired: function handleRequired(value, multi) {
+			if (!value) return true;
+			return multi ? value.length === 0 : Object.keys(value).length === 0;
+		},
+
+		getOptionLabel: function getOptionLabel(op) {
+			return op[this.props.labelKey];
+		},
+
+		getValueArray: function getValueArray(value) {
+			if (this.props.multi) {
+				if (typeof value === 'string') value = value.split(this.props.delimiter);
+				if (!Array.isArray(value)) {
+					if (value === null || value === undefined) return [];
+					value = [value];
+				}
+				return value.map(this.expandValue).filter(function (i) {
+					return i;
+				});
+			}
+			var expandedValue = this.expandValue(value);
+			return expandedValue ? [expandedValue] : [];
+		},
+
+		expandValue: function expandValue(value) {
+			if (typeof value !== 'string' && typeof value !== 'number') return value;
+			var _props = this.props;
+			var options = _props.options;
+			var valueKey = _props.valueKey;
+
+			if (!options) return;
+			for (var i = 0; i < options.length; i++) {
+				if (options[i][valueKey] === value) return options[i];
+			}
+		},
+
+		setValue: function setValue(value) {
+			var _this = this;
+
+			if (this.props.autoBlur) {
+				this.blurInput();
+			}
+			if (!this.props.onChange) return;
+			if (this.props.required) {
+				var required = this.handleRequired(value, this.props.multi);
+				this.setState({ required: required });
+			}
+			if (this.props.simpleValue && value) {
+				value = this.props.multi ? value.map(function (i) {
+					return i[_this.props.valueKey];
+				}).join(this.props.delimiter) : value[this.props.valueKey];
+			}
+			this.props.onChange(value);
+		},
+
+		selectValue: function selectValue(value) {
+			this.hasScrolledToOption = false;
+			if (this.props.multi) {
+				this.addValue(value);
+				this.setState({
+					inputValue: ''
+				});
+			} else {
+				this.setValue(value);
+				this.setState({
+					isOpen: false,
+					inputValue: '',
+					isPseudoFocused: this.state.isFocused
+				});
+			}
+		},
+
+		addValue: function addValue(value) {
+			var valueArray = this.getValueArray(this.props.value);
+			this.setValue(valueArray.concat(value));
+		},
+
+		popValue: function popValue() {
+			var valueArray = this.getValueArray(this.props.value);
+			if (!valueArray.length) return;
+			if (valueArray[valueArray.length - 1].clearableValue === false) return;
+			this.setValue(valueArray.slice(0, valueArray.length - 1));
+		},
+
+		removeValue: function removeValue(value) {
+			var valueArray = this.getValueArray(this.props.value);
+			this.setValue(valueArray.filter(function (i) {
+				return i !== value;
+			}));
+			this.focus();
+		},
+
+		clearValue: function clearValue(event) {
+			// if the event was triggered by a mousedown and not the primary
+			// button, ignore it.
+			if (event && event.type === 'mousedown' && event.button !== 0) {
+				return;
+			}
+			event.stopPropagation();
+			event.preventDefault();
+			this.setValue(this.props.resetValue);
+			this.setState({
+				isOpen: false,
+				inputValue: ''
+			}, this.focus);
+		},
+
+		focusOption: function focusOption(option) {
+			this.setState({
+				focusedOption: option
+			});
+		},
+
+		focusNextOption: function focusNextOption() {
+			this.focusAdjacentOption('next');
+		},
+
+		focusPreviousOption: function focusPreviousOption() {
+			this.focusAdjacentOption('previous');
+		},
+
+		focusAdjacentOption: function focusAdjacentOption(dir) {
+			var options = this._visibleOptions.filter(function (i) {
+				return !i.disabled;
+			});
+			this._scrollToFocusedOptionOnUpdate = true;
+			if (!this.state.isOpen) {
+				this.setState({
+					isOpen: true,
+					inputValue: '',
+					focusedOption: this._focusedOption || options[dir === 'next' ? 0 : options.length - 1]
+				});
+				return;
+			}
+			if (!options.length) return;
+			var focusedIndex = -1;
+			for (var i = 0; i < options.length; i++) {
+				if (this._focusedOption === options[i]) {
+					focusedIndex = i;
+					break;
+				}
+			}
+			var focusedOption = options[0];
+			if (dir === 'next' && focusedIndex > -1 && focusedIndex < options.length - 1) {
+				focusedOption = options[focusedIndex + 1];
+			} else if (dir === 'previous') {
+				if (focusedIndex > 0) {
+					focusedOption = options[focusedIndex - 1];
+				} else {
+					focusedOption = options[options.length - 1];
+				}
+			}
+			this.setState({
+				focusedOption: focusedOption
+			});
+		},
+
+		selectFocusedOption: function selectFocusedOption() {
+			// if (this.props.allowCreate && !this.state.focusedOption) {
+			// 	return this.selectValue(this.state.inputValue);
+			// }
+			if (this._focusedOption) {
+				return this.selectValue(this._focusedOption);
+			}
+		},
+
+		renderLoading: function renderLoading() {
+			if (!this.props.isLoading) return;
+			return _react2['default'].createElement(
+				'span',
+				{ className: 'Select-loading-zone', 'aria-hidden': 'true' },
+				_react2['default'].createElement('span', { className: 'Select-loading' })
+			);
+		},
+
+		renderValue: function renderValue(valueArray, isOpen) {
+			var _this2 = this;
+
+			var renderLabel = this.props.valueRenderer || this.getOptionLabel;
+			var ValueComponent = this.props.valueComponent;
+			if (!valueArray.length) {
+				return !this.state.inputValue ? _react2['default'].createElement(
+					'div',
+					{ className: 'Select-placeholder' },
+					this.props.placeholder
+				) : null;
+			}
+			var onClick = this.props.onValueClick ? this.handleValueClick : null;
+			if (this.props.multi) {
+				return valueArray.map(function (value, i) {
+					return _react2['default'].createElement(
+						ValueComponent,
+						{
+							disabled: _this2.props.disabled || value.clearableValue === false,
+							key: 'value-' + i + '-' + value[_this2.props.valueKey],
+							onClick: onClick,
+							onRemove: _this2.removeValue,
+							value: value
+						},
+						renderLabel(value)
+					);
+				});
+			} else if (!this.state.inputValue) {
+				if (isOpen) onClick = null;
+				return _react2['default'].createElement(
+					ValueComponent,
+					{
+						disabled: this.props.disabled,
+						onClick: onClick,
+						value: valueArray[0]
+					},
+					renderLabel(valueArray[0])
+				);
+			}
+		},
+
+		renderInput: function renderInput(valueArray) {
+			if (this.props.inputRenderer) {
+				return this.props.inputRenderer();
+			} else {
+				var className = (0, _classnames2['default'])('Select-input', this.props.inputProps.className);
+				if (this.props.disabled || !this.props.searchable) {
+					return _react2['default'].createElement('div', _extends({}, this.props.inputProps, {
+						className: className,
+						tabIndex: this.props.tabIndex || 0,
+						onBlur: this.handleInputBlur,
+						onFocus: this.handleInputFocus,
+						ref: 'input',
+						style: { border: 0, width: 1, display: 'inline-block' } }));
+				}
+				if (this.props.autosize) {
+					return _react2['default'].createElement(_reactInputAutosize2['default'], _extends({}, this.props.inputProps, {
+						className: className,
+						tabIndex: this.props.tabIndex,
+						onBlur: this.handleInputBlur,
+						onChange: this.handleInputChange,
+						onFocus: this.handleInputFocus,
+						minWidth: '5',
+						ref: 'input',
+						required: this.state.required,
+						value: this.state.inputValue
+					}));
+				}
+				return _react2['default'].createElement(
+					'div',
+					{ className: className },
+					_react2['default'].createElement('input', _extends({}, this.props.inputProps, {
+						tabIndex: this.props.tabIndex,
+						onBlur: this.handleInputBlur,
+						onChange: this.handleInputChange,
+						onFocus: this.handleInputFocus,
+						ref: 'input',
+						required: this.state.required,
+						value: this.state.inputValue
+					}))
+				);
+			}
+		},
+
+		renderClear: function renderClear() {
+			if (!this.props.clearable || !this.props.value || this.props.multi && !this.props.value.length || this.props.disabled || this.props.isLoading) return;
+			return _react2['default'].createElement(
+				'span',
+				{ className: 'Select-clear-zone', title: this.props.multi ? this.props.clearAllText : this.props.clearValueText,
+					'aria-label': this.props.multi ? this.props.clearAllText : this.props.clearValueText,
+					onMouseDown: this.clearValue,
+					onTouchStart: this.handleTouchStart,
+					onTouchMove: this.handleTouchMove,
+					onTouchEnd: this.handleTouchEndClearValue },
+				_react2['default'].createElement('span', { className: 'Select-clear', dangerouslySetInnerHTML: { __html: '&times;' } })
+			);
+		},
+
+		renderArrow: function renderArrow() {
+			return _react2['default'].createElement(
+				'span',
+				{ className: 'Select-arrow-zone', onMouseDown: this.handleMouseDownOnArrow },
+				_react2['default'].createElement('span', { className: 'Select-arrow', onMouseDown: this.handleMouseDownOnArrow })
+			);
+		},
+
+		filterOptions: function filterOptions(excludeOptions) {
+			var _this3 = this;
+
+			var filterValue = this.state.inputValue;
+			var options = this.props.options || [];
+			if (typeof this.props.filterOptions === 'function') {
+				return this.props.filterOptions.call(this, options, filterValue, excludeOptions);
+			} else if (this.props.filterOptions) {
+				if (this.props.ignoreAccents) {
+					filterValue = (0, _utilsStripDiacritics2['default'])(filterValue);
+				}
+				if (this.props.ignoreCase) {
+					filterValue = filterValue.toLowerCase();
+				}
+				if (excludeOptions) excludeOptions = excludeOptions.map(function (i) {
+					return i[_this3.props.valueKey];
+				});
+				return options.filter(function (option) {
+					if (excludeOptions && excludeOptions.indexOf(option[_this3.props.valueKey]) > -1) return false;
+					if (_this3.props.filterOption) return _this3.props.filterOption.call(_this3, option, filterValue);
+					if (!filterValue) return true;
+					var valueTest = String(option[_this3.props.valueKey]);
+					var labelTest = String(option[_this3.props.labelKey]);
+					if (_this3.props.ignoreAccents) {
+						if (_this3.props.matchProp !== 'label') valueTest = (0, _utilsStripDiacritics2['default'])(valueTest);
+						if (_this3.props.matchProp !== 'value') labelTest = (0, _utilsStripDiacritics2['default'])(labelTest);
+					}
+					if (_this3.props.ignoreCase) {
+						if (_this3.props.matchProp !== 'label') valueTest = valueTest.toLowerCase();
+						if (_this3.props.matchProp !== 'value') labelTest = labelTest.toLowerCase();
+					}
+					return _this3.props.matchPos === 'start' ? _this3.props.matchProp !== 'label' && valueTest.substr(0, filterValue.length) === filterValue || _this3.props.matchProp !== 'value' && labelTest.substr(0, filterValue.length) === filterValue : _this3.props.matchProp !== 'label' && valueTest.indexOf(filterValue) >= 0 || _this3.props.matchProp !== 'value' && labelTest.indexOf(filterValue) >= 0;
+				});
+			} else {
+				return options;
+			}
+		},
+
+		renderMenu: function renderMenu(options, valueArray, focusedOption) {
+			var _this4 = this;
+
+			if (options && options.length) {
+				if (this.props.menuRenderer) {
+					return this.props.menuRenderer({
+						focusedOption: focusedOption,
+						focusOption: this.focusOption,
+						labelKey: this.props.labelKey,
+						options: options,
+						selectValue: this.selectValue,
+						valueArray: valueArray
+					});
+				} else {
+					var _ret = (function () {
+						var Option = _this4.props.optionComponent;
+						var renderLabel = _this4.props.optionRenderer || _this4.getOptionLabel;
+
+						return {
+							v: options.map(function (option, i) {
+								var isSelected = valueArray && valueArray.indexOf(option) > -1;
+								var isFocused = option === focusedOption;
+								var optionRef = isFocused ? 'focused' : null;
+								var optionClass = (0, _classnames2['default'])(_this4.props.optionClassName, {
+									'Select-option': true,
+									'is-selected': isSelected,
+									'is-focused': isFocused,
+									'is-disabled': option.disabled
+								});
+
+								return _react2['default'].createElement(
+									Option,
+									{
+										className: optionClass,
+										isDisabled: option.disabled,
+										isFocused: isFocused,
+										key: 'option-' + i + '-' + option[_this4.props.valueKey],
+										onSelect: _this4.selectValue,
+										onFocus: _this4.focusOption,
+										option: option,
+										isSelected: isSelected,
+										ref: optionRef
+									},
+									renderLabel(option)
+								);
+							})
+						};
+					})();
+
+					if (typeof _ret === 'object') return _ret.v;
+				}
+			} else if (this.props.noResultsText) {
+				return _react2['default'].createElement(
+					'div',
+					{ className: 'Select-noresults' },
+					this.props.noResultsText
+				);
+			} else {
+				return null;
+			}
+		},
+
+		renderHiddenField: function renderHiddenField(valueArray) {
+			var _this5 = this;
+
+			if (!this.props.name) return;
+			if (this.props.joinValues) {
+				var value = valueArray.map(function (i) {
+					return stringifyValue(i[_this5.props.valueKey]);
+				}).join(this.props.delimiter);
+				return _react2['default'].createElement('input', {
+					type: 'hidden',
+					ref: 'value',
+					name: this.props.name,
+					value: value,
+					disabled: this.props.disabled });
+			}
+			return valueArray.map(function (item, index) {
+				return _react2['default'].createElement('input', { key: 'hidden.' + index,
+					type: 'hidden',
+					ref: 'value' + index,
+					name: _this5.props.name,
+					value: stringifyValue(item[_this5.props.valueKey]),
+					disabled: _this5.props.disabled });
+			});
+		},
+
+		getFocusableOption: function getFocusableOption(selectedOption) {
+			var options = this._visibleOptions;
+			if (!options.length) return;
+			var focusedOption = this.state.focusedOption || selectedOption;
+			if (focusedOption && options.indexOf(focusedOption) > -1) return focusedOption;
+			for (var i = 0; i < options.length; i++) {
+				if (!options[i].disabled) return options[i];
+			}
+		},
+
+		renderOuter: function renderOuter(options, valueArray, focusedOption) {
+			var menu = this.renderMenu(options, valueArray, focusedOption);
+			if (!menu) {
+				return null;
+			}
+
+			return _react2['default'].createElement(
+				'div',
+				{ ref: 'menuContainer', className: 'Select-menu-outer', style: this.props.menuContainerStyle },
+				_react2['default'].createElement(
+					'div',
+					{ ref: 'menu', className: 'Select-menu',
+						style: this.props.menuStyle,
+						onScroll: this.handleMenuScroll,
+						onMouseDown: this.handleMouseDownOnMenu },
+					menu
+				)
+			);
+		},
+
+		render: function render() {
+			var valueArray = this.getValueArray(this.props.value);
+			var options = this._visibleOptions = this.filterOptions(this.props.multi ? valueArray : null);
+			var isOpen = this.state.isOpen;
+			if (this.props.multi && !options.length && valueArray.length && !this.state.inputValue) isOpen = false;
+			var focusedOption = this._focusedOption = this.getFocusableOption(valueArray[0]);
+			var className = (0, _classnames2['default'])('Select', this.props.className, {
+				'Select--multi': this.props.multi,
+				'Select--single': !this.props.multi,
+				'is-disabled': this.props.disabled,
+				'is-focused': this.state.isFocused,
+				'is-loading': this.props.isLoading,
+				'is-open': isOpen,
+				'is-pseudo-focused': this.state.isPseudoFocused,
+				'is-searchable': this.props.searchable,
+				'has-value': valueArray.length
+			});
+
+			return _react2['default'].createElement(
+				'div',
+				{ ref: 'wrapper', className: className, style: this.props.wrapperStyle },
+				this.renderHiddenField(valueArray),
+				_react2['default'].createElement(
+					'div',
+					{ ref: 'control',
+						className: 'Select-control',
+						style: this.props.style,
+						onKeyDown: this.handleKeyDown,
+						onMouseDown: this.handleMouseDown,
+						onTouchEnd: this.handleTouchEnd,
+						onTouchStart: this.handleTouchStart,
+						onTouchMove: this.handleTouchMove },
+					this.renderValue(valueArray, isOpen),
+					this.renderInput(valueArray),
+					this.renderLoading(),
+					this.renderClear(),
+					this.renderArrow()
+				),
+				isOpen ? this.renderOuter(options, !this.props.multi ? valueArray : null, focusedOption) : null
+			);
+		}
+
+	});
+
+	exports['default'] = Select;
+	module.exports = exports['default'];
+
+/***/ },
+/* 489 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var React = __webpack_require__(1);
+
+	var sizerStyle = { position: 'absolute', visibility: 'hidden', height: 0, width: 0, overflow: 'scroll', whiteSpace: 'pre' };
+
+	var nextFrame = typeof window !== 'undefined' ? (function () {
+		return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
+			window.setTimeout(callback, 1000 / 60);
+		};
+	})().bind(window) : undefined; // If window is undefined, then we can't define a nextFrame function
+
+	var AutosizeInput = React.createClass({
+		displayName: 'AutosizeInput',
+
+		propTypes: {
+			value: React.PropTypes.any, // field value
+			defaultValue: React.PropTypes.any, // default field value
+			onChange: React.PropTypes.func, // onChange handler: function(newValue) {}
+			style: React.PropTypes.object, // css styles for the outer element
+			className: React.PropTypes.string, // className for the outer element
+			minWidth: React.PropTypes.oneOfType([// minimum width for input element
+			React.PropTypes.number, React.PropTypes.string]),
+			inputStyle: React.PropTypes.object, // css styles for the input element
+			inputClassName: React.PropTypes.string // className for the input element
+		},
+		getDefaultProps: function getDefaultProps() {
+			return {
+				minWidth: 1
+			};
+		},
+		getInitialState: function getInitialState() {
+			return {
+				inputWidth: this.props.minWidth
+			};
+		},
+		componentDidMount: function componentDidMount() {
+			this.copyInputStyles();
+			this.updateInputWidth();
+		},
+		componentDidUpdate: function componentDidUpdate() {
+			this.updateInputWidth();
+		},
+		copyInputStyles: function copyInputStyles() {
+			if (!this.isMounted() || !window.getComputedStyle) {
+				return;
+			}
+			var inputStyle = window.getComputedStyle(this.refs.input);
+			if (!inputStyle) {
+				return;
+			}
+			var widthNode = this.refs.sizer;
+			widthNode.style.fontSize = inputStyle.fontSize;
+			widthNode.style.fontFamily = inputStyle.fontFamily;
+			widthNode.style.fontWeight = inputStyle.fontWeight;
+			widthNode.style.fontStyle = inputStyle.fontStyle;
+			widthNode.style.letterSpacing = inputStyle.letterSpacing;
+			if (this.props.placeholder) {
+				var placeholderNode = this.refs.placeholderSizer;
+				placeholderNode.style.fontSize = inputStyle.fontSize;
+				placeholderNode.style.fontFamily = inputStyle.fontFamily;
+				placeholderNode.style.fontWeight = inputStyle.fontWeight;
+				placeholderNode.style.fontStyle = inputStyle.fontStyle;
+				placeholderNode.style.letterSpacing = inputStyle.letterSpacing;
+			}
+		},
+		updateInputWidth: function updateInputWidth() {
+			if (!this.isMounted() || typeof this.refs.sizer.scrollWidth === 'undefined') {
+				return;
+			}
+			var newInputWidth = undefined;
+			if (this.props.placeholder) {
+				newInputWidth = Math.max(this.refs.sizer.scrollWidth, this.refs.placeholderSizer.scrollWidth) + 2;
+			} else {
+				newInputWidth = this.refs.sizer.scrollWidth + 2;
+			}
+			if (newInputWidth < this.props.minWidth) {
+				newInputWidth = this.props.minWidth;
+			}
+			if (newInputWidth !== this.state.inputWidth) {
+				this.setState({
+					inputWidth: newInputWidth
+				});
+			}
+		},
+		getInput: function getInput() {
+			return this.refs.input;
+		},
+		focus: function focus() {
+			this.refs.input.focus();
+		},
+		blur: function blur() {
+			this.refs.input.blur();
+		},
+		select: function select() {
+			this.refs.input.select();
+		},
+		render: function render() {
+			var sizerValue = this.props.defaultValue || this.props.value || '';
+			var wrapperStyle = this.props.style || {};
+			if (!wrapperStyle.display) wrapperStyle.display = 'inline-block';
+			var inputStyle = _extends({}, this.props.inputStyle);
+			inputStyle.width = this.state.inputWidth + 'px';
+			inputStyle.boxSizing = 'content-box';
+			var placeholder = this.props.placeholder ? React.createElement(
+				'div',
+				{ ref: 'placeholderSizer', style: sizerStyle },
+				this.props.placeholder
+			) : null;
+			return React.createElement(
+				'div',
+				{ className: this.props.className, style: wrapperStyle },
+				React.createElement('input', _extends({}, this.props, { ref: 'input', className: this.props.inputClassName, style: inputStyle })),
+				React.createElement(
+					'div',
+					{ ref: 'sizer', style: sizerStyle },
+					sizerValue
+				),
+				placeholder
+			);
+		}
+	});
+
+	module.exports = AutosizeInput;
+
+/***/ },
+/* 490 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	  Copyright (c) 2016 Jed Watson.
+	  Licensed under the MIT License (MIT), see
+	  http://jedwatson.github.io/classnames
+	*/
+	/* global define */
+
+	(function () {
+		'use strict';
+
+		var hasOwn = {}.hasOwnProperty;
+
+		function classNames () {
+			var classes = [];
+
+			for (var i = 0; i < arguments.length; i++) {
+				var arg = arguments[i];
+				if (!arg) continue;
+
+				var argType = typeof arg;
+
+				if (argType === 'string' || argType === 'number') {
+					classes.push(arg);
+				} else if (Array.isArray(arg)) {
+					classes.push(classNames.apply(null, arg));
+				} else if (argType === 'object') {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes.push(key);
+						}
+					}
+				}
+			}
+
+			return classes.join(' ');
+		}
+
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		} else if (true) {
+			// register as 'classnames', consistent with npm package name
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return classNames;
+			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {
+			window.classNames = classNames;
+		}
+	}());
+
+
+/***/ },
+/* 491 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var map = [{ 'base': 'A', 'letters': /[\u0041\u24B6\uFF21\u00C0\u00C1\u00C2\u1EA6\u1EA4\u1EAA\u1EA8\u00C3\u0100\u0102\u1EB0\u1EAE\u1EB4\u1EB2\u0226\u01E0\u00C4\u01DE\u1EA2\u00C5\u01FA\u01CD\u0200\u0202\u1EA0\u1EAC\u1EB6\u1E00\u0104\u023A\u2C6F]/g }, { 'base': 'AA', 'letters': /[\uA732]/g }, { 'base': 'AE', 'letters': /[\u00C6\u01FC\u01E2]/g }, { 'base': 'AO', 'letters': /[\uA734]/g }, { 'base': 'AU', 'letters': /[\uA736]/g }, { 'base': 'AV', 'letters': /[\uA738\uA73A]/g }, { 'base': 'AY', 'letters': /[\uA73C]/g }, { 'base': 'B', 'letters': /[\u0042\u24B7\uFF22\u1E02\u1E04\u1E06\u0243\u0182\u0181]/g }, { 'base': 'C', 'letters': /[\u0043\u24B8\uFF23\u0106\u0108\u010A\u010C\u00C7\u1E08\u0187\u023B\uA73E]/g }, { 'base': 'D', 'letters': /[\u0044\u24B9\uFF24\u1E0A\u010E\u1E0C\u1E10\u1E12\u1E0E\u0110\u018B\u018A\u0189\uA779]/g }, { 'base': 'DZ', 'letters': /[\u01F1\u01C4]/g }, { 'base': 'Dz', 'letters': /[\u01F2\u01C5]/g }, { 'base': 'E', 'letters': /[\u0045\u24BA\uFF25\u00C8\u00C9\u00CA\u1EC0\u1EBE\u1EC4\u1EC2\u1EBC\u0112\u1E14\u1E16\u0114\u0116\u00CB\u1EBA\u011A\u0204\u0206\u1EB8\u1EC6\u0228\u1E1C\u0118\u1E18\u1E1A\u0190\u018E]/g }, { 'base': 'F', 'letters': /[\u0046\u24BB\uFF26\u1E1E\u0191\uA77B]/g }, { 'base': 'G', 'letters': /[\u0047\u24BC\uFF27\u01F4\u011C\u1E20\u011E\u0120\u01E6\u0122\u01E4\u0193\uA7A0\uA77D\uA77E]/g }, { 'base': 'H', 'letters': /[\u0048\u24BD\uFF28\u0124\u1E22\u1E26\u021E\u1E24\u1E28\u1E2A\u0126\u2C67\u2C75\uA78D]/g }, { 'base': 'I', 'letters': /[\u0049\u24BE\uFF29\u00CC\u00CD\u00CE\u0128\u012A\u012C\u0130\u00CF\u1E2E\u1EC8\u01CF\u0208\u020A\u1ECA\u012E\u1E2C\u0197]/g }, { 'base': 'J', 'letters': /[\u004A\u24BF\uFF2A\u0134\u0248]/g }, { 'base': 'K', 'letters': /[\u004B\u24C0\uFF2B\u1E30\u01E8\u1E32\u0136\u1E34\u0198\u2C69\uA740\uA742\uA744\uA7A2]/g }, { 'base': 'L', 'letters': /[\u004C\u24C1\uFF2C\u013F\u0139\u013D\u1E36\u1E38\u013B\u1E3C\u1E3A\u0141\u023D\u2C62\u2C60\uA748\uA746\uA780]/g }, { 'base': 'LJ', 'letters': /[\u01C7]/g }, { 'base': 'Lj', 'letters': /[\u01C8]/g }, { 'base': 'M', 'letters': /[\u004D\u24C2\uFF2D\u1E3E\u1E40\u1E42\u2C6E\u019C]/g }, { 'base': 'N', 'letters': /[\u004E\u24C3\uFF2E\u01F8\u0143\u00D1\u1E44\u0147\u1E46\u0145\u1E4A\u1E48\u0220\u019D\uA790\uA7A4]/g }, { 'base': 'NJ', 'letters': /[\u01CA]/g }, { 'base': 'Nj', 'letters': /[\u01CB]/g }, { 'base': 'O', 'letters': /[\u004F\u24C4\uFF2F\u00D2\u00D3\u00D4\u1ED2\u1ED0\u1ED6\u1ED4\u00D5\u1E4C\u022C\u1E4E\u014C\u1E50\u1E52\u014E\u022E\u0230\u00D6\u022A\u1ECE\u0150\u01D1\u020C\u020E\u01A0\u1EDC\u1EDA\u1EE0\u1EDE\u1EE2\u1ECC\u1ED8\u01EA\u01EC\u00D8\u01FE\u0186\u019F\uA74A\uA74C]/g }, { 'base': 'OI', 'letters': /[\u01A2]/g }, { 'base': 'OO', 'letters': /[\uA74E]/g }, { 'base': 'OU', 'letters': /[\u0222]/g }, { 'base': 'P', 'letters': /[\u0050\u24C5\uFF30\u1E54\u1E56\u01A4\u2C63\uA750\uA752\uA754]/g }, { 'base': 'Q', 'letters': /[\u0051\u24C6\uFF31\uA756\uA758\u024A]/g }, { 'base': 'R', 'letters': /[\u0052\u24C7\uFF32\u0154\u1E58\u0158\u0210\u0212\u1E5A\u1E5C\u0156\u1E5E\u024C\u2C64\uA75A\uA7A6\uA782]/g }, { 'base': 'S', 'letters': /[\u0053\u24C8\uFF33\u1E9E\u015A\u1E64\u015C\u1E60\u0160\u1E66\u1E62\u1E68\u0218\u015E\u2C7E\uA7A8\uA784]/g }, { 'base': 'T', 'letters': /[\u0054\u24C9\uFF34\u1E6A\u0164\u1E6C\u021A\u0162\u1E70\u1E6E\u0166\u01AC\u01AE\u023E\uA786]/g }, { 'base': 'TZ', 'letters': /[\uA728]/g }, { 'base': 'U', 'letters': /[\u0055\u24CA\uFF35\u00D9\u00DA\u00DB\u0168\u1E78\u016A\u1E7A\u016C\u00DC\u01DB\u01D7\u01D5\u01D9\u1EE6\u016E\u0170\u01D3\u0214\u0216\u01AF\u1EEA\u1EE8\u1EEE\u1EEC\u1EF0\u1EE4\u1E72\u0172\u1E76\u1E74\u0244]/g }, { 'base': 'V', 'letters': /[\u0056\u24CB\uFF36\u1E7C\u1E7E\u01B2\uA75E\u0245]/g }, { 'base': 'VY', 'letters': /[\uA760]/g }, { 'base': 'W', 'letters': /[\u0057\u24CC\uFF37\u1E80\u1E82\u0174\u1E86\u1E84\u1E88\u2C72]/g }, { 'base': 'X', 'letters': /[\u0058\u24CD\uFF38\u1E8A\u1E8C]/g }, { 'base': 'Y', 'letters': /[\u0059\u24CE\uFF39\u1EF2\u00DD\u0176\u1EF8\u0232\u1E8E\u0178\u1EF6\u1EF4\u01B3\u024E\u1EFE]/g }, { 'base': 'Z', 'letters': /[\u005A\u24CF\uFF3A\u0179\u1E90\u017B\u017D\u1E92\u1E94\u01B5\u0224\u2C7F\u2C6B\uA762]/g }, { 'base': 'a', 'letters': /[\u0061\u24D0\uFF41\u1E9A\u00E0\u00E1\u00E2\u1EA7\u1EA5\u1EAB\u1EA9\u00E3\u0101\u0103\u1EB1\u1EAF\u1EB5\u1EB3\u0227\u01E1\u00E4\u01DF\u1EA3\u00E5\u01FB\u01CE\u0201\u0203\u1EA1\u1EAD\u1EB7\u1E01\u0105\u2C65\u0250]/g }, { 'base': 'aa', 'letters': /[\uA733]/g }, { 'base': 'ae', 'letters': /[\u00E6\u01FD\u01E3]/g }, { 'base': 'ao', 'letters': /[\uA735]/g }, { 'base': 'au', 'letters': /[\uA737]/g }, { 'base': 'av', 'letters': /[\uA739\uA73B]/g }, { 'base': 'ay', 'letters': /[\uA73D]/g }, { 'base': 'b', 'letters': /[\u0062\u24D1\uFF42\u1E03\u1E05\u1E07\u0180\u0183\u0253]/g }, { 'base': 'c', 'letters': /[\u0063\u24D2\uFF43\u0107\u0109\u010B\u010D\u00E7\u1E09\u0188\u023C\uA73F\u2184]/g }, { 'base': 'd', 'letters': /[\u0064\u24D3\uFF44\u1E0B\u010F\u1E0D\u1E11\u1E13\u1E0F\u0111\u018C\u0256\u0257\uA77A]/g }, { 'base': 'dz', 'letters': /[\u01F3\u01C6]/g }, { 'base': 'e', 'letters': /[\u0065\u24D4\uFF45\u00E8\u00E9\u00EA\u1EC1\u1EBF\u1EC5\u1EC3\u1EBD\u0113\u1E15\u1E17\u0115\u0117\u00EB\u1EBB\u011B\u0205\u0207\u1EB9\u1EC7\u0229\u1E1D\u0119\u1E19\u1E1B\u0247\u025B\u01DD]/g }, { 'base': 'f', 'letters': /[\u0066\u24D5\uFF46\u1E1F\u0192\uA77C]/g }, { 'base': 'g', 'letters': /[\u0067\u24D6\uFF47\u01F5\u011D\u1E21\u011F\u0121\u01E7\u0123\u01E5\u0260\uA7A1\u1D79\uA77F]/g }, { 'base': 'h', 'letters': /[\u0068\u24D7\uFF48\u0125\u1E23\u1E27\u021F\u1E25\u1E29\u1E2B\u1E96\u0127\u2C68\u2C76\u0265]/g }, { 'base': 'hv', 'letters': /[\u0195]/g }, { 'base': 'i', 'letters': /[\u0069\u24D8\uFF49\u00EC\u00ED\u00EE\u0129\u012B\u012D\u00EF\u1E2F\u1EC9\u01D0\u0209\u020B\u1ECB\u012F\u1E2D\u0268\u0131]/g }, { 'base': 'j', 'letters': /[\u006A\u24D9\uFF4A\u0135\u01F0\u0249]/g }, { 'base': 'k', 'letters': /[\u006B\u24DA\uFF4B\u1E31\u01E9\u1E33\u0137\u1E35\u0199\u2C6A\uA741\uA743\uA745\uA7A3]/g }, { 'base': 'l', 'letters': /[\u006C\u24DB\uFF4C\u0140\u013A\u013E\u1E37\u1E39\u013C\u1E3D\u1E3B\u017F\u0142\u019A\u026B\u2C61\uA749\uA781\uA747]/g }, { 'base': 'lj', 'letters': /[\u01C9]/g }, { 'base': 'm', 'letters': /[\u006D\u24DC\uFF4D\u1E3F\u1E41\u1E43\u0271\u026F]/g }, { 'base': 'n', 'letters': /[\u006E\u24DD\uFF4E\u01F9\u0144\u00F1\u1E45\u0148\u1E47\u0146\u1E4B\u1E49\u019E\u0272\u0149\uA791\uA7A5]/g }, { 'base': 'nj', 'letters': /[\u01CC]/g }, { 'base': 'o', 'letters': /[\u006F\u24DE\uFF4F\u00F2\u00F3\u00F4\u1ED3\u1ED1\u1ED7\u1ED5\u00F5\u1E4D\u022D\u1E4F\u014D\u1E51\u1E53\u014F\u022F\u0231\u00F6\u022B\u1ECF\u0151\u01D2\u020D\u020F\u01A1\u1EDD\u1EDB\u1EE1\u1EDF\u1EE3\u1ECD\u1ED9\u01EB\u01ED\u00F8\u01FF\u0254\uA74B\uA74D\u0275]/g }, { 'base': 'oi', 'letters': /[\u01A3]/g }, { 'base': 'ou', 'letters': /[\u0223]/g }, { 'base': 'oo', 'letters': /[\uA74F]/g }, { 'base': 'p', 'letters': /[\u0070\u24DF\uFF50\u1E55\u1E57\u01A5\u1D7D\uA751\uA753\uA755]/g }, { 'base': 'q', 'letters': /[\u0071\u24E0\uFF51\u024B\uA757\uA759]/g }, { 'base': 'r', 'letters': /[\u0072\u24E1\uFF52\u0155\u1E59\u0159\u0211\u0213\u1E5B\u1E5D\u0157\u1E5F\u024D\u027D\uA75B\uA7A7\uA783]/g }, { 'base': 's', 'letters': /[\u0073\u24E2\uFF53\u00DF\u015B\u1E65\u015D\u1E61\u0161\u1E67\u1E63\u1E69\u0219\u015F\u023F\uA7A9\uA785\u1E9B]/g }, { 'base': 't', 'letters': /[\u0074\u24E3\uFF54\u1E6B\u1E97\u0165\u1E6D\u021B\u0163\u1E71\u1E6F\u0167\u01AD\u0288\u2C66\uA787]/g }, { 'base': 'tz', 'letters': /[\uA729]/g }, { 'base': 'u', 'letters': /[\u0075\u24E4\uFF55\u00F9\u00FA\u00FB\u0169\u1E79\u016B\u1E7B\u016D\u00FC\u01DC\u01D8\u01D6\u01DA\u1EE7\u016F\u0171\u01D4\u0215\u0217\u01B0\u1EEB\u1EE9\u1EEF\u1EED\u1EF1\u1EE5\u1E73\u0173\u1E77\u1E75\u0289]/g }, { 'base': 'v', 'letters': /[\u0076\u24E5\uFF56\u1E7D\u1E7F\u028B\uA75F\u028C]/g }, { 'base': 'vy', 'letters': /[\uA761]/g }, { 'base': 'w', 'letters': /[\u0077\u24E6\uFF57\u1E81\u1E83\u0175\u1E87\u1E85\u1E98\u1E89\u2C73]/g }, { 'base': 'x', 'letters': /[\u0078\u24E7\uFF58\u1E8B\u1E8D]/g }, { 'base': 'y', 'letters': /[\u0079\u24E8\uFF59\u1EF3\u00FD\u0177\u1EF9\u0233\u1E8F\u00FF\u1EF7\u1E99\u1EF5\u01B4\u024F\u1EFF]/g }, { 'base': 'z', 'letters': /[\u007A\u24E9\uFF5A\u017A\u1E91\u017C\u017E\u1E93\u1E95\u01B6\u0225\u0240\u2C6C\uA763]/g }];
+
+	module.exports = function stripDiacritics(str) {
+		for (var i = 0; i < map.length; i++) {
+			str = str.replace(map[i].letters, map[i].base);
+		}
+		return str;
+	};
+
+/***/ },
+/* 492 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _Select = __webpack_require__(488);
+
+	var _Select2 = _interopRequireDefault(_Select);
+
+	var _utilsStripDiacritics = __webpack_require__(491);
+
+	var _utilsStripDiacritics2 = _interopRequireDefault(_utilsStripDiacritics);
+
+	var requestId = 0;
+
+	function initCache(cache) {
+		if (cache && typeof cache !== 'object') {
+			cache = {};
+		}
+		return cache ? cache : null;
+	}
+
+	function updateCache(cache, input, data) {
+		if (!cache) return;
+		cache[input] = data;
+	}
+
+	function getFromCache(cache, input) {
+		if (!cache) return;
+		for (var i = input.length; i >= 0; --i) {
+			var cacheKey = input.slice(0, i);
+			if (cache[cacheKey] && (input === cacheKey || cache[cacheKey].complete)) {
+				return cache[cacheKey];
+			}
+		}
+	}
+
+	function thenPromise(promise, callback) {
+		if (!promise || typeof promise.then !== 'function') return;
+		return promise.then(function (data) {
+			callback(null, data);
+		}, function (err) {
+			callback(err);
+		});
+	}
+
+	var stringOrNode = _react2['default'].PropTypes.oneOfType([_react2['default'].PropTypes.string, _react2['default'].PropTypes.node]);
+
+	var Async = _react2['default'].createClass({
+		displayName: 'Async',
+
+		propTypes: {
+			cache: _react2['default'].PropTypes.any, // object to use to cache results, can be null to disable cache
+			ignoreAccents: _react2['default'].PropTypes.bool, // whether to strip diacritics when filtering (shared with Select)
+			ignoreCase: _react2['default'].PropTypes.bool, // whether to perform case-insensitive filtering (shared with Select)
+			isLoading: _react2['default'].PropTypes.bool, // overrides the isLoading state when set to true
+			loadOptions: _react2['default'].PropTypes.func.isRequired, // function to call to load options asynchronously
+			loadingPlaceholder: _react2['default'].PropTypes.string, // replaces the placeholder while options are loading
+			minimumInput: _react2['default'].PropTypes.number, // the minimum number of characters that trigger loadOptions
+			noResultsText: stringOrNode, // placeholder displayed when there are no matching search results (shared with Select)
+			onInputChange: _react2['default'].PropTypes.func, // onInputChange handler: function (inputValue) {}
+			placeholder: stringOrNode, // field placeholder, displayed when there's no value (shared with Select)
+			searchPromptText: _react2['default'].PropTypes.string, // label to prompt for search input
+			searchingText: _react2['default'].PropTypes.string },
+		// message to display while options are loading
+		getDefaultProps: function getDefaultProps() {
+			return {
+				cache: true,
+				ignoreAccents: true,
+				ignoreCase: true,
+				loadingPlaceholder: 'Loading...',
+				minimumInput: 0,
+				searchingText: 'Searching...',
+				searchPromptText: 'Type to search'
+			};
+		},
+		getInitialState: function getInitialState() {
+			return {
+				cache: initCache(this.props.cache),
+				isLoading: false,
+				options: []
+			};
+		},
+		componentWillMount: function componentWillMount() {
+			this._lastInput = '';
+		},
+		componentDidMount: function componentDidMount() {
+			this.loadOptions('');
+		},
+		componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+			if (nextProps.cache !== this.props.cache) {
+				this.setState({
+					cache: initCache(nextProps.cache)
+				});
+			}
+		},
+		focus: function focus() {
+			this.refs.select.focus();
+		},
+		resetState: function resetState() {
+			this._currentRequestId = -1;
+			this.setState({
+				isLoading: false,
+				options: []
+			});
+		},
+		getResponseHandler: function getResponseHandler(input) {
+			var _this = this;
+
+			var _requestId = this._currentRequestId = requestId++;
+			return function (err, data) {
+				if (err) throw err;
+				if (!_this.isMounted()) return;
+				updateCache(_this.state.cache, input, data);
+				if (_requestId !== _this._currentRequestId) return;
+				_this.setState({
+					isLoading: false,
+					options: data && data.options || []
+				});
+			};
+		},
+		loadOptions: function loadOptions(input) {
+			if (this.props.onInputChange) {
+				var nextState = this.props.onInputChange(input);
+				// Note: != used deliberately here to catch undefined and null
+				if (nextState != null) {
+					input = '' + nextState;
+				}
+			}
+			if (this.props.ignoreAccents) input = (0, _utilsStripDiacritics2['default'])(input);
+			if (this.props.ignoreCase) input = input.toLowerCase();
+			this._lastInput = input;
+			if (input.length < this.props.minimumInput) {
+				return this.resetState();
+			}
+			var cacheResult = getFromCache(this.state.cache, input);
+			if (cacheResult) {
+				return this.setState({
+					options: cacheResult.options
+				});
+			}
+			this.setState({
+				isLoading: true
+			});
+			var responseHandler = this.getResponseHandler(input);
+			return thenPromise(this.props.loadOptions(input, responseHandler), responseHandler);
+		},
+		render: function render() {
+			var noResultsText = this.props.noResultsText;
+			var _state = this.state;
+			var isLoading = _state.isLoading;
+			var options = _state.options;
+
+			if (this.props.isLoading) isLoading = true;
+			var placeholder = isLoading ? this.props.loadingPlaceholder : this.props.placeholder;
+			if (!options.length) {
+				if (this._lastInput.length < this.props.minimumInput) noResultsText = this.props.searchPromptText;
+				if (isLoading) noResultsText = this.props.searchingText;
+			}
+			return _react2['default'].createElement(_Select2['default'], _extends({}, this.props, {
+				ref: 'select',
+				isLoading: isLoading,
+				noResultsText: noResultsText,
+				onInputChange: this.loadOptions,
+				options: options,
+				placeholder: placeholder
+			}));
+		}
+	});
+
+	module.exports = Async;
+
+/***/ },
+/* 493 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _classnames = __webpack_require__(490);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var Option = _react2['default'].createClass({
+		displayName: 'Option',
+
+		propTypes: {
+			children: _react2['default'].PropTypes.node,
+			className: _react2['default'].PropTypes.string, // className (based on mouse position)
+			isDisabled: _react2['default'].PropTypes.bool, // the option is disabled
+			isFocused: _react2['default'].PropTypes.bool, // the option is focused
+			isSelected: _react2['default'].PropTypes.bool, // the option is selected
+			onFocus: _react2['default'].PropTypes.func, // method to handle mouseEnter on option element
+			onSelect: _react2['default'].PropTypes.func, // method to handle click on option element
+			onUnfocus: _react2['default'].PropTypes.func, // method to handle mouseLeave on option element
+			option: _react2['default'].PropTypes.object.isRequired },
+		// object that is base for that option
+		blockEvent: function blockEvent(event) {
+			event.preventDefault();
+			event.stopPropagation();
+			if (event.target.tagName !== 'A' || !('href' in event.target)) {
+				return;
+			}
+			if (event.target.target) {
+				window.open(event.target.href, event.target.target);
+			} else {
+				window.location.href = event.target.href;
+			}
+		},
+
+		handleMouseDown: function handleMouseDown(event) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.props.onSelect(this.props.option, event);
+		},
+
+		handleMouseEnter: function handleMouseEnter(event) {
+			this.onFocus(event);
+		},
+
+		handleMouseMove: function handleMouseMove(event) {
+			this.onFocus(event);
+		},
+
+		handleTouchEnd: function handleTouchEnd(event) {
+			// Check if the view is being dragged, In this case
+			// we don't want to fire the click event (because the user only wants to scroll)
+			if (this.dragging) return;
+
+			this.handleMouseDown(event);
+		},
+
+		handleTouchMove: function handleTouchMove(event) {
+			// Set a flag that the view is being dragged
+			this.dragging = true;
+		},
+
+		handleTouchStart: function handleTouchStart(event) {
+			// Set a flag that the view is not being dragged
+			this.dragging = false;
+		},
+
+		onFocus: function onFocus(event) {
+			if (!this.props.isFocused) {
+				this.props.onFocus(this.props.option, event);
+			}
+		},
+		render: function render() {
+			var option = this.props.option;
+
+			var className = (0, _classnames2['default'])(this.props.className, option.className);
+
+			return option.disabled ? _react2['default'].createElement(
+				'div',
+				{ className: className,
+					onMouseDown: this.blockEvent,
+					onClick: this.blockEvent },
+				this.props.children
+			) : _react2['default'].createElement(
+				'div',
+				{ className: className,
+					style: option.style,
+					onMouseDown: this.handleMouseDown,
+					onMouseEnter: this.handleMouseEnter,
+					onMouseMove: this.handleMouseMove,
+					onTouchStart: this.handleTouchStart,
+					onTouchMove: this.handleTouchMove,
+					onTouchEnd: this.handleTouchEnd,
+					title: option.title },
+				this.props.children
+			);
+		}
+	});
+
+	module.exports = Option;
+
+/***/ },
+/* 494 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _classnames = __webpack_require__(490);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var Value = _react2['default'].createClass({
+
+		displayName: 'Value',
+
+		propTypes: {
+			children: _react2['default'].PropTypes.node,
+			disabled: _react2['default'].PropTypes.bool, // disabled prop passed to ReactSelect
+			onClick: _react2['default'].PropTypes.func, // method to handle click on value label
+			onRemove: _react2['default'].PropTypes.func, // method to handle removal of the value
+			value: _react2['default'].PropTypes.object.isRequired },
+
+		// the option object for this value
+		handleMouseDown: function handleMouseDown(event) {
+			if (event.type === 'mousedown' && event.button !== 0) {
+				return;
+			}
+			if (this.props.onClick) {
+				event.stopPropagation();
+				this.props.onClick(this.props.value, event);
+				return;
+			}
+			if (this.props.value.href) {
+				event.stopPropagation();
+			}
+		},
+
+		onRemove: function onRemove(event) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.props.onRemove(this.props.value);
+		},
+
+		handleTouchEndRemove: function handleTouchEndRemove(event) {
+			// Check if the view is being dragged, In this case
+			// we don't want to fire the click event (because the user only wants to scroll)
+			if (this.dragging) return;
+
+			// Fire the mouse events
+			this.onRemove(event);
+		},
+
+		handleTouchMove: function handleTouchMove(event) {
+			// Set a flag that the view is being dragged
+			this.dragging = true;
+		},
+
+		handleTouchStart: function handleTouchStart(event) {
+			// Set a flag that the view is not being dragged
+			this.dragging = false;
+		},
+
+		renderRemoveIcon: function renderRemoveIcon() {
+			if (this.props.disabled || !this.props.onRemove) return;
+			return _react2['default'].createElement(
+				'span',
+				{ className: 'Select-value-icon',
+					onMouseDown: this.onRemove,
+					onTouchEnd: this.handleTouchEndRemove,
+					onTouchStart: this.handleTouchStart,
+					onTouchMove: this.handleTouchMove },
+				'×'
+			);
+		},
+
+		renderLabel: function renderLabel() {
+			var className = 'Select-value-label';
+			return this.props.onClick || this.props.value.href ? _react2['default'].createElement(
+				'a',
+				{ className: className, href: this.props.value.href, target: this.props.value.target, onMouseDown: this.handleMouseDown, onTouchEnd: this.handleMouseDown },
+				this.props.children
+			) : _react2['default'].createElement(
+				'span',
+				{ className: className },
+				this.props.children
+			);
+		},
+
+		render: function render() {
+			return _react2['default'].createElement(
+				'div',
+				{ className: (0, _classnames2['default'])('Select-value', this.props.value.className),
+					style: this.props.value.style,
+					title: this.props.value.title
+				},
+				this.renderRemoveIcon(),
+				this.renderLabel()
+			);
+		}
+
+	});
+
+	module.exports = Value;
+
+/***/ },
+/* 495 */,
+/* 496 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(497);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(379)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../css-loader/index.js!./../../sass-loader/index.js!./default.scss", function() {
+				var newContent = require("!!./../../css-loader/index.js!./../../sass-loader/index.js!./default.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 497 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(378)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "/**\n * React Select\n * ============\n * Created by Jed Watson and Joss Mackison for KeystoneJS, http://www.keystonejs.com/\n * https://twitter.com/jedwatson https://twitter.com/jossmackison https://twitter.com/keystonejs\n * MIT License: https://github.com/keystonejs/react-select\n*/\n@keyframes Select-animation-spin {\n  to {\n    transform: rotate(1turn); } }\n\n@-webkit-keyframes Select-animation-spin {\n  to {\n    -webkit-transform: rotate(1turn); } }\n\n.Select {\n  position: relative; }\n  .Select,\n  .Select div,\n  .Select input,\n  .Select span {\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box; }\n  .Select.is-disabled > .Select-control {\n    background-color: #f9f9f9; }\n    .Select.is-disabled > .Select-control:hover {\n      box-shadow: none; }\n  .Select.is-disabled .Select-arrow-zone {\n    cursor: default;\n    pointer-events: none; }\n\n.Select-control {\n  background-color: #fff;\n  border-color: #d9d9d9 #ccc #b3b3b3;\n  border-radius: 4px;\n  border: 1px solid #ccc;\n  color: #333;\n  cursor: default;\n  display: table;\n  border-spacing: 0;\n  border-collapse: separate;\n  height: 36px;\n  outline: none;\n  overflow: hidden;\n  position: relative;\n  width: 100%; }\n  .Select-control:hover {\n    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06); }\n\n.is-searchable.is-open > .Select-control {\n  cursor: text; }\n\n.is-open > .Select-control {\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0;\n  background: #fff;\n  border-color: #b3b3b3 #ccc #d9d9d9; }\n  .is-open > .Select-control > .Select-arrow {\n    border-color: transparent transparent #999;\n    border-width: 0 5px 5px; }\n\n.is-searchable.is-focused:not(.is-open) > .Select-control {\n  cursor: text; }\n\n.is-focused:not(.is-open) > .Select-control {\n  border-color: #08c #0099e6 #0099e6;\n  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 5px -1px fade(#08c, 50%); }\n\n.Select-placeholder,\n.Select--single > .Select-control .Select-value {\n  bottom: 0;\n  color: #aaa;\n  left: 0;\n  line-height: 34px;\n  padding-left: 10px;\n  padding-right: 10px;\n  position: absolute;\n  right: 0;\n  top: 0;\n  max-width: 100%;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap; }\n\n.has-value.Select--single:not(.is-focused) > .Select-control > .Select-value .Select-value-label,\n.has-value.is-pseudo-focused.Select--single > .Select-control > .Select-value .Select-value-label {\n  color: #333; }\n\n.has-value.Select--single:not(.is-focused) > .Select-control > .Select-value a.Select-value-label,\n.has-value.is-pseudo-focused.Select--single > .Select-control > .Select-value a.Select-value-label {\n  cursor: pointer;\n  text-decoration: none; }\n  .has-value.Select--single:not(.is-focused) > .Select-control > .Select-value a.Select-value-label:hover,\n  .has-value.is-pseudo-focused.Select--single > .Select-control > .Select-value a.Select-value-label:hover {\n    color: #08c;\n    text-decoration: underline; }\n\n.Select-input {\n  height: 34px;\n  padding-left: 10px;\n  padding-right: 10px;\n  vertical-align: middle; }\n  .Select-input > input {\n    background: none transparent;\n    border: 0 none;\n    box-shadow: none;\n    cursor: default;\n    display: inline-block;\n    font-family: inherit;\n    font-size: inherit;\n    margin: 0;\n    outline: none;\n    line-height: 14px;\n    /* For IE 8 compatibility */\n    padding: 8px 0 12px;\n    /* For IE 8 compatibility */\n    -webkit-appearance: none; }\n    .is-focused .Select-input > input {\n      cursor: text; }\n\n.has-value.is-pseudo-focused .Select-input {\n  opacity: 0; }\n\n.Select-control:not(.is-searchable) > .Select-input {\n  outline: none; }\n\n.Select-loading-zone {\n  cursor: pointer;\n  display: table-cell;\n  position: relative;\n  text-align: center;\n  vertical-align: middle;\n  width: 16px; }\n\n.Select-loading {\n  -webkit-animation: Select-animation-spin 400ms infinite linear;\n  -o-animation: Select-animation-spin 400ms infinite linear;\n  animation: Select-animation-spin 400ms infinite linear;\n  width: 16px;\n  height: 16px;\n  box-sizing: border-box;\n  border-radius: 50%;\n  border: 2px solid #ccc;\n  border-right-color: #333;\n  display: inline-block;\n  position: relative;\n  vertical-align: middle; }\n\n.Select-clear-zone {\n  -webkit-animation: Select-animation-fadeIn 200ms;\n  -o-animation: Select-animation-fadeIn 200ms;\n  animation: Select-animation-fadeIn 200ms;\n  color: #999;\n  cursor: pointer;\n  display: table-cell;\n  position: relative;\n  text-align: center;\n  vertical-align: middle;\n  width: 17px; }\n  .Select-clear-zone:hover {\n    color: #D0021B; }\n\n.Select-clear {\n  display: inline-block;\n  font-size: 18px;\n  line-height: 1; }\n\n.Select--multi .Select-clear-zone {\n  width: 17px; }\n\n.Select-arrow-zone {\n  cursor: pointer;\n  display: table-cell;\n  position: relative;\n  text-align: center;\n  vertical-align: middle;\n  width: 25px;\n  padding-right: 5px; }\n\n.Select-arrow {\n  border-color: #999 transparent transparent;\n  border-style: solid;\n  border-width: 5px 5px 2.5px;\n  display: inline-block;\n  height: 0;\n  width: 0; }\n\n.is-open .Select-arrow,\n.Select-arrow-zone:hover > .Select-arrow {\n  border-top-color: #666; }\n\n@-webkit-keyframes Select-animation-fadeIn {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n\n@keyframes Select-animation-fadeIn {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n\n.Select-menu-outer {\n  border-bottom-right-radius: 4px;\n  border-bottom-left-radius: 4px;\n  background-color: #fff;\n  border: 1px solid #ccc;\n  border-top-color: #e6e6e6;\n  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);\n  box-sizing: border-box;\n  margin-top: -1px;\n  max-height: 200px;\n  position: absolute;\n  top: 100%;\n  width: 100%;\n  z-index: 1000;\n  -webkit-overflow-scrolling: touch; }\n\n.Select-menu {\n  max-height: 198px;\n  overflow-y: auto; }\n\n.Select-option {\n  box-sizing: border-box;\n  background-color: #fff;\n  color: #666666;\n  cursor: pointer;\n  display: block;\n  padding: 8px 10px; }\n  .Select-option:last-child {\n    border-bottom-right-radius: 4px;\n    border-bottom-left-radius: 4px; }\n  .Select-option.is-selected {\n    background-color: #f5faff;\n    color: #333; }\n  .Select-option.is-focused {\n    background-color: #f2f9fc;\n    color: #333; }\n  .Select-option.is-disabled {\n    color: #cccccc;\n    cursor: default; }\n\n.Select-noresults {\n  box-sizing: border-box;\n  color: #999999;\n  cursor: default;\n  display: block;\n  padding: 8px 10px; }\n\n.Select--multi .Select-input {\n  vertical-align: middle;\n  margin-left: 10px;\n  padding: 0; }\n\n.Select--multi.has-value .Select-input {\n  margin-left: 5px; }\n\n.Select--multi .Select-value {\n  background-color: #f2f9fc;\n  border-radius: 2px;\n  border: 1px solid #c9e6f2;\n  color: #08c;\n  display: inline-block;\n  font-size: 0.9em;\n  margin-left: 5px;\n  margin-top: 5px;\n  vertical-align: top; }\n\n.Select--multi .Select-value-icon,\n.Select--multi .Select-value-label {\n  display: inline-block;\n  vertical-align: middle; }\n\n.Select--multi .Select-value-label {\n  border-bottom-right-radius: 2px;\n  border-top-right-radius: 2px;\n  cursor: default;\n  padding: 2px 5px; }\n\n.Select--multi a.Select-value-label {\n  color: #08c;\n  cursor: pointer;\n  text-decoration: none; }\n  .Select--multi a.Select-value-label:hover {\n    text-decoration: underline; }\n\n.Select--multi .Select-value-icon {\n  cursor: pointer;\n  border-bottom-left-radius: 2px;\n  border-top-left-radius: 2px;\n  border-right: 1px solid #c9e6f2;\n  padding: 1px 5px 3px; }\n  .Select--multi .Select-value-icon:hover, .Select--multi .Select-value-icon:focus {\n    background-color: #ddeff7;\n    color: #0077b3; }\n  .Select--multi .Select-value-icon:active {\n    background-color: #c9e6f2; }\n\n.Select--multi.is-disabled .Select-value {\n  background-color: #fcfcfc;\n  border: 1px solid #e3e3e3;\n  color: #333; }\n\n.Select--multi.is-disabled .Select-value-icon {\n  cursor: not-allowed;\n  border-right: 1px solid #e3e3e3; }\n  .Select--multi.is-disabled .Select-value-icon:hover, .Select--multi.is-disabled .Select-value-icon:focus, .Select--multi.is-disabled .Select-value-icon:active {\n    background-color: #fcfcfc; }\n\n@keyframes Select-animation-spin {\n  to {\n    transform: rotate(1turn); } }\n\n@-webkit-keyframes Select-animation-spin {\n  to {\n    -webkit-transform: rotate(1turn); } }\n", ""]);
+
+	// exports
 
 
 /***/ }

@@ -48,6 +48,9 @@ function getTodayScoreBoardUrl() {
 function update(players) {
     // If players.players is undefined, nothing is stored in storage.sync. Need to exit
     // and do nothing
+    console.log('start extension');
+
+    // No players found.  Ends execution.
     if (!players.players) {
         return;
     }
@@ -58,7 +61,7 @@ function update(players) {
 
 /**
  * setGameTime
- * 
+ *
  *
  * @param players
  * @returns {undefined}

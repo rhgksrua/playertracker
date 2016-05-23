@@ -5,6 +5,7 @@ import { updateOnChanged, update, initializing } from '../actions/actions';
 // components
 import PlayersContainer from './PlayersContainer';
 import Search from './Search';
+import SearchSelect from './SearchSelect';
 
 
 class App extends React.Component {
@@ -32,8 +33,8 @@ class App extends React.Component {
     render() {
         return (
             <div className='app-container'>
-                <h1>Players</h1>
-                <Search />
+                <h1>Player Tracker</h1>
+                <SearchSelect />
                 <PlayersContainer />
             </div>
         );
@@ -41,7 +42,7 @@ class App extends React.Component {
 }
 
 /*******************************************************************
- * 
+ *
  * Redux
  *
  ******************************************************************/
@@ -49,7 +50,7 @@ class App extends React.Component {
 const mapStateToProps = (state) => {
     const { playerList, options } = state;
     return {
-        playerList, 
+        playerList,
         options
     };
 }

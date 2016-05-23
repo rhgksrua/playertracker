@@ -14,6 +14,7 @@ const loggerMiddleware = createLogger();
 let store = createStore(reducers, applyMiddleware(thunkMiddleware, loggerMiddleware));
 
 require('../styles/index.scss');
+require('react-select/scss/default.scss');
 
 ReactDOM.render((
     <Provider store={store}>
