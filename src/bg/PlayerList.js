@@ -5,7 +5,7 @@ import fetch from 'isomorphic-fetch';
 class PlayerList {
     /**
      * constructor
-     * 
+     *
      *
      * @returns {undefined}
      */
@@ -23,8 +23,44 @@ class PlayerList {
      * @returns {undefined}
      */
     setFirstGameTime() {
-        let allGames = this.data.data.games.game;
+        this.firstGameTime = this.getFirstGameTime();
     }
+    getFirstGameTime() {
+        if (!this.players && this.players.length < 1) return;
+
+        // Remove no games
+        let filteredPlayers = this.players.filter(player => {
+            return player.timeDate !== 'No Game';
+        });
+
+        // Get array of game times
+        let allTimes = filteredPlayers.map(player => {
+            return player.timeDate;
+        });
+
+        // Sort by game time
+        allTimes.sort((a, b) => {
+            let aTime =  moment(`${a} pm`, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
+            let bTime =  moment(`${b} pm`, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
+            return aTime.isAfter(bTime);
+            if (aTime.isAfter(bTime)) {
+                return -1;
+            }
+            if (bTime.isAfter(aTime)) {
+                return 1;
+            }
+            return 0;
+        });
+
+        console.log('alltimes sorted', allTimes);
+
+        // returns very first game
+        return allTimes[0];
+    }
+    /**
+     * setGameTime
+     * Sets game time time for each player
+     */
     setGameTime() {
         let newPlayers = this.players.map(player => {
             // player.t is team name.  Need to look for team name abbr in data.data.games[0]
@@ -32,11 +68,11 @@ class PlayerList {
             const gamesLen = games.length;
             for (let i = 0; i < gamesLen; i++) {
                 let currentGame = games[i];
-                if (currentGame['home_name_abbrev'] === player.t || 
+                if (currentGame['home_name_abbrev'] === player.t ||
                     currentGame['away_name_abbrev'] === player.t) {
                     // player game is finished
                     if (currentGame.status.status === 'Final') {
-                        player.time = 'Final';
+                        player.timeDate = 'Final';
                         break;
                     }
 
@@ -44,6 +80,11 @@ class PlayerList {
                     player.timeDate = currentGame.time_date;
                     break;
                 }
+            }
+
+            // Game not scheduled
+            if (!player.timeDate) {
+                player.timeDate = 'No Game';
             }
             return player;
         });
@@ -57,6 +98,7 @@ class PlayerList {
         }
         this.data = data;
         this.setGameTime();
+        console.log('after game time set', this.players);
         this.updateIfNecessary(data);
     }
     /**
@@ -81,6 +123,7 @@ class PlayerList {
      * @returns {undefined}
      */
     shouldUpdate(time) {
+        console.log('all done', this.allGamesFinished());
         return true;
         // Time when data is being parsed
         //let currentTime = moment();
@@ -93,6 +136,24 @@ class PlayerList {
 
         //return currentTime.isAfter(gameTime);
         //return true;
+
+        // should stop updating if all game are finished
+
+    }
+
+    /**
+     * allGamesFinished
+     * If there are games still in progress, returns true
+     * @return {boolean}
+     */
+    allGamesFinished() {
+        let allGames = this.data.data.games.game;
+        let gamesAreInProgress = allGames.some(game => {
+            return game.status.status !== 'Final';
+        });
+
+        if (gamesAreInprogress) return false;
+        return true;
     }
 
     /**
@@ -106,6 +167,9 @@ class PlayerList {
      */
     updatePlayerStats() {
         let allGames = this.data.data.games.game;
+
+        this.setFirstGameTime();
+        console.log('----- first game time', this.firstGameTime);
 
         // Loop through all the players stored
         let updatedPlayers = this.players.map(player => {
@@ -130,7 +194,7 @@ class PlayerList {
                     player.orderKey = order.orderKey;
 
                     player.outs = currentGame.status.o;
-                    
+
                     player.gameStatus = currentGame.status.status;
                     player.lastUpdated = moment().format();
 
@@ -193,8 +257,8 @@ class PlayerList {
      */
     setNotificationIfNecessary(player) {
         console.log(player.lastOrder, player.order);
-        if (player.order === 'Final' || 
-            player.lastOrder === player.order || 
+        if (player.order === 'Final' ||
+            player.lastOrder === player.order ||
             player.order === 'Dugout') {
             return;
         }

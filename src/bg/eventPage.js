@@ -56,7 +56,15 @@ function update(players) {
     }
 
     let playerList = new PlayerList(players.players);
-    fetchGameData(playerList);
+    if (shouldUpdate(players.players)) {
+        fetchGameData(playerList);
+    }
+    console.log('nothing to update');
+}
+
+function shouldUpdate(players) {
+    return true;
+
 }
 
 /**
