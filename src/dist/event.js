@@ -164,7 +164,7 @@
 	            type: 'basic',
 	            iconUrl: 'http://mlb.mlb.com/images/players/assets/74_' + player.p + '.png',
 	            title: player.n,
-	            message: '' + player.order,
+	            message: player.order + ', ' + player.outs + ' Outs',
 	            contextMessage: player.hits + ' for ' + player.ab,
 	            buttons: [{
 	                title: 'watch on mlb.tv'
@@ -28611,8 +28611,22 @@
 	        this.gameTimeSet = players.gameTimeSet;
 	        this.notification = [];
 	    }
+	    /**
+	     * setFirstGameTime
+	     * Finds the first game of the day and returns it
+	     *
+	     * This will be used to determine if the extension should fetch from mlb api
+	     *
+	     * @returns {undefined}
+	     */
+
 
 	    _createClass(PlayerList, [{
+	        key: 'setFirstGameTime',
+	        value: function setFirstGameTime() {
+	            var allGames = this.data.data.games.game;
+	        }
+	    }, {
 	        key: 'setGameTime',
 	        value: function setGameTime() {
 	            var _this = this;

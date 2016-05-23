@@ -14,6 +14,17 @@ class PlayerList {
         this.gameTimeSet = players.gameTimeSet;
         this.notification = [];
     }
+    /**
+     * setFirstGameTime
+     * Finds the first game of the day and returns it
+     *
+     * This will be used to determine if the extension should fetch from mlb api
+     *
+     * @returns {undefined}
+     */
+    setFirstGameTime() {
+        let allGames = this.data.data.games.game;
+    }
     setGameTime() {
         let newPlayers = this.players.map(player => {
             // player.t is team name.  Need to look for team name abbr in data.data.games[0]

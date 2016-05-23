@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { update, initializing } from '../actions/actions';
+import { updateOnChanged, update, initializing } from '../actions/actions';
 
 // components
 import PlayersContainer from './PlayersContainer';
@@ -21,14 +21,20 @@ class App extends React.Component {
     componentDidMount() {
         //console.log('--chrome', chrome);
         this.props.initialize();
+        // Listens for changes in storage.sync
+        chrome.storage.onChanged.addListener((changes, areaName) => {
+            if (areaName === 'sync') {
+                console.log(changes);
+                this.props.storageUpdate(changes.players.newValue.players);
+            }
+        });
     }
     render() {
         return (
             <div className='app-container'>
                 <h1>Players</h1>
-                <button onClick={this.props.update}>update</button>
-                <PlayersContainer />
                 <Search />
+                <PlayersContainer />
             </div>
         );
     }
@@ -55,6 +61,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         },
         initialize: () => {
             dispatch(initializing());
+        },
+        storageUpdate: (obj) => {
+            dispatch(updateOnChanged(obj));
         }
     }
 }

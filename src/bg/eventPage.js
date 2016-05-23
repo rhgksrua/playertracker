@@ -100,7 +100,7 @@ function notifyUser(notification) {
             type: 'basic',
             iconUrl: `http://mlb.mlb.com/images/players/assets/74_${player.p}.png`,
             title: player.n,
-            message: `${player.order}`,
+            message: `${player.order}, ${player.outs} Outs`,
             contextMessage: `${player.hits} for ${player.ab}`,
             buttons: [
                 {

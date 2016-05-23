@@ -9,6 +9,7 @@ export const ADD_PLAYER = 'ADD_PLAYER';
 export const REMOVE_PLAYER = 'REMOVE_PLAYER';
 export const UPDATE = 'UPDATE';
 export const INITIALIZE = 'INITIALIZE';
+export const UPDATE_ON_CHANGE = 'UPDATE_ON_CHANGE';
 
 /**
  * updates game time if needed
@@ -92,6 +93,13 @@ export const update = () => {
         });
     }
 };
+
+export const updateOnChanged = (obj) => {
+    return {
+        type: UPDATE_ON_CHANGE,
+        players: obj
+    };
+}
 
 export const updateStore = () => {
     return {

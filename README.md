@@ -26,3 +26,5 @@ miniscoreboard.json
 # NOTES
 
 comment out lastOrder order equality to test notification
+
+Uses a forked version of autocomplete.  `wrapperStyle` prop is not merge into the official repository.

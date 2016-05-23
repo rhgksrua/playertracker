@@ -1,7 +1,7 @@
 'use strict';
 
 import { combineReducers } from 'redux';
-import { ADD_PLAYER, REMOVE_PLAYER, INITIALIZE } from '../actions/actions';
+import { UPDATE_ON_CHANGE, ADD_PLAYER, REMOVE_PLAYER, INITIALIZE } from '../actions/actions';
 
 import playerId from '../playerId';
 
@@ -43,6 +43,9 @@ function playerList(state = initialStatePlayerList, action) {
             let removedState = Object.assign({}, state, {players: filteredPlayers});
             chrome.storage.sync.set({'players': removedState});
             return removedState;
+        case UPDATE_ON_CHANGE:
+            let updatedState = Object.assign({}, state, {players: action.players});
+            return updatedState;
         default:
             return state;
     }

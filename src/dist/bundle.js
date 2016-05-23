@@ -21557,6 +21557,9 @@
 	            var removedState = Object.assign({}, state, { players: filteredPlayers });
 	            chrome.storage.sync.set({ 'players': removedState });
 	            return removedState;
+	        case _actions.UPDATE_ON_CHANGE:
+	            var updatedState = Object.assign({}, state, { players: action.players });
+	            return updatedState;
 	        default:
 	            return state;
 	    }
@@ -21602,7 +21605,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.initializing = exports.initialize = exports.updateStore = exports.update = exports.removePlayer = exports.addPlayer = exports.updateGameTimeIfNeeded = exports.INITIALIZE = exports.UPDATE = exports.REMOVE_PLAYER = exports.ADD_PLAYER = undefined;
+	exports.initializing = exports.initialize = exports.updateStore = exports.updateOnChanged = exports.update = exports.removePlayer = exports.addPlayer = exports.updateGameTimeIfNeeded = exports.UPDATE_ON_CHANGE = exports.INITIALIZE = exports.UPDATE = exports.REMOVE_PLAYER = exports.ADD_PLAYER = undefined;
 
 	var _es6Promise = __webpack_require__(185);
 
@@ -21623,6 +21626,7 @@
 	var REMOVE_PLAYER = exports.REMOVE_PLAYER = 'REMOVE_PLAYER';
 	var UPDATE = exports.UPDATE = 'UPDATE';
 	var INITIALIZE = exports.INITIALIZE = 'INITIALIZE';
+	var UPDATE_ON_CHANGE = exports.UPDATE_ON_CHANGE = 'UPDATE_ON_CHANGE';
 
 	/**
 	 * updates game time if needed
@@ -21701,6 +21705,13 @@
 	    };
 	};
 
+	var updateOnChanged = exports.updateOnChanged = function updateOnChanged(obj) {
+	    return {
+	        type: UPDATE_ON_CHANGE,
+	        players: obj
+	    };
+	};
+
 	var updateStore = exports.updateStore = function updateStore() {
 	    return {
 	        type: UPDATE
@@ -21734,7 +21745,7 @@
 /* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
+	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
 	 * @overview es6-promise - a tiny implementation of Promises/A+.
 	 * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
 	 * @license   Licensed under MIT license
@@ -35992,8 +36003,17 @@
 	    _createClass(App, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
+	            var _this2 = this;
+
 	            //console.log('--chrome', chrome);
 	            this.props.initialize();
+	            // Listens for changes in storage.sync
+	            chrome.storage.onChanged.addListener(function (changes, areaName) {
+	                if (areaName === 'sync') {
+	                    console.log(changes);
+	                    _this2.props.storageUpdate(changes.players.newValue.players);
+	                }
+	            });
 	        }
 	    }, {
 	        key: 'render',
@@ -36006,13 +36026,8 @@
 	                    null,
 	                    'Players'
 	                ),
-	                _react2.default.createElement(
-	                    'button',
-	                    { onClick: this.props.update },
-	                    'update'
-	                ),
-	                _react2.default.createElement(_PlayersContainer2.default, null),
-	                _react2.default.createElement(_Search2.default, null)
+	                _react2.default.createElement(_Search2.default, null),
+	                _react2.default.createElement(_PlayersContainer2.default, null)
 	            );
 	        }
 	    }]);
@@ -36043,6 +36058,9 @@
 	        },
 	        initialize: function initialize() {
 	            dispatch((0, _actions.initializing)());
+	        },
+	        storageUpdate: function storageUpdate(obj) {
+	            dispatch((0, _actions.updateOnChanged)(obj));
 	        }
 	    };
 	};
@@ -36201,9 +36219,33 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var playerStyles = {
+	                position: 'relative',
+	                backgroundColor: '#EBEBEB',
+	                padding: '4px 10px',
+	                marginBottom: '10px',
+	                boxShadow: '3px 5px 10px rgba(0, 0, 0, 0.12)'
+	            };
+	            if (this.props.playerObj.order === 'At Bat') {
+	                playerStyles.backgroundColor = '#7CB342';
+	            } else if (this.props.playerObj.order === 'On Deck') {
+	                playerStyles.backgroundColor = '#FFEE58';
+	            } else if (this.props.playerObj.order === 'In Hole') {
+	                playerStyles.backgroundColor = '#BBDEFB';
+	            } else {
+	                playerStyles.backgroundColor = '#EBEBEB';
+	            }
+	            var remove = {
+	                position: 'absolute',
+	                top: '0',
+	                right: '0',
+	                padding: '5px 10px',
+	                backgroundColor: '#D81B60',
+	                color: '#FFF'
+	            };
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'player' },
+	                { className: 'player', style: playerStyles },
 	                _react2.default.createElement(
 	                    'h3',
 	                    null,
@@ -36212,11 +36254,6 @@
 	                        { href: '#', onClick: this.openPlayerPage },
 	                        this.props.playerObj.n
 	                    )
-	                ),
-	                _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    this.props.playerObj.p
 	                ),
 	                _react2.default.createElement(
 	                    'p',
@@ -36235,12 +36272,6 @@
 	                    'Order ',
 	                    this.props.playerObj.order
 	                ),
-	                this.props.playerObj.lastUpdated && _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    'Last Updated ',
-	                    this.props.playerObj.lastUpdated
-	                ),
 	                this.props.playerObj.gameStatus && _react2.default.createElement(
 	                    'p',
 	                    null,
@@ -36248,8 +36279,8 @@
 	                    this.props.playerObj.gameStatus
 	                ),
 	                _react2.default.createElement(
-	                    'button',
-	                    { onClick: this.props.removePlayerById.bind(this, this.props.playerObj.p) },
+	                    'div',
+	                    { style: remove, onClick: this.props.removePlayerById.bind(this, this.props.playerObj.p) },
 	                    'Remove'
 	                )
 	            );
@@ -36329,16 +36360,21 @@
 	            // t: teamname
 	            // n: player name
 	            // p: player id
+	            var wrapperStyle = {
+	                height: '100px',
+	                display: 'block'
+	            };
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'search-container' },
 	                _react2.default.createElement(
 	                    'h2',
 	                    null,
-	                    'Search Player'
+	                    'Add Player'
 	                ),
 	                _react2.default.createElement(_reactAutocomplete2.default, {
-	                    value: 'test',
+	                    wrapperStyle: wrapperStyle,
+	                    value: '',
 	                    labelText: '',
 	                    inputProps: { name: 'players' },
 	                    items: this.props.playerIds,
@@ -36348,7 +36384,7 @@
 	                    },
 	                    onSelect: this.onSelectAddPlayer,
 	                    onChange: function onChange(event, value) {
-	                        return 0;
+	                        console.log('on change', value);
 	                    },
 	                    renderItem: function renderItem(item, isHighlighted) {
 	                        return _react2.default.createElement(
@@ -53659,7 +53695,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n  width: 600px;\n  height: 700px; }\n", ""]);
+	exports.push([module.id, "body {\n  width: 450px;\n  height: 700px; }\n", ""]);
 
 	// exports
 

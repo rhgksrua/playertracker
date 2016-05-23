@@ -15,18 +15,23 @@ class Search extends React.Component {
         // t: teamname
         // n: player name
         // p: player id
+        const wrapperStyle = {
+            height: '100px',
+            display: 'block'
+        };
         return (
             <div className='search-container'>
-                <h2>Search Player</h2>
+                <h2>Add Player</h2>
                 <Autocomplete
-                    value='test'
+                    wrapperStyle={wrapperStyle}
+                    value=''
                     labelText=''
                     inputProps={{name: 'players'}}
                     items={this.props.playerIds}
                     shouldItemRender={this.matchStateToTerm}
                     getItemValue={(item) => item.n}
                     onSelect={this.onSelectAddPlayer}
-                    onChange={(event, value) => { return 0; }}
+                    onChange={(event, value) => { console.log('on change', value) }}
                     renderItem={(item, isHighlighted) => (
                         <div
                             style={isHighlighted ? styles.highlightedItem : styles.item}
