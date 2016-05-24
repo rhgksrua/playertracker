@@ -21693,7 +21693,7 @@
 
 	/**
 	 * playerList - Also adds playerlist to storage.sync
-	 * 
+	 *
 	 * chrome.storage.sync.get is async.  The "real" initialization values are set in App.js
 	 * inside componentDidMount().
 	 *
@@ -21711,10 +21711,12 @@
 	            if (!action.val) return state;
 	            var newState = Object.assign({}, state, { players: action.val.players });
 	            return newState;
+
 	        case _actions.ADD_PLAYER:
 	            var addState = Object.assign({}, state, { players: state.players.concat(action.player) });
 	            chrome.storage.sync.set({ 'players': addState });
 	            return addState;
+
 	        case _actions.REMOVE_PLAYER:
 	            var filteredPlayers = state.players.filter(function (player) {
 	                console.log(player.p, action.playerId);
@@ -21723,9 +21725,44 @@
 	            var removedState = Object.assign({}, state, { players: filteredPlayers });
 	            chrome.storage.sync.set({ 'players': removedState });
 	            return removedState;
+
 	        case _actions.UPDATE_ON_CHANGE:
 	            var updatedState = Object.assign({}, state, { players: action.players });
 	            return updatedState;
+
+	        case _actions.TOGGLE_AT_BAT:
+	            var togglePlayers = state.players.map(function (player) {
+	                if (action.id === player.p) {
+	                    player.toggleAtBat = player.toggleAtBat ? false : true;
+	                }
+	                return player;
+	            });
+	            var toggleState = Object.assign({}, state, { players: togglePlayers });
+	            chrome.storage.sync.set({ 'players': toggleState });
+	            return toggleState;
+
+	        case _actions.TOGGLE_ON_DECK:
+	            togglePlayers = state.players.map(function (player) {
+	                if (action.id === player.p) {
+	                    player.toggleOnDeck = player.toggleOnDeck ? false : true;
+	                }
+	                return player;
+	            });
+	            toggleState = Object.assign({}, state, { players: togglePlayers });
+	            chrome.storage.sync.set({ 'players': toggleState });
+	            return toggleState;
+
+	        case _actions.TOGGLE_IN_HOLE:
+	            togglePlayers = state.players.map(function (player) {
+	                if (action.id === player.p) {
+	                    player.toggleInHole = player.toggleInHole ? false : true;
+	                }
+	                return player;
+	            });
+	            toggleState = Object.assign({}, state, { players: togglePlayers });
+	            chrome.storage.sync.set({ 'players': toggleState });
+	            return toggleState;
+
 	        default:
 	            return state;
 	    }
@@ -21771,7 +21808,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.initializing = exports.initialize = exports.updateStore = exports.updateOnChanged = exports.update = exports.removePlayer = exports.addPlayer = exports.updateGameTimeIfNeeded = exports.UPDATE_ON_CHANGE = exports.INITIALIZE = exports.UPDATE = exports.REMOVE_PLAYER = exports.ADD_PLAYER = undefined;
+	exports.toggleInHoleById = exports.toggleOnDeckById = exports.toggleAtBatById = exports.initializing = exports.initialize = exports.updateStore = exports.updateOnChanged = exports.update = exports.removePlayer = exports.addPlayer = exports.updateGameTimeIfNeeded = exports.TOGGLE_IN_HOLE = exports.TOGGLE_ON_DECK = exports.TOGGLE_AT_BAT = exports.UPDATE_ON_CHANGE = exports.INITIALIZE = exports.UPDATE = exports.REMOVE_PLAYER = exports.ADD_PLAYER = undefined;
 
 	var _es6Promise = __webpack_require__(189);
 
@@ -21793,6 +21830,9 @@
 	var UPDATE = exports.UPDATE = 'UPDATE';
 	var INITIALIZE = exports.INITIALIZE = 'INITIALIZE';
 	var UPDATE_ON_CHANGE = exports.UPDATE_ON_CHANGE = 'UPDATE_ON_CHANGE';
+	var TOGGLE_AT_BAT = exports.TOGGLE_AT_BAT = 'TOGGLE_AT_BAT';
+	var TOGGLE_ON_DECK = exports.TOGGLE_ON_DECK = 'TOGGLE_ON_DECK';
+	var TOGGLE_IN_HOLE = exports.TOGGLE_IN_HOLE = 'TOGGLE_IN_HOLE';
 
 	/**
 	 * updates game time if needed
@@ -21825,6 +21865,9 @@
 	 * @returns {undefined}
 	 */
 	var addPlayer = exports.addPlayer = function addPlayer(player) {
+	    player.toggleAtBat = true;
+	    player.toggleOnDeck = true;
+	    player.toggleInHole = false;
 	    return {
 	        type: ADD_PLAYER,
 	        player: player
@@ -21904,6 +21947,27 @@
 	            console.log('val ', val);
 	            dispatch(initialize(val.players));
 	        });
+	    };
+	};
+
+	var toggleAtBatById = exports.toggleAtBatById = function toggleAtBatById(id) {
+	    return {
+	        type: TOGGLE_AT_BAT,
+	        id: id
+	    };
+	};
+
+	var toggleOnDeckById = exports.toggleOnDeckById = function toggleOnDeckById(id) {
+	    return {
+	        type: TOGGLE_ON_DECK,
+	        id: id
+	    };
+	};
+
+	var toggleInHoleById = exports.toggleInHoleById = function toggleInHoleById(id) {
+	    return {
+	        type: TOGGLE_IN_HOLE,
+	        id: id
 	    };
 	};
 
@@ -36171,10 +36235,14 @@
 	                { className: 'app-container' },
 	                _react2.default.createElement(
 	                    'h1',
-	                    null,
+	                    { className: 'title' },
 	                    'Player Tracker'
 	                ),
-	                _react2.default.createElement(_SearchSelect2.default, null),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'search-container' },
+	                    _react2.default.createElement(_SearchSelect2.default, null)
+	                ),
 	                _react2.default.createElement(_PlayersContainer2.default, null)
 	            );
 	        }
@@ -36338,6 +36406,10 @@
 
 	var _actions = __webpack_require__(188);
 
+	var _classnames = __webpack_require__(497);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -36369,7 +36441,7 @@
 	        value: function render() {
 	            var playerStyles = {
 	                position: 'relative',
-	                backgroundColor: '#EBEBEB',
+	                backgroundColor: '#FFF',
 	                padding: '4px 10px',
 	                marginBottom: '10px',
 	                boxShadow: '3px 5px 10px rgba(0, 0, 0, 0.12)'
@@ -36381,7 +36453,7 @@
 	            } else if (this.props.playerObj.order === 'In Hole') {
 	                playerStyles.backgroundColor = '#BBDEFB';
 	            } else {
-	                playerStyles.backgroundColor = '#EBEBEB';
+	                playerStyles.backgroundColor = '#FFF';
 	            }
 	            var remove = {
 	                position: 'absolute',
@@ -36391,45 +36463,87 @@
 	                backgroundColor: '#D81B60',
 	                color: '#FFF'
 	            };
+	            console.log('at bat class', this.props.playerObj);
+	            var atBatClass = (0, _classnames2.default)({
+	                'toggle': true,
+	                'toggle-active': this.props.playerObj.toggleAtBat
+	            });
+	            var onDeckClass = (0, _classnames2.default)({
+	                'toggle': true,
+	                'toggle-active': this.props.playerObj.toggleOnDeck
+	            });
+	            var inHoleClass = (0, _classnames2.default)({
+	                'toggle': true,
+	                'toggle-active': this.props.playerObj.toggleInHole
+	            });
+
+	            var validOrders = ['At Bat', 'In Hole', 'On Deck'];
+
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'player', style: playerStyles },
+	                { className: 'player' },
 	                _react2.default.createElement(
-	                    'h3',
+	                    'p',
 	                    null,
 	                    _react2.default.createElement(
 	                        'a',
-	                        { href: '#', onClick: this.openPlayerPage },
+	                        { className: 'player-name', href: '#', onClick: this.openPlayerPage },
 	                        this.props.playerObj.n
+	                    ),
+	                    _react2.default.createElement(
+	                        'span',
+	                        { className: 'player-team' },
+	                        this.props.playerObj.t
+	                    ),
+	                    this.props.playerObj.order && //validOrders.indexOf(this.props.playerObj.order) >= 0 &&
+	                    _react2.default.createElement(
+	                        'span',
+	                        { className: 'player-order' },
+	                        this.props.playerObj.order
 	                    )
 	                ),
-	                _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    this.props.playerObj.t
-	                ),
-	                this.props.playerObj.time && _react2.default.createElement(
+	                this.props.playerObj.timeDate && this.props.playerObj.timeDate !== 'Final' && _react2.default.createElement(
 	                    'p',
 	                    null,
 	                    'Time ',
-	                    this.props.playerObj.time
-	                ),
-	                this.props.playerObj.order && _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    'Order ',
-	                    this.props.playerObj.order
+	                    this.props.playerObj.timeDate
 	                ),
 	                this.props.playerObj.gameStatus && _react2.default.createElement(
 	                    'p',
-	                    null,
+	                    { className: 'game-status' },
 	                    'Game Status: ',
 	                    this.props.playerObj.gameStatus
 	                ),
+	                this.props.playerObj.gameStatus === 'In Progress' && _react2.default.createElement(
+	                    'p',
+	                    null,
+	                    this.props.playerObj.hits,
+	                    ' for ',
+	                    this.props.playerObj.abs
+	                ),
 	                _react2.default.createElement(
 	                    'div',
-	                    { style: remove, onClick: this.props.removePlayerById.bind(this, this.props.playerObj.p) },
-	                    'Remove'
+	                    { className: 'toggle-container' },
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: atBatClass, onClick: this.props.toggleAtBat.bind(this, this.props.playerObj.p) },
+	                        'At Bat'
+	                    ),
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: onDeckClass, onClick: this.props.toggleOnDeck.bind(this, this.props.playerObj.p) },
+	                        'On Deck'
+	                    ),
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: inHoleClass, onClick: this.props.toggleInHole.bind(this, this.props.playerObj.p) },
+	                        'In Hole'
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'span',
+	                    { className: 'remove', onClick: this.props.removePlayerById.bind(this, this.props.playerObj.p) },
+	                    '✖'
 	                )
 	            );
 	        }
@@ -36446,6 +36560,15 @@
 	    return {
 	        removePlayerById: function removePlayerById(playerId) {
 	            dispatch((0, _actions.removePlayer)(playerId));
+	        },
+	        toggleAtBat: function toggleAtBat(id) {
+	            dispatch((0, _actions.toggleAtBatById)(id));
+	        },
+	        toggleOnDeck: function toggleOnDeck(id) {
+	            dispatch((0, _actions.toggleOnDeckById)(id));
+	        },
+	        toggleInHole: function toggleInHole(id) {
+	            dispatch((0, _actions.toggleInHoleById)(id));
 	        }
 	    };
 	};
@@ -54001,6 +54124,8 @@
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Search).call(this, props));
 
 	        _this.selectPlayer = _this.selectPlayer.bind(_this);
+	        _this.renderValue = _this.renderValue.bind(_this);
+	        _this.renderOption = _this.renderOption.bind(_this);
 	        _this.state = {
 	            value: ''
 	        };
@@ -54008,6 +54133,36 @@
 	    }
 
 	    _createClass(Search, [{
+	        key: 'renderValue',
+	        value: function renderValue(option) {
+	            console.log('--- option', option);
+	            return _react2.default.createElement(
+	                'span',
+	                null,
+	                _react2.default.createElement(
+	                    'span',
+	                    { className: 'team' },
+	                    option.t
+	                ),
+	                option.n
+	            );
+	        }
+	    }, {
+	        key: 'renderOption',
+	        value: function renderOption(option) {
+	            return _react2.default.createElement(
+	                'span',
+	                null,
+	                _react2.default.createElement(
+	                    'span',
+	                    { className: 'team' },
+	                    option.t
+	                ),
+	                ' ',
+	                option.n
+	            );
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            // this.props.playerIds is an array of objects.
@@ -54024,7 +54179,8 @@
 	                },
 	                clearable: false,
 	                searchable: true,
-	                labelKey: 'n',
+	                optionRenderer: this.renderOption,
+	                valueRenderer: this.renderValue,
 	                valueKey: 'n'
 	            });
 	        }
@@ -55682,7 +55838,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n  width: 450px;\n  height: 700px; }\n\n.players-container {\n  margin-top: 10px; }\n", ""]);
+	exports.push([module.id, "/* http://meyerweb.com/eric/tools/css/reset/\r\n   v2.0 | 20110126\r\n   License: none (public domain)\r\n*/\nhtml, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {\n  margin: 0;\n  padding: 0;\n  border: 0;\n  font-size: 100%;\n  font: inherit;\n  vertical-align: baseline; }\n\n/* HTML5 display-role reset for older browsers */\narticle, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {\n  display: block; }\n\nbody {\n  line-height: 1; }\n\nol, ul {\n  list-style: none; }\n\nblockquote, q {\n  quotes: none; }\n\nblockquote:before, blockquote:after {\n  content: '';\n  content: none; }\n\nq:before, q:after {\n  content: '';\n  content: none; }\n\ntable {\n  border-collapse: collapse;\n  border-spacing: 0; }\n\nbody {\n  width: 400px;\n  background-color: #EBEBEB;\n  font-family: 'Roboto', sans-serif; }\n\n.title {\n  font-size: 1.3em;\n  margin: 10px; }\n\n.search-container {\n  margin: 10px; }\n\n.players-container {\n  margin-top: 10px; }\n  .players-container .player {\n    position: relative;\n    margin: 5px 5px 10px 5px;\n    background-color: #FFF;\n    padding: 10px 16px;\n    border-radius: 4px;\n    border: 0.5px solid rgba(0, 0, 0, 0.12);\n    box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.11); }\n    .players-container .player p {\n      padding: 3px 0;\n      position: relative; }\n      .players-container .player p .player-name {\n        display: inline-block; }\n      .players-container .player p .player-team {\n        display: inline-block;\n        font-size: 0.8em;\n        padding-left: 15px; }\n      .players-container .player p .player-order {\n        position: absolute;\n        padding: 7px;\n        background-color: #6D6D6D;\n        color: #FFF;\n        border-radius: 3px;\n        display: inline;\n        right: 40px; }\n    .players-container .player .game-status {\n      padding: 3px 0;\n      font-size: 0.9em;\n      color: #6B6B6B; }\n    .players-container .player .toggle-container {\n      padding: 3px 0; }\n      .players-container .player .toggle-container .toggle {\n        box-sizing: border-box;\n        height: 26px;\n        width: 114.28571px;\n        margin: 0 2px;\n        padding: 5px;\n        border: 2px solid rgba(255, 255, 255, 0.2);\n        border-radius: 3px;\n        color: #FFF;\n        background-color: red;\n        cursor: pointer; }\n        .players-container .player .toggle-container .toggle:hover {\n          border: 2px solid rgba(0, 0, 0, 0.2); }\n      .players-container .player .toggle-container .toggle-active {\n        background-color: green; }\n    .players-container .player .remove {\n      display: inline-block;\n      position: absolute;\n      color: #424242;\n      padding: 3px;\n      top: 4px;\n      right: 5px;\n      cursor: pointer; }\n      .players-container .player .remove:hover {\n        background-color: #EBEBEB; }\n\n.team {\n  display: inline-block;\n  width: 50px;\n  color: red; }\n", ""]);
 
 	// exports
 
@@ -56033,6 +56189,167 @@
 	exports.push([module.id, "/**\n * React Select\n * ============\n * Created by Jed Watson and Joss Mackison for KeystoneJS, http://www.keystonejs.com/\n * https://twitter.com/jedwatson https://twitter.com/jossmackison https://twitter.com/keystonejs\n * MIT License: https://github.com/keystonejs/react-select\n*/\n@keyframes Select-animation-spin {\n  to {\n    transform: rotate(1turn); } }\n\n@-webkit-keyframes Select-animation-spin {\n  to {\n    -webkit-transform: rotate(1turn); } }\n\n.Select {\n  position: relative; }\n  .Select,\n  .Select div,\n  .Select input,\n  .Select span {\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box; }\n  .Select.is-disabled > .Select-control {\n    background-color: #f9f9f9; }\n    .Select.is-disabled > .Select-control:hover {\n      box-shadow: none; }\n  .Select.is-disabled .Select-arrow-zone {\n    cursor: default;\n    pointer-events: none; }\n\n.Select-control {\n  background-color: #fff;\n  border-color: #d9d9d9 #ccc #b3b3b3;\n  border-radius: 4px;\n  border: 1px solid #ccc;\n  color: #333;\n  cursor: default;\n  display: table;\n  border-spacing: 0;\n  border-collapse: separate;\n  height: 36px;\n  outline: none;\n  overflow: hidden;\n  position: relative;\n  width: 100%; }\n  .Select-control:hover {\n    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06); }\n\n.is-searchable.is-open > .Select-control {\n  cursor: text; }\n\n.is-open > .Select-control {\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0;\n  background: #fff;\n  border-color: #b3b3b3 #ccc #d9d9d9; }\n  .is-open > .Select-control > .Select-arrow {\n    border-color: transparent transparent #999;\n    border-width: 0 5px 5px; }\n\n.is-searchable.is-focused:not(.is-open) > .Select-control {\n  cursor: text; }\n\n.is-focused:not(.is-open) > .Select-control {\n  border-color: #08c #0099e6 #0099e6;\n  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 5px -1px fade(#08c, 50%); }\n\n.Select-placeholder,\n.Select--single > .Select-control .Select-value {\n  bottom: 0;\n  color: #aaa;\n  left: 0;\n  line-height: 34px;\n  padding-left: 10px;\n  padding-right: 10px;\n  position: absolute;\n  right: 0;\n  top: 0;\n  max-width: 100%;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap; }\n\n.has-value.Select--single:not(.is-focused) > .Select-control > .Select-value .Select-value-label,\n.has-value.is-pseudo-focused.Select--single > .Select-control > .Select-value .Select-value-label {\n  color: #333; }\n\n.has-value.Select--single:not(.is-focused) > .Select-control > .Select-value a.Select-value-label,\n.has-value.is-pseudo-focused.Select--single > .Select-control > .Select-value a.Select-value-label {\n  cursor: pointer;\n  text-decoration: none; }\n  .has-value.Select--single:not(.is-focused) > .Select-control > .Select-value a.Select-value-label:hover,\n  .has-value.is-pseudo-focused.Select--single > .Select-control > .Select-value a.Select-value-label:hover {\n    color: #08c;\n    text-decoration: underline; }\n\n.Select-input {\n  height: 34px;\n  padding-left: 10px;\n  padding-right: 10px;\n  vertical-align: middle; }\n  .Select-input > input {\n    background: none transparent;\n    border: 0 none;\n    box-shadow: none;\n    cursor: default;\n    display: inline-block;\n    font-family: inherit;\n    font-size: inherit;\n    margin: 0;\n    outline: none;\n    line-height: 14px;\n    /* For IE 8 compatibility */\n    padding: 8px 0 12px;\n    /* For IE 8 compatibility */\n    -webkit-appearance: none; }\n    .is-focused .Select-input > input {\n      cursor: text; }\n\n.has-value.is-pseudo-focused .Select-input {\n  opacity: 0; }\n\n.Select-control:not(.is-searchable) > .Select-input {\n  outline: none; }\n\n.Select-loading-zone {\n  cursor: pointer;\n  display: table-cell;\n  position: relative;\n  text-align: center;\n  vertical-align: middle;\n  width: 16px; }\n\n.Select-loading {\n  -webkit-animation: Select-animation-spin 400ms infinite linear;\n  -o-animation: Select-animation-spin 400ms infinite linear;\n  animation: Select-animation-spin 400ms infinite linear;\n  width: 16px;\n  height: 16px;\n  box-sizing: border-box;\n  border-radius: 50%;\n  border: 2px solid #ccc;\n  border-right-color: #333;\n  display: inline-block;\n  position: relative;\n  vertical-align: middle; }\n\n.Select-clear-zone {\n  -webkit-animation: Select-animation-fadeIn 200ms;\n  -o-animation: Select-animation-fadeIn 200ms;\n  animation: Select-animation-fadeIn 200ms;\n  color: #999;\n  cursor: pointer;\n  display: table-cell;\n  position: relative;\n  text-align: center;\n  vertical-align: middle;\n  width: 17px; }\n  .Select-clear-zone:hover {\n    color: #D0021B; }\n\n.Select-clear {\n  display: inline-block;\n  font-size: 18px;\n  line-height: 1; }\n\n.Select--multi .Select-clear-zone {\n  width: 17px; }\n\n.Select-arrow-zone {\n  cursor: pointer;\n  display: table-cell;\n  position: relative;\n  text-align: center;\n  vertical-align: middle;\n  width: 25px;\n  padding-right: 5px; }\n\n.Select-arrow {\n  border-color: #999 transparent transparent;\n  border-style: solid;\n  border-width: 5px 5px 2.5px;\n  display: inline-block;\n  height: 0;\n  width: 0; }\n\n.is-open .Select-arrow,\n.Select-arrow-zone:hover > .Select-arrow {\n  border-top-color: #666; }\n\n@-webkit-keyframes Select-animation-fadeIn {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n\n@keyframes Select-animation-fadeIn {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n\n.Select-menu-outer {\n  border-bottom-right-radius: 4px;\n  border-bottom-left-radius: 4px;\n  background-color: #fff;\n  border: 1px solid #ccc;\n  border-top-color: #e6e6e6;\n  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);\n  box-sizing: border-box;\n  margin-top: -1px;\n  max-height: 200px;\n  position: absolute;\n  top: 100%;\n  width: 100%;\n  z-index: 1000;\n  -webkit-overflow-scrolling: touch; }\n\n.Select-menu {\n  max-height: 198px;\n  overflow-y: auto; }\n\n.Select-option {\n  box-sizing: border-box;\n  background-color: #fff;\n  color: #666666;\n  cursor: pointer;\n  display: block;\n  padding: 8px 10px; }\n  .Select-option:last-child {\n    border-bottom-right-radius: 4px;\n    border-bottom-left-radius: 4px; }\n  .Select-option.is-selected {\n    background-color: #f5faff;\n    color: #333; }\n  .Select-option.is-focused {\n    background-color: #f2f9fc;\n    color: #333; }\n  .Select-option.is-disabled {\n    color: #cccccc;\n    cursor: default; }\n\n.Select-noresults {\n  box-sizing: border-box;\n  color: #999999;\n  cursor: default;\n  display: block;\n  padding: 8px 10px; }\n\n.Select--multi .Select-input {\n  vertical-align: middle;\n  margin-left: 10px;\n  padding: 0; }\n\n.Select--multi.has-value .Select-input {\n  margin-left: 5px; }\n\n.Select--multi .Select-value {\n  background-color: #f2f9fc;\n  border-radius: 2px;\n  border: 1px solid #c9e6f2;\n  color: #08c;\n  display: inline-block;\n  font-size: 0.9em;\n  margin-left: 5px;\n  margin-top: 5px;\n  vertical-align: top; }\n\n.Select--multi .Select-value-icon,\n.Select--multi .Select-value-label {\n  display: inline-block;\n  vertical-align: middle; }\n\n.Select--multi .Select-value-label {\n  border-bottom-right-radius: 2px;\n  border-top-right-radius: 2px;\n  cursor: default;\n  padding: 2px 5px; }\n\n.Select--multi a.Select-value-label {\n  color: #08c;\n  cursor: pointer;\n  text-decoration: none; }\n  .Select--multi a.Select-value-label:hover {\n    text-decoration: underline; }\n\n.Select--multi .Select-value-icon {\n  cursor: pointer;\n  border-bottom-left-radius: 2px;\n  border-top-left-radius: 2px;\n  border-right: 1px solid #c9e6f2;\n  padding: 1px 5px 3px; }\n  .Select--multi .Select-value-icon:hover, .Select--multi .Select-value-icon:focus {\n    background-color: #ddeff7;\n    color: #0077b3; }\n  .Select--multi .Select-value-icon:active {\n    background-color: #c9e6f2; }\n\n.Select--multi.is-disabled .Select-value {\n  background-color: #fcfcfc;\n  border: 1px solid #e3e3e3;\n  color: #333; }\n\n.Select--multi.is-disabled .Select-value-icon {\n  cursor: not-allowed;\n  border-right: 1px solid #e3e3e3; }\n  .Select--multi.is-disabled .Select-value-icon:hover, .Select--multi.is-disabled .Select-value-icon:focus, .Select--multi.is-disabled .Select-value-icon:active {\n    background-color: #fcfcfc; }\n\n@keyframes Select-animation-spin {\n  to {\n    transform: rotate(1turn); } }\n\n@-webkit-keyframes Select-animation-spin {\n  to {\n    -webkit-transform: rotate(1turn); } }\n", ""]);
 
 	// exports
+
+
+/***/ },
+/* 390 */,
+/* 391 */,
+/* 392 */,
+/* 393 */,
+/* 394 */,
+/* 395 */,
+/* 396 */,
+/* 397 */,
+/* 398 */,
+/* 399 */,
+/* 400 */,
+/* 401 */,
+/* 402 */,
+/* 403 */,
+/* 404 */,
+/* 405 */,
+/* 406 */,
+/* 407 */,
+/* 408 */,
+/* 409 */,
+/* 410 */,
+/* 411 */,
+/* 412 */,
+/* 413 */,
+/* 414 */,
+/* 415 */,
+/* 416 */,
+/* 417 */,
+/* 418 */,
+/* 419 */,
+/* 420 */,
+/* 421 */,
+/* 422 */,
+/* 423 */,
+/* 424 */,
+/* 425 */,
+/* 426 */,
+/* 427 */,
+/* 428 */,
+/* 429 */,
+/* 430 */,
+/* 431 */,
+/* 432 */,
+/* 433 */,
+/* 434 */,
+/* 435 */,
+/* 436 */,
+/* 437 */,
+/* 438 */,
+/* 439 */,
+/* 440 */,
+/* 441 */,
+/* 442 */,
+/* 443 */,
+/* 444 */,
+/* 445 */,
+/* 446 */,
+/* 447 */,
+/* 448 */,
+/* 449 */,
+/* 450 */,
+/* 451 */,
+/* 452 */,
+/* 453 */,
+/* 454 */,
+/* 455 */,
+/* 456 */,
+/* 457 */,
+/* 458 */,
+/* 459 */,
+/* 460 */,
+/* 461 */,
+/* 462 */,
+/* 463 */,
+/* 464 */,
+/* 465 */,
+/* 466 */,
+/* 467 */,
+/* 468 */,
+/* 469 */,
+/* 470 */,
+/* 471 */,
+/* 472 */,
+/* 473 */,
+/* 474 */,
+/* 475 */,
+/* 476 */,
+/* 477 */,
+/* 478 */,
+/* 479 */,
+/* 480 */,
+/* 481 */,
+/* 482 */,
+/* 483 */,
+/* 484 */,
+/* 485 */,
+/* 486 */,
+/* 487 */,
+/* 488 */,
+/* 489 */,
+/* 490 */,
+/* 491 */,
+/* 492 */,
+/* 493 */,
+/* 494 */,
+/* 495 */,
+/* 496 */,
+/* 497 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	  Copyright (c) 2016 Jed Watson.
+	  Licensed under the MIT License (MIT), see
+	  http://jedwatson.github.io/classnames
+	*/
+	/* global define */
+
+	(function () {
+		'use strict';
+
+		var hasOwn = {}.hasOwnProperty;
+
+		function classNames () {
+			var classes = [];
+
+			for (var i = 0; i < arguments.length; i++) {
+				var arg = arguments[i];
+				if (!arg) continue;
+
+				var argType = typeof arg;
+
+				if (argType === 'string' || argType === 'number') {
+					classes.push(arg);
+				} else if (Array.isArray(arg)) {
+					classes.push(classNames.apply(null, arg));
+				} else if (argType === 'object') {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes.push(key);
+						}
+					}
+				}
+			}
+
+			return classes.join(' ');
+		}
+
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		} else if (true) {
+			// register as 'classnames', consistent with npm package name
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return classNames;
+			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {
+			window.classNames = classNames;
+		}
+	}());
 
 
 /***/ }

@@ -1,30 +1,15 @@
-# Player Tracker
+# Player Tracker Chrome Extension
 
-## App flow
+This is a chrome extension that keeps track of player at bats.  User can add players and be notified when the player is at bat, on deck, or in hole.  UI is built with React.JS.
 
-* Check for added player
-* Check if teams with players is playing
-* If no game do nothing
-* If game exists, 
+## Building the extension
 
-gameday_Syn.xml
-- at bat on deck
-- lineup
+`npm install`
+`webpack`
 
-
-plays.json
-- has at bat on deck in hole info
-- lineup
-
-game_events.json
-- has at bat on deck in hole info
-
-master_scoreboard.json
-miniscoreboard.json
-- has which teams are playing
+Currently, the extension is not minified.
 
 # NOTES
 
-comment out lastOrder order equality to test notification
-
-Uses a forked version of autocomplete.  `wrapperStyle` prop is not merge into the official repository.
+Options page needs to be remove.
+Need to add update conditions.

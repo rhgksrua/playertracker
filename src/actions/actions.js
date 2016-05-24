@@ -10,6 +10,9 @@ export const REMOVE_PLAYER = 'REMOVE_PLAYER';
 export const UPDATE = 'UPDATE';
 export const INITIALIZE = 'INITIALIZE';
 export const UPDATE_ON_CHANGE = 'UPDATE_ON_CHANGE';
+export const TOGGLE_AT_BAT = 'TOGGLE_AT_BAT';
+export const TOGGLE_ON_DECK = 'TOGGLE_ON_DECK';
+export const TOGGLE_IN_HOLE = 'TOGGLE_IN_HOLE';
 
 /**
  * updates game time if needed
@@ -42,6 +45,9 @@ const shouldUpdateGameTime = (state) => {
  * @returns {undefined}
  */
 export const addPlayer = (player) => {
+    player.toggleAtBat = true;
+    player.toggleOnDeck = true;
+    player.toggleInHole = false;
     return {
         type: ADD_PLAYER,
         player
@@ -128,4 +134,25 @@ export const initializing = () => {
             dispatch(initialize(val.players));
         });
     }
+}
+
+export const toggleAtBatById = id => {
+    return {
+        type: TOGGLE_AT_BAT,
+        id
+    };
+}
+
+export const toggleOnDeckById = id => {
+    return {
+        type: TOGGLE_ON_DECK,
+        id
+    };
+}
+
+export const toggleInHoleById = id => {
+    return {
+        type: TOGGLE_IN_HOLE,
+        id
+    };
 }

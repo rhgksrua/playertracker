@@ -33,8 +33,10 @@ class App extends React.Component {
     render() {
         return (
             <div className='app-container'>
-                <h1>Player Tracker</h1>
-                <SearchSelect />
+                <h1 className='title'>Player Tracker</h1>
+                <div className='search-container'>
+                    <SearchSelect />
+                </div>
                 <PlayersContainer />
             </div>
         );

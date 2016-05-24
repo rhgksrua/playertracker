@@ -1,14 +1,6 @@
-import { getYearMonthDate } from '../lib/utils';
 import moment from 'moment-timezone';
-import fetch from 'isomorphic-fetch';
 
 class PlayerList {
-    /**
-     * constructor
-     *
-     *
-     * @returns {undefined}
-     */
     constructor(players) {
         this.players = players.players;
         this.gameTimeSet = players.gameTimeSet;
@@ -25,6 +17,11 @@ class PlayerList {
     setFirstGameTime() {
         this.firstGameTime = this.getFirstGameTime();
     }
+    /**
+     * getFirstGameTime
+     * Returns first game time in the player list
+     * @return {string} [date and time in string]
+     */
     getFirstGameTime() {
         if (!this.players && this.players.length < 1) return;
 
@@ -52,7 +49,7 @@ class PlayerList {
             return 0;
         });
 
-        console.log('alltimes sorted', allTimes);
+        //console.log('alltimes sorted', allTimes);
 
         // returns very first game
         return allTimes[0];
@@ -98,7 +95,7 @@ class PlayerList {
         }
         this.data = data;
         this.setGameTime();
-        console.log('after game time set', this.players);
+        //console.log('after game time set', this.players);
         this.updateIfNecessary(data);
     }
     /**
@@ -152,7 +149,7 @@ class PlayerList {
             return game.status.status !== 'Final';
         });
 
-        if (gamesAreInprogress) return false;
+        if (gamesAreInProgress) return false;
         return true;
     }
 
@@ -180,14 +177,16 @@ class PlayerList {
                 if (currentGame.away_name_abbrev === player.t ||
                     currentGame.home_name_abbrev === player.t) {
 
+                    player.lastOrder = player.order;
+
                     // Game did not start or has ended
                     if (currentGame.status.status !== 'In Progress') {
+                        player.order = 'Dugout';
                         player.gameStatus = currentGame.status.status;
                         continue;
                     }
 
                     // Set all required data for player
-                    player.lastOrder = player.order;
 
                     let order = this.getCurrentOrder(player.p, currentGame);
                     player.order = order.order;
@@ -256,12 +255,18 @@ class PlayerList {
      * @returns {undefined}
      */
     setNotificationIfNecessary(player) {
-        console.log(player.lastOrder, player.order);
+        //console.log(player.lastOrder, player.order);
         if (player.order === 'Final' ||
             player.lastOrder === player.order ||
             player.order === 'Dugout') {
             return;
         }
+
+        // User setting
+        if (player.order === 'At Bat' && player.toggleAtBat === false) return;
+        if (player.order === 'On Deck' && player.toggleOnDeck === false) return;
+        if (player.order === 'In Hole' && player.toggleInHole === false) return;
+
         this.notification = this.notification.concat(player);
     }
 

@@ -1,9 +1,9 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 import xml2js from 'xml2js';
 import promise from 'es6-promise';
 promise.polyfill();
 import fetch from 'isomorphic-fetch';
-import { zerofill, getYearMonthDate } from '../lib/utils';
+import { zerofill, getYearMonthDate, getFirstGameTime, momentTime } from '../lib/utils';
 import PlayerList from './PlayerList';
 
 //const SCORE_BOARD_JSON_URL = getTodayScoreBoardUrl();
@@ -56,13 +56,29 @@ function update(players) {
     }
 
     let playerList = new PlayerList(players.players);
-    if (shouldUpdate(players.players)) {
+    if (shouldUpdate(players.players.players)) {
         fetchGameData(playerList);
     }
     console.log('nothing to update');
 }
 
+/**
+ * [shouldUpdate description]
+ * @param  {array} players [description]
+ * @return {boolean}         [description]
+ */
 function shouldUpdate(players) {
+    console.log('---should update', players);
+    let firstGameTime = momentTime(getFirstGameTime(players));
+    let now = moment();
+    console.log('---- time now', now.format());
+    console.log('---- first game', firstGameTime.format())
+    if (now.isBefore(firstGameTime.tz('America/New_York'))) {
+        console.log('current time if before any game have started');
+    } else {
+        console.log('games are in progress');
+    }
+    console.log('==== first game time', firstGameTime);
     return true;
 
 }

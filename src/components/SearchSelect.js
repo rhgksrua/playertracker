@@ -13,9 +13,18 @@ class Search extends React.Component {
     constructor(props) {
         super(props);
         this.selectPlayer = this.selectPlayer.bind(this);
+        this.renderValue = this.renderValue.bind(this);
+        this.renderOption = this.renderOption.bind(this);
         this.state = {
             value: ''
         };
+    }
+    renderValue(option) {
+        console.log('--- option', option);
+        return <span><span className='team'>{option.t}</span>{option.n}</span>
+    }
+    renderOption(option) {
+        return <span><span className='team'>{option.t}</span> {option.n}</span>
     }
     render() {
         // this.props.playerIds is an array of objects.
@@ -31,7 +40,8 @@ class Search extends React.Component {
                 onInputChange={inputValue => {console.log(inputValue)}}
                 clearable={false}
                 searchable
-                labelKey={'n'}
+                optionRenderer={this.renderOption}
+                valueRenderer={this.renderValue}
                 valueKey={'n'}
             />
         );
