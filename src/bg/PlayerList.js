@@ -204,9 +204,6 @@ class PlayerList {
                     if (validOrder.indexOf(player.orderKey) >= 0) {
                         player.hits = currentGame[player.orderKey].h;
                         player.ab = currentGame[player.orderKey].ab;
-                    } else {
-                        player.hits = 0;
-                        player.ab = 0;
                     }
 
                     break;

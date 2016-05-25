@@ -3,6 +3,7 @@
 $extension-width: 400px;
 $extension-height: 600px;
 $player-color: #FFF;
+$link-color: #2196F3;
 
 body {
     width: $extension-width;
@@ -11,13 +12,20 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
-.title {
-    font-size: 1.3em;
-    margin: 10px;
+header {
+    margin: 0 0 16px 0;
+    padding: 10px;
+    color: white;
+    background-color: #365E80;
+    box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.12);
+    .title {
+        font-size: 1.3em;
+        margin: 10px;
+    }
 }
 
 .search-container {
-    margin: 10px;
+    margin: 14px 5px;
 }
 
 .players-container {
@@ -31,10 +39,17 @@ body {
         border: 0.5px solid rgba(0, 0, 0, 0.12);
         box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.11);
         p {
+            padding: 10px 0;
+        }
+        .name-container {
             padding: 3px 0;
+            margin: 3px 0;
             position: relative;
             .player-name {
                 display: inline-block;
+                text-decoration: none;
+                font-weight: bold;
+                color: $link-color;
 
             }
             .player-team {
@@ -43,16 +58,21 @@ body {
                 padding-left: 15px;
 
             }
-            .player-order {
-                position: absolute;
-                padding: 7px;
-                background-color: #6D6D6D;
-                color: #FFF;
-                border-radius: 3px;
-                display: inline;
-                right: 40px;
+            .player-order-container {
+                display: inline-block;
+                width: 90px;
+                .player-order {
+                    padding: 7px;
+                    background-color: #6D6D6D;
+                    color: #FFF;
+                    border-radius: 3px;
+                    margin-right: 12px;
 
+                }
             }
+        }
+        .game-time {
+            margin-top: 10px;
         }
         .game-status {
             padding: 3px 0;
@@ -60,17 +80,16 @@ body {
             color: #6B6B6B;
         }
         .toggle-container {
-            padding: 3px 0;
+            padding: 10px 0;
             .toggle {
                 box-sizing: border-box;
-                height: 26px;
+                height: 30px;
                 width: $extension-width / 3.5;
                 margin: 0 2px;
-                padding: 5px;
                 border: 2px solid rgba(255, 255, 255, 0.2);
                 border-radius: 3px;
                 color: #FFF;
-                background-color: red;
+                background-color: #D32F2F;
                 cursor: pointer;
                 &:hover {
                     border: 2px solid rgba(0, 0, 0, 0.2);
@@ -78,7 +97,8 @@ body {
             }
 
             .toggle-active {
-                background-color: green;
+                color: #000;
+                background-color: #69F0AE;
             }
         }
         .remove {
@@ -95,7 +115,71 @@ body {
 
         }
     }
+}
 
+$toggle-width: 40px;
+$toggle-height: $toggle-width / 2;
+$toggle-space: $toggle-width * 0.26;
+$toggle-fix: 3px;
+
+.toggle-flex-container {
+    display: flex;
+    justify-content: space-around;
+}
+
+.toggle-checkbox-container {
+    position: relative;
+    display: inline-block;
+    .btn-name {
+        display: inline-block;
+        margin-right: 10px;
+    }
+    .toggle-btn-container {
+        display: inline;
+        margin-right: 10px;
+        input[type='checkbox'] {
+            display: none;
+            &:checked + label:after {
+                background-color: #009688;
+                left: $toggle-width / 2; // $toggle-width / 2
+            }
+            &:checked + label:before {
+                background-color: #6CBCB5;
+            }
+        }
+        label {
+            position: relative;
+            display: inline-block;
+            height: $toggle-height;
+            width: $toggle-width;
+            background-color: #FFF;
+            border-radius: $toggle-height;
+            border: none;
+            &:after {
+                content: '';
+                position: absolute;
+                border-radius: $toggle-height / 2;
+                left: 0;
+                top: 0 + $toggle-fix;
+                height: $toggle-height;
+                width: $toggle-width / 2;
+                background-color: #F7F7F7;
+                box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.42);
+                transition: all 0.2s ease-in-out;
+            }
+            &:before {
+                content: '';
+                position: absolute;
+                height: ($toggle-height + $toggle-space / 2) / 2;
+                width: $toggle-width - $toggle-space;
+                left: $toggle-space / 2;
+                top: $toggle-height / 2 - $toggle-space / 2 + $toggle-fix;
+                background-color: #6D6D6D;
+                border-radius: $toggle-height / 2;
+                transition: all 0.2s ease-in-out;
+            }
+        }
+    }
 }
 
 .team {

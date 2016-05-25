@@ -33,7 +33,9 @@ class App extends React.Component {
     render() {
         return (
             <div className='app-container'>
-                <h1 className='title'>Player Tracker</h1>
+                <header>
+                    <h1 className='title'>Baseball Player Tracker</h1>
+                </header>
                 <div className='search-container'>
                     <SearchSelect />
                 </div>

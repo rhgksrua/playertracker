@@ -7,6 +7,9 @@ class Player extends React.Component {
     constructor(props) {
         super(props);
         this.openPlayerPage = this.openPlayerPage.bind(this);
+        this.state = {
+            atBatChecked: this.props.playerObj.toggleAtBat
+        };
     }
     openPlayerPage() {
         console.log('open page for ', this.props.playerObj.p);
@@ -54,29 +57,46 @@ class Player extends React.Component {
         let validOrders = ['At Bat', 'In Hole', 'On Deck'];
 
 
+        console.log('player in players', this.props.playerObj);
         return (
             <div className='player'>
-                <p>
+                <div className='name-container'>
+                    {this.props.playerObj.order && //validOrders.indexOf(this.props.playerObj.order) >= 0 &&
+                    <p className='player-order-container'>
+                        <span className='player-order'>{this.props.playerObj.order}</span>
+                    </p>
+                    }
                     <a className='player-name' href='#' onClick={this.openPlayerPage}>{this.props.playerObj.n}</a>
                     <span className='player-team'>{this.props.playerObj.t}</span>
-                    {this.props.playerObj.order && //validOrders.indexOf(this.props.playerObj.order) >= 0 &&
-                    <span className='player-order'>{this.props.playerObj.order}</span>
-                    }
-                </p>
+                </div>
                 {this.props.playerObj.timeDate && this.props.playerObj.timeDate !== 'Final' &&
-                <p>Time {this.props.playerObj.timeDate}</p>
+                <p className='game-time'>{this.props.playerObj.timeDate} ET</p>
                 }
                 {this.props.playerObj.gameStatus &&
-                <p className='game-status'>Game Status: {this.props.playerObj.gameStatus}</p>
+                <p className='game-status'>{this.props.playerObj.gameStatus}</p>
                 }
-                {this.props.playerObj.gameStatus === 'In Progress' &&
-                <p>{this.props.playerObj.hits} for {this.props.playerObj.abs}</p>
-                }
-
-                <div className='toggle-container'>
-                    <button className={atBatClass} onClick={this.props.toggleAtBat.bind(this, this.props.playerObj.p)}>At Bat</button>
-                    <button className={onDeckClass} onClick={this.props.toggleOnDeck.bind(this, this.props.playerObj.p)}>On Deck</button>
-                    <button className={inHoleClass} onClick={this.props.toggleInHole.bind(this, this.props.playerObj.p)}>In Hole</button>
+                <div className='toggle-flex-container'>
+                    <div className='toggle-checkbox-container'>
+                        <p className='btn-name'>At Bat</p>
+                        <p className='toggle-btn-container'>
+                            <input type='checkbox' checked={this.props.playerObj.toggleAtBat} readOnly />
+                            <label onClick={this.props.toggleAtBat.bind(this, this.props.playerObj.p)}></label>
+                        </p>
+                    </div>
+                    <div className='toggle-checkbox-container'>
+                        <p className='btn-name'>On Deck</p>
+                        <p className='toggle-btn-container'>
+                            <input type='checkbox' checked={this.props.playerObj.toggleOnDeck} readOnly />
+                            <label onClick={this.props.toggleOnDeck.bind(this, this.props.playerObj.p)}></label>
+                        </p>
+                    </div>
+                    <div className='toggle-checkbox-container'>
+                        <p className='btn-name'>In Hole</p>
+                        <p className='toggle-btn-container'>
+                            <input type='checkbox' checked={this.props.playerObj.toggleInHole} readOnly />
+                            <label onClick={this.props.toggleInHole.bind(this, this.props.playerObj.p)}></label>
+                        </p>
+                    </div>
                 </div>
 
                 <span className='remove' onClick={this.props.removePlayerById.bind(this, this.props.playerObj.p)}>&#x2716;</span>
