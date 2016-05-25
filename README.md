@@ -4,8 +4,9 @@ This is a chrome extension that keeps track of player at bats.  User can add pla
 
 ## Building the extension
 
-`npm install`
-`webpack`
+`npm run build`
+
+Need to zip the `/dist` directory
 
 Currently, the extension is not minified.
 
