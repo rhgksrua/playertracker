@@ -96,7 +96,9 @@ class PlayerList {
         this.data = data;
         this.setGameTime();
         //console.log('after game time set', this.players);
-        this.updateIfNecessary(data);
+        console.log('JUST before updating player stat');
+        this.updatePlayerStats();
+        //this.updateIfNecessary(data);
     }
     /**
      * updateIfNecessary

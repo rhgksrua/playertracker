@@ -76,7 +76,7 @@
 	shouldUpdate();
 	chrome.alarms.create('shouldUpdate', { periodInMinutes: 30 });
 
-	chrome.alarms.create('update', { periodInMinutes: 1 });
+	//chrome.alarms.create('update', {periodInMinutes: 1});
 	chrome.storage.sync.get(['players', 'shouldUpdate'], update);
 
 	chrome.alarms.onAlarm.addListener(function (alarm) {
@@ -124,34 +124,58 @@
 	    var allGames = data; // array of games
 
 	    // Check if all games are finished.  Returns false if all done.
-	    var allGamesFinal = allGames.every(function (game) {
-	        return game.status === 'Final';
-	    });
-	    if (allGamesFinal) {
-	        chrome.storage.sync.set({ shouldUpdate: false }, function () {
+	    if (allGamesFinal(allGames)) {
+	        chrome.alarms.clear('update', function (wasCleared) {
+	            console.log('All games are finished. No updates!!!!');
+	            if (!wasCleared) {
+	                console.log('failed to clear alarm');
+	                return;
+	            }
+	            console.log('alarms cleared');
+	        });
+	        /*
+	        chrome.storage.sync.set({shouldUpdate: false}, () => {
 	            console.log('shouldUpdate set to FALSE!');
 	        });
+	        */
 	        return;
 	    }
 
 	    // Checks if there are games coming up in the next hour.
 	    // Start returns true if at least one game is scheduled.
-	    var gameStartsInHour = allGames.some(function (game) {
-	        var now = (0, _momentTimezone2.default)();
-	        var gameTime = (0, _momentTimezone2.default)(game.time_date + ' ' + game.ampm, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
-	        var compare = now.add(1, 'h').isAfter(gameTime);
-	        return now.add(1, 'h').isAfter(gameTime);
-	    });
-	    if (gameStartsInHour) {
-	        chrome.storage.sync.set({ shouldUpdate: true }, function () {
-	            console.log('Ther is a game starting within an hour. shouldUpdate set to TRUE');
+	    if (gameStartsInHour(allGames)) {
+	        console.log('At least ONE game starting within the hour');
+	        update();
+	        chrome.alarms.create('update', { periodInMinutes: 1 });
+	        /*
+	        chrome.storage.sync.set({shouldUpdate: true}, () => {
+	            console.log('There is a game starting within an hour. shouldUpdate set to TRUE');
 	        });
+	        */
 	        return;
 	    }
 
 	    // No games have started yet.
-	    chrome.storage.sync.set({ shouldUpdate: false }, function () {
+	    /*
+	    chrome.storage.sync.set({shouldUpdate: false}, () => {
 	        console.log('No games have started yet. shouldUpdate to FALSE');
+	    });
+	    */
+	}
+
+	function allGamesFinal(allGames) {
+	    return allGames.every(function (game) {
+	        //console.log('update status', game.status);
+	        return game.status === 'Final' || game.status === 'Game Over';
+	    });
+	}
+
+	function gameStartsInHour(allGames) {
+	    return allGames.some(function (game) {
+	        var now = (0, _momentTimezone2.default)();
+	        var gameTime = (0, _momentTimezone2.default)(game.time_date + ' ' + game.ampm, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
+	        var compare = now.add(1, 'h').isAfter(gameTime);
+	        return now.add(1, 'h').isAfter(gameTime);
 	    });
 	}
 
@@ -162,6 +186,10 @@
 	 */
 	function parseNotificationId(id) {
 	    return id.split('|')[1];
+	}
+
+	function createNotificationId(playerId, mlbtv) {
+	    return playerId + '|' + mlbtv;
 	}
 
 	/**
@@ -189,7 +217,8 @@
 	    // and do nothing
 
 	    // No players found.  Ends execution.
-	    if (!items.players || !items.shouldUpdate) {
+	    //if (!items.players || !items.shouldUpdate) {
+	    if (!items.players) {
 	        return;
 	    }
 
@@ -220,9 +249,6 @@
 	            chrome.storage.sync.set({ 'players': newPlayerList }, function () {
 	                console.log('updated player time. player time set to storage');
 	            });
-
-	            //notifyUser(playerList.getNotification());
-	            //console.log('notis', playerList.notis);
 	            notifyUser(playerList.notis);
 	        });
 	        return data;
@@ -255,10 +281,6 @@
 	        });
 	    });
 	    console.log('----------------------- END --------------------------');
-	}
-
-	function createNotificationId(playerId, mlbtv) {
-	    return playerId + '|' + mlbtv;
 	}
 
 /***/ },
@@ -552,7 +574,7 @@
 /* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
+	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
 	 * @overview es6-promise - a tiny implementation of Promises/A+.
 	 * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
 	 * @license   Licensed under MIT license
@@ -17393,7 +17415,9 @@
 	            this.data = data;
 	            this.setGameTime();
 	            //console.log('after game time set', this.players);
-	            this.updateIfNecessary(data);
+	            console.log('JUST before updating player stat');
+	            this.updatePlayerStats();
+	            //this.updateIfNecessary(data);
 	        }
 	        /**
 	         * updateIfNecessary

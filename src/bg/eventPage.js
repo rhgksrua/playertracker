@@ -13,7 +13,7 @@ const API_BASE = 'http://gd2.mlb.com/components/game/mlb/';
 shouldUpdate();
 chrome.alarms.create('shouldUpdate', {periodInMinutes: 30});
 
-chrome.alarms.create('update', {periodInMinutes: 1});
+//chrome.alarms.create('update', {periodInMinutes: 1});
 chrome.storage.sync.get(['players', 'shouldUpdate'], update);
 
 chrome.alarms.onAlarm.addListener(function(alarm){
@@ -64,34 +64,58 @@ function setUpdateStatus(data) {
     const allGames = data; // array of games
     
     // Check if all games are finished.  Returns false if all done.
-    let allGamesFinal = allGames.every(game => {
-        return game.status === 'Final';
-    });
-    if (allGamesFinal) {
+    if (allGamesFinal(allGames)) {
+        chrome.alarms.clear('update', wasCleared => {
+            console.log('All games are finished. No updates!!!!');
+            if (!wasCleared) {
+                console.log('failed to clear alarm');
+                return;
+            }
+            console.log('alarms cleared');
+        });
+        /*
         chrome.storage.sync.set({shouldUpdate: false}, () => {
             console.log('shouldUpdate set to FALSE!');
         });
+        */
         return;
     }
 
     // Checks if there are games coming up in the next hour.
     // Start returns true if at least one game is scheduled.
-    let gameStartsInHour = allGames.some((game) => {
-        let now = moment();
-        let gameTime = moment(`${game.time_date} ${game.ampm}`, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
-        let compare = now.add(1, 'h').isAfter(gameTime);
-        return now.add(1, 'h').isAfter(gameTime);
-    });
-    if (gameStartsInHour) {
+    if (gameStartsInHour(allGames)) {
+        console.log('At least ONE game starting within the hour');
+        update();
+        chrome.alarms.create('update', {periodInMinutes: 1});
+        /*
         chrome.storage.sync.set({shouldUpdate: true}, () => {
-            console.log('Ther is a game starting within an hour. shouldUpdate set to TRUE');
+            console.log('There is a game starting within an hour. shouldUpdate set to TRUE');
         });
+        */
         return;
     }
 
     // No games have started yet.
+    /*
     chrome.storage.sync.set({shouldUpdate: false}, () => {
         console.log('No games have started yet. shouldUpdate to FALSE');
+    });
+    */
+}
+
+function allGamesFinal(allGames) {
+    return allGames.every(game => {
+        //console.log('update status', game.status);
+        return game.status === 'Final' || game.status === 'Game Over';
+    });
+}
+
+function gameStartsInHour(allGames) {
+    return allGames.some((game) => {
+        let now = moment();
+        let gameTime = moment(`${game.time_date} ${game.ampm}`, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
+        let compare = now.add(1, 'h').isAfter(gameTime);
+        return now.add(1, 'h').isAfter(gameTime);
     });
 }
 
@@ -131,7 +155,8 @@ function update(items) {
     // and do nothing
 
     // No players found.  Ends execution.
-    if (!items.players || !items.shouldUpdate) {
+    //if (!items.players || !items.shouldUpdate) {
+    if (!items.players) {
         return;
     }
 
@@ -164,9 +189,6 @@ function fetchGameData(playerList) {
                 chrome.storage.sync.set({'players': newPlayerList}, function() {
                     console.log('updated player time. player time set to storage');
                 });
-
-                //notifyUser(playerList.getNotification());
-                //console.log('notis', playerList.notis);
                 notifyUser(playerList.notis);
             });
             return data
