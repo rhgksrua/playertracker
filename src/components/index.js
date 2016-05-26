@@ -5,16 +5,29 @@ import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import createLogger from 'redux-logger';
 import reducers from '../reducers/reducers';
-
-// Components
 import App from './App';
+
+/*****************************************************************
+ *
+ * CSS
+ *
+ ****************************************************************/
+
+ // app
+import '../styles/index.scss';
+
+// react-select
+import 'react-select/scss/default.scss';
+
+/*****************************************************************
+ *
+ * End of CSS
+ *
+ ****************************************************************/
 
 const loggerMiddleware = createLogger();
 
 let store = createStore(reducers, applyMiddleware(thunkMiddleware, loggerMiddleware));
-
-require('../styles/index.scss');
-require('react-select/scss/default.scss');
 
 ReactDOM.render((
     <Provider store={store}>

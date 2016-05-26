@@ -31,7 +31,7 @@ const initialStatePlayerList = { gameTimeSet: false, players: []};
  * @param action
  * @returns {undefined}
  */
-function playerList(state = initialStatePlayerList, action) {
+export function playerList(state = initialStatePlayerList, action) {
     switch (action.type) {
         case INITIALIZE:
             console.log('action val', action.val);
@@ -46,7 +46,6 @@ function playerList(state = initialStatePlayerList, action) {
 
         case REMOVE_PLAYER:
             let filteredPlayers = state.players.filter(player => {
-                console.log(player.p, action.playerId);
                 return player.p !== action.playerId;
             });
             let removedState = Object.assign({}, state, {players: filteredPlayers});
@@ -95,7 +94,7 @@ function playerList(state = initialStatePlayerList, action) {
     }
 }
 
-function options(state = {}, action) {
+export function options(state = {}, action) {
     switch (action.type) {
         default:
             return state;
@@ -103,7 +102,6 @@ function options(state = {}, action) {
 }
 
 const playerIdInitialState = playerId.search_autocomp.search_autocomplete.queryResults.row;
-console.log(playerIdInitialState);
 
 function playerIds(state = playerIdInitialState, action) {
     switch (action.type) {

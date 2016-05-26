@@ -74,22 +74,36 @@
 
 	var _App2 = _interopRequireDefault(_App);
 
+	__webpack_require__(385);
+
+	__webpack_require__(389);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	/*****************************************************************
+	 *
+	 * End of CSS
+	 *
+	 ****************************************************************/
+
+	/*****************************************************************
+	 *
+	 * CSS
+	 *
+	 ****************************************************************/
+
+	// app
 	var loggerMiddleware = (0, _reduxLogger2.default)();
 
-	// Components
+	// react-select
 
 
 	var store = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(_reduxThunk2.default, loggerMiddleware));
 
-	__webpack_require__(385);
-	__webpack_require__(389);
-
 	_reactDom2.default.render(_react2.default.createElement(
-	    _reactRedux.Provider,
-	    { store: store },
-	    _react2.default.createElement(_App2.default, null)
+	  _reactRedux.Provider,
+	  { store: store },
+	  _react2.default.createElement(_App2.default, null)
 	), document.getElementById('app'));
 
 /***/ },
@@ -21672,6 +21686,8 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.playerList = playerList;
+	exports.options = options;
 
 	var _redux = __webpack_require__(166);
 
@@ -21719,7 +21735,6 @@
 
 	        case _actions.REMOVE_PLAYER:
 	            var filteredPlayers = state.players.filter(function (player) {
-	                console.log(player.p, action.playerId);
 	                return player.p !== action.playerId;
 	            });
 	            var removedState = Object.assign({}, state, { players: filteredPlayers });
@@ -21779,7 +21794,6 @@
 	}
 
 	var playerIdInitialState = _playerId2.default.search_autocomp.search_autocomplete.queryResults.row;
-	console.log(playerIdInitialState);
 
 	function playerIds() {
 	    var state = arguments.length <= 0 || arguments[0] === undefined ? playerIdInitialState : arguments[0];
@@ -21808,7 +21822,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.toggleInHoleById = exports.toggleOnDeckById = exports.toggleAtBatById = exports.initializing = exports.initialize = exports.updateStore = exports.updateOnChanged = exports.update = exports.removePlayer = exports.addPlayer = exports.updateGameTimeIfNeeded = exports.TOGGLE_IN_HOLE = exports.TOGGLE_ON_DECK = exports.TOGGLE_AT_BAT = exports.UPDATE_ON_CHANGE = exports.INITIALIZE = exports.UPDATE = exports.REMOVE_PLAYER = exports.ADD_PLAYER = undefined;
+	exports.toggleInHoleById = exports.toggleOnDeckById = exports.toggleAtBatById = exports.initializing = exports.initialize = exports.updateOnChanged = exports.removePlayer = exports.addPlayer = exports.TOGGLE_IN_HOLE = exports.TOGGLE_ON_DECK = exports.TOGGLE_AT_BAT = exports.UPDATE_ON_CHANGE = exports.INITIALIZE = exports.UPDATE = exports.REMOVE_PLAYER = exports.ADD_PLAYER = undefined;
 
 	var _es6Promise = __webpack_require__(189);
 
@@ -21833,31 +21847,6 @@
 	var TOGGLE_AT_BAT = exports.TOGGLE_AT_BAT = 'TOGGLE_AT_BAT';
 	var TOGGLE_ON_DECK = exports.TOGGLE_ON_DECK = 'TOGGLE_ON_DECK';
 	var TOGGLE_IN_HOLE = exports.TOGGLE_IN_HOLE = 'TOGGLE_IN_HOLE';
-
-	/**
-	 * updates game time if needed
-	 *
-	 * @returns {undefined}
-	 */
-	var updateGameTimeIfNeeded = exports.updateGameTimeIfNeeded = function updateGameTimeIfNeeded() {
-	    return function (dispatch, getState) {
-	        if (shouldUpdateGameTime(getState())) {
-	            return dispatch(getNewGameTime);
-	        }
-	    };
-	};
-
-	/**
-	 * Checks game time has been set
-	 *
-	 * @returns {undefined}
-	 */
-	var shouldUpdateGameTime = function shouldUpdateGameTime(state) {
-	    if (state.playerList.gameTimeSet) {
-	        return true;
-	    }
-	    return false;
-	};
 
 	/**
 	 * Add a player to playerList.
@@ -21886,44 +21875,10 @@
 	    };
 	};
 
-	/**
-	 * update - Handles updating of player status.
-	 *
-	 * @returns {undefined}
-	 */
-	var update = exports.update = function update() {
-	    return function (dispatch) {
-	        return (0, _isomorphicFetch2.default)('http://gd2.mlb.com/components/game/mlb/year_2016/month_05/day_16/master_scoreboard.xml', {
-	            method: 'get'
-	        }).then(function (data) {
-	            console.log('-------fetch data', data);
-	            return data.text();
-	        }).then(function (data) {
-	            //console.log('----- fetch json data', data);
-	            //const oParser = new DOMParser();
-	            //const oDOM = oParser.parseFromString(data, 'text/xml');
-	            //console.log('---- oDOM', oDOM);
-	            var parseString = _xml2js2.default.parseString;
-	            parseString(data, function (err, result) {
-	                console.dir(result);
-	            });
-	            return data;
-	        }).catch(function (err) {
-	            console.warn(err);
-	        });
-	    };
-	};
-
 	var updateOnChanged = exports.updateOnChanged = function updateOnChanged(obj) {
 	    return {
 	        type: UPDATE_ON_CHANGE,
 	        players: obj
-	    };
-	};
-
-	var updateStore = exports.updateStore = function updateStore() {
-	    return {
-	        type: UPDATE
 	    };
 	};
 

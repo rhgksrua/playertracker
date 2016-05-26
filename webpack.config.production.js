@@ -1,6 +1,8 @@
 // Production
 
+var webpack = require('webpack');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
+var CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -33,6 +35,20 @@ module.exports = {
         ]
     },
     plugins: [
+        // Removes react development code
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': '"production"'
+        }),
+        new webpack.optimize.UglifyJsPlugin({
+            verbose: false 
+        }),
+        // Remove /dist
+        new CleanWebpackPlugin(['dist'], {
+            root: __dirname,
+            verbose: false,
+            dry: false 
+        }),
+        // Build
         new CopyWebpackPlugin([
             {
                 from: 'manifest.json',
@@ -47,16 +63,8 @@ module.exports = {
                 to: 'src/browser_action/browser_action.html',
             },
             {
-                from: 'src/options_custom',
-                to: 'src/options_custom'
-            },
-            {
                 from: 'icons',
                 to: 'icons',
-            },
-            {
-                from: '_locales',
-                to: '_locales'
             }
         ])
 
