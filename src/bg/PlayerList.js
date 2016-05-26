@@ -6,54 +6,7 @@ class PlayerList {
         this.gameTimeSet = players.gameTimeSet;
         this.notification = [];
     }
-    /**
-     * setFirstGameTime
-     * Finds the first game of the day and returns it
-     *
-     * This will be used to determine if the extension should fetch from mlb api
-     *
-     * @returns {undefined}
-     */
-    setFirstGameTime() {
-        this.firstGameTime = this.getFirstGameTime();
-    }
-    /**
-     * getFirstGameTime
-     * Returns first game time in the player list
-     * @return {string} [date and time in string]
-     */
-    getFirstGameTime() {
-        if (!this.players && this.players.length < 1) return;
 
-        // Remove no games
-        let filteredPlayers = this.players.filter(player => {
-            return player.timeDate !== 'No Game';
-        });
-
-        // Get array of game times
-        let allTimes = filteredPlayers.map(player => {
-            return player.timeDate;
-        });
-
-        // Sort by game time
-        allTimes.sort((a, b) => {
-            let aTime =  moment(`${a} pm`, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
-            let bTime =  moment(`${b} pm`, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
-            return aTime.isAfter(bTime);
-            if (aTime.isAfter(bTime)) {
-                return -1;
-            }
-            if (bTime.isAfter(aTime)) {
-                return 1;
-            }
-            return 0;
-        });
-
-        //console.log('alltimes sorted', allTimes);
-
-        // returns very first game
-        return allTimes[0];
-    }
     /**
      * setGameTime
      * Sets game time time for each player
@@ -87,72 +40,14 @@ class PlayerList {
         });
         this.players = newPlayers;
     }
-    getPlayers() {
-        return this.players;
-    }
+
     parseGameData(data) {
         if (!data) {
+            return;
         }
         this.data = data;
         this.setGameTime();
-        //console.log('after game time set', this.players);
-        console.log('JUST before updating player stat');
         this.updatePlayerStats();
-        //this.updateIfNecessary(data);
-    }
-    /**
-     * updateIfNecessary
-     * If there are at least one player playing at current time,
-     * update starts until all games are finished for the day.
-     *
-     * @returns {undefined}
-     */
-    updateIfNecessary(data = this.data) {
-        if(this.shouldUpdate()) {
-            //console.log('player status should be updated', player.n);
-            this.updatePlayerStats();
-        } else {
-            console.log('game has not started yet', player.n);
-        }
-    }
-    /**
-     * shouldUpdate
-     * The base ti
-     *
-     * @returns {undefined}
-     */
-    shouldUpdate(time) {
-        console.log('all done', this.allGamesFinished());
-        return true;
-        // Time when data is being parsed
-        //let currentTime = moment();
-        // Time when the game starts
-        //console.log(time);
-        //let gameTime =  moment(`${time} pm`, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
-
-        //console.log(currentTime.format(), gameTime.format());
-        //console.log(currentTime.isAfter(gameTime));
-
-        //return currentTime.isAfter(gameTime);
-        //return true;
-
-        // should stop updating if all game are finished
-
-    }
-
-    /**
-     * allGamesFinished
-     * If there are games still in progress, returns true
-     * @return {boolean}
-     */
-    allGamesFinished() {
-        let allGames = this.data.data.games.game;
-        let gamesAreInProgress = allGames.some(game => {
-            return game.status.status !== 'Final';
-        });
-
-        if (gamesAreInProgress) return false;
-        return true;
     }
 
     /**
@@ -168,7 +63,6 @@ class PlayerList {
         let allGames = this.data.data.games.game;
 
         //this.setFirstGameTime();
-        //console.log('----- first game time', this.firstGameTime);
 
         // Loop through all the players stored
         let updatedPlayers = this.players.map(player => {
@@ -254,7 +148,6 @@ class PlayerList {
      * @returns {undefined}
      */
     setNotificationIfNecessary(player) {
-        //console.log(player.lastOrder, player.order);
         if (player.order === 'Final' ||
             player.lastOrder === player.order ||
             player.order === 'Dugout') {
@@ -269,18 +162,6 @@ class PlayerList {
         this.notification = this.notification.concat(player);
     }
 
-    /**
-     * notification
-     *
-     * @returns {undefined}
-     */
-    getNotification() {
-        if (!this.notification) {
-            return [];
-        }
-        return this.notification;
-    }
-
     get notis() {
         return this.notification;
     }
@@ -288,12 +169,14 @@ class PlayerList {
     getPlayersArr() {
         return this.players;
     }
+
     parseMlbtv(raw) {
         let id = this.parseCalendarId(raw);
         let clickOrigin = '';
         let team = '';
         return `http://m.mlb.com/tv/e${id}/?clickOrigin=${clickOrigin}&team=${team}`;
     }
+    
     parseCalendarId(raw) {
         const re = /calendar_event_id:\'([\d\-]+)\'/;
         let results = re.exec(raw);

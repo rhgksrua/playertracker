@@ -3,7 +3,6 @@
 import promise from 'es6-promise';
 promise.polyfill();
 import fetch from 'isomorphic-fetch';
-import xml2js from 'xml2js';
 
 export const ADD_PLAYER = 'ADD_PLAYER';
 export const REMOVE_PLAYER = 'REMOVE_PLAYER';
@@ -13,6 +12,7 @@ export const UPDATE_ON_CHANGE = 'UPDATE_ON_CHANGE';
 export const TOGGLE_AT_BAT = 'TOGGLE_AT_BAT';
 export const TOGGLE_ON_DECK = 'TOGGLE_ON_DECK';
 export const TOGGLE_IN_HOLE = 'TOGGLE_IN_HOLE';
+export const TOGGLE_INTERACTION = 'TOGGLE_INTERACTION';
 
 /**
  * Add a player to playerList.
@@ -23,6 +23,7 @@ export const addPlayer = (player) => {
     player.toggleAtBat = true;
     player.toggleOnDeck = true;
     player.toggleInHole = false;
+    player.toggleInteraction = false;
     return {
         type: ADD_PLAYER,
         player
@@ -64,8 +65,6 @@ export const initialize = (val) => {
 export const initializing = () => {
     return (dispatch, getState) => {
         chrome.storage.sync.get('players', function(val) {
-            console.log('val players', val.players);
-            console.log('val ', val);
             dispatch(initialize(val.players));
         });
     }
@@ -88,6 +87,13 @@ export const toggleOnDeckById = id => {
 export const toggleInHoleById = id => {
     return {
         type: TOGGLE_IN_HOLE,
+        id
+    };
+}
+
+export const toggleInteraction = id => {
+    return {
+        type: TOGGLE_INTERACTION,
         id
     };
 }

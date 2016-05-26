@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { styles } from '../styles/autocomplete';
 import { addPlayer } from '../actions/actions';
 import Select from 'react-select';
 
@@ -20,11 +19,10 @@ class Search extends React.Component {
         };
     }
     renderValue(option) {
-        console.log('--- option', option);
-        return <span><span className='team'>{option.t}</span>{option.n}</span>
+        return <span><span className='team'>{option.t}</span>{option.n}</span>;
     }
     renderOption(option) {
-        return <span><span className='team'>{option.t}</span> {option.n}</span>
+        return <span><span className='team'>{option.t}</span> {option.n}</span>;
     }
     render() {
         // this.props.playerIds is an array of objects.
@@ -37,7 +35,7 @@ class Search extends React.Component {
                 value={this.state.value}
                 options={this.props.playerIds}
                 onChange={this.selectPlayer}
-                onInputChange={inputValue => {console.log(inputValue)}}
+                onInputChange={inputValue => inputValue}
                 clearable={false}
                 searchable
                 optionRenderer={this.renderOption}
@@ -86,14 +84,14 @@ const mapStateToProps = (state) => {
         playerIds,
         playerList
     };
-}
+};
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch) => {
     return {
         addPlayerObj: (playerObj) => {
             dispatch(addPlayer(playerObj));
         }
     };
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Search);

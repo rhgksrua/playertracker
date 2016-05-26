@@ -4,7 +4,6 @@ import { updateOnChanged, update, initializing } from '../actions/actions';
 
 // components
 import PlayersContainer from './PlayersContainer';
-import Search from './Search';
 import SearchSelect from './SearchSelect';
 
 
@@ -20,12 +19,12 @@ class App extends React.Component {
      * @returns {undefined}
      */
     componentDidMount() {
-        //console.log('--chrome', chrome);
         this.props.initialize();
         // Listens for changes in storage.sync
+        // Need to rework this.  It might be better to update by passing message from
+        // eventPage to popup
         chrome.storage.onChanged.addListener((changes, areaName) => {
             if (areaName === 'sync') {
-                console.log(changes);
                 this.props.storageUpdate(changes.players.newValue.players);
             }
         });
@@ -57,9 +56,9 @@ const mapStateToProps = (state) => {
         playerList,
         options
     };
-}
+};
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch) => {
     return {
         update: () => {
             dispatch(update());
@@ -70,7 +69,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         storageUpdate: (obj) => {
             dispatch(updateOnChanged(obj));
         }
-    }
-}
+    };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

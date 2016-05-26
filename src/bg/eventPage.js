@@ -2,11 +2,10 @@ import moment from 'moment-timezone';
 import promise from 'es6-promise';
 promise.polyfill();
 import fetch from 'isomorphic-fetch';
-import { zerofill, getYearMonthDate, momentTime } from '../lib/utils';
+import { getYearMonthDate } from '../lib/utils';
 import PlayerList from './PlayerList';
 
 //const SCORE_BOARD_JSON_URL = getTodayScoreBoardUrl();
-const API_DOMAIN = 'http://gd2.mlb.com/';
 const API_BASE = 'http://gd2.mlb.com/components/game/mlb/';
 
 
@@ -39,7 +38,6 @@ chrome.notifications.onButtonClicked.addListener(function(id, index) {
  * @return {[type]} [description]
  */
 function shouldUpdate() {
-    //console.log('start shouldUpdate')
     let miniUrl = getTodayScoreBoardUrl('miniscoreboard.json');
     const options = {};
     fetch(miniUrl, options)
@@ -73,11 +71,6 @@ function setUpdateStatus(data) {
             }
             console.log('alarms cleared');
         });
-        /*
-        chrome.storage.sync.set({shouldUpdate: false}, () => {
-            console.log('shouldUpdate set to FALSE!');
-        });
-        */
         return;
     }
 
@@ -87,25 +80,12 @@ function setUpdateStatus(data) {
         console.log('At least ONE game starting within the hour');
         update();
         chrome.alarms.create('update', {periodInMinutes: 1});
-        /*
-        chrome.storage.sync.set({shouldUpdate: true}, () => {
-            console.log('There is a game starting within an hour. shouldUpdate set to TRUE');
-        });
-        */
         return;
     }
-
-    // No games have started yet.
-    /*
-    chrome.storage.sync.set({shouldUpdate: false}, () => {
-        console.log('No games have started yet. shouldUpdate to FALSE');
-    });
-    */
 }
 
 function allGamesFinal(allGames) {
     return allGames.every(game => {
-        //console.log('update status', game.status);
         return game.status === 'Final' || game.status === 'Game Over';
     });
 }
@@ -115,7 +95,7 @@ function gameStartsInHour(allGames) {
         let now = moment();
         let gameTime = moment(`${game.time_date} ${game.ampm}`, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
         let compare = now.add(1, 'h').isAfter(gameTime);
-        return now.add(1, 'h').isAfter(gameTime);
+        return compare;
     });
 }
 
@@ -191,7 +171,7 @@ function fetchGameData(playerList) {
                 });
                 notifyUser(playerList.notis);
             });
-            return data
+            return data;
         })
         .catch(err => {
             console.warn(err);
@@ -199,8 +179,6 @@ function fetchGameData(playerList) {
 }
 
 function notifyUser(notification) {
-    console.log('----------------------- noti --------------------------');
-    let interaction = true;
     notification.forEach(player => {
         let notiOpt = {
             type: 'basic',
@@ -214,16 +192,13 @@ function notifyUser(notification) {
                 }
             ],
             isClickable: true,
-            requireInteraction: interaction 
+            requireInteraction: player.toggleInteraction 
         };
-        // Might need to consider using player id and mlbtv id to create
-        // notification id.
         let notificationId = createNotificationId(player.p, player.mlbtv);
         chrome.notifications.create(notificationId, notiOpt, notiId => {
             console.log('created notification');
         });
     });
-    console.log('----------------------- END --------------------------');
 }
 
 

@@ -1,3 +1,7 @@
+// Development
+
+var webpack = require('webpack');
+
 module.exports = {
     entry: {
         bundle: './src/components/index.js', 
@@ -27,5 +31,10 @@ module.exports = {
                 loaders: ['json-loader']
             }
         ]
-    }
+    },
+    plugins: [
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': '"development"'
+        })
+    ]
 };

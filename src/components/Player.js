@@ -1,6 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { removePlayer, toggleAtBatById, toggleOnDeckById, toggleInHoleById} from '../actions/actions';
+import { removePlayer, 
+         toggleAtBatById, 
+         toggleOnDeckById, 
+         toggleInHoleById, 
+         toggleInteraction 
+       } from '../actions/actions';
 import classNames from 'classnames';
 
 class Player extends React.Component {
@@ -12,7 +17,6 @@ class Player extends React.Component {
         };
     }
     openPlayerPage() {
-        console.log('open page for ', this.props.playerObj.p);
         chrome.tabs.create({url: `http://mlb.mlb.com/team/player.jsp?player_id=${this.props.playerObj.p}`});
     }
     render() {
@@ -40,7 +44,6 @@ class Player extends React.Component {
             backgroundColor: '#D81B60',
             color: '#FFF'
         };
-        console.log('at bat class', this.props.playerObj);
         let atBatClass = classNames({
             'toggle': true,
             'toggle-active': this.props.playerObj.toggleAtBat
@@ -57,11 +60,10 @@ class Player extends React.Component {
         let validOrders = ['At Bat', 'In Hole', 'On Deck'];
 
 
-        console.log('player in players', this.props.playerObj);
         return (
             <div className='player'>
                 <div className='name-container'>
-                    {this.props.playerObj.order && //validOrders.indexOf(this.props.playerObj.order) >= 0 &&
+                    {this.props.playerObj.order &&
                     <p className='player-order-container'>
                         <span className='player-order'>{this.props.playerObj.order}</span>
                     </p>
@@ -69,7 +71,7 @@ class Player extends React.Component {
                     <a className='player-name' href='#' onClick={this.openPlayerPage}>{this.props.playerObj.n}</a>
                     <span className='player-team'>{this.props.playerObj.t}</span>
                 </div>
-                {this.props.playerObj.timeDate && this.props.playerObj.timeDate !== 'Final' &&
+                {this.props.playerObj.timeDate && this.props.playerObj.timeDate !== 'Final' && this.props.playerObj.timeDate !== 'No Game' &&
                 <p className='game-time'>{this.props.playerObj.timeDate} ET</p>
                 }
                 {this.props.playerObj.gameStatus &&
@@ -97,6 +99,13 @@ class Player extends React.Component {
                             <label onClick={this.props.toggleInHole.bind(this, this.props.playerObj.p)}></label>
                         </p>
                     </div>
+                    <div className='toggle-checkbox-container'>
+                        <p className='btn-name'>Persistent</p>
+                        <p className='toggle-btn-container'>
+                            <input type='checkbox' checked={this.props.playerObj.toggleInteraction} readOnly />
+                            <label onClick={this.props.toggleInteraction.bind(this, this.props.playerObj.p)}></label>
+                        </p>
+                    </div>
                 </div>
 
                 <span className='remove' onClick={this.props.removePlayerById.bind(this, this.props.playerObj.p)}>&#x2716;</span>
@@ -109,7 +118,7 @@ const mapStateToProps = (state, ownProps) => {
     return ownProps;
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch) => {
     return {
         removePlayerById: playerId => {
             dispatch(removePlayer(playerId));
@@ -122,6 +131,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         },
         toggleInHole: id => {
             dispatch(toggleInHoleById(id));
+        },
+        toggleInteraction: id => {
+            dispatch(toggleInteraction(id));
         }
     };
 };

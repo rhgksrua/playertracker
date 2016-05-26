@@ -130,6 +130,9 @@ $toggle-fix: 3px;
 .toggle-checkbox-container {
     position: relative;
     display: inline-block;
+    width: 100px;
+    text-align: center;
+    margin-bottom: 6px;
     .btn-name {
         display: inline-block;
         margin-right: 10px;
@@ -188,4 +191,3 @@ $toggle-fix: 3px;
     color: red;
 }
 
-// TOGGLE ATBAT ONDECK inhole

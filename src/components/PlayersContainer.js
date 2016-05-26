@@ -3,21 +3,22 @@ import { connect } from 'react-redux';
 
 import Players from './Players';
 
-const mapStateToProps = (state, ownProps) => {
-    const { playerList, options, playerIds } = state;
+const mapStateToProps = (state) => {
+    const { playerList, options } = state;
     return {
         playerList,
         options
     };
-}
+};
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch) => {
     return {
         test: () => {
             console.log('test from container');
+            dispatch();
         }
     };
-}
+};
 
 const PlayersContainer = connect(
     mapStateToProps,

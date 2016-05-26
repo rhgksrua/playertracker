@@ -25,9 +25,15 @@ import 'react-select/scss/default.scss';
  *
  ****************************************************************/
 
-const loggerMiddleware = createLogger();
+const middlewares = [thunkMiddleware];
 
-let store = createStore(reducers, applyMiddleware(thunkMiddleware, loggerMiddleware));
+if (process.env.NODE_ENV === 'development') {
+	const createLogger = require('redux-logger');
+	const logger = createLogger();
+	middlewares.push(logger);
+}
+
+let store = createStore(reducers, applyMiddleware(...middlewares));
 
 ReactDOM.render((
     <Provider store={store}>

@@ -7,34 +7,24 @@ import { UPDATE_ON_CHANGE,
          INITIALIZE,
          TOGGLE_AT_BAT,
          TOGGLE_ON_DECK,
-         TOGGLE_IN_HOLE
-        } from '../actions/actions';
+         TOGGLE_IN_HOLE,
+         TOGGLE_INTERACTION
+       } from '../actions/actions';
 
 import playerId from '../playerId';
 
-const getStoredPlayers = () => {
-    chrome.storage.sync.get('players', function(val) {
-        if (val.players === 'undefined') {
-        }
-    });
-};
-
 const initialStatePlayerList = { gameTimeSet: false, players: []};
 
-/**
- * playerList - Also adds playerlist to storage.sync
- *
- * chrome.storage.sync.get is async.  The "real" initialization values are set in App.js
- * inside componentDidMount().
- *
- * @param state = initialStatePlayerList
- * @param action
- * @returns {undefined}
- */
+
+ /**
+  * Reducer for user added players
+  * @param  {Object} state  - holds all players added by user
+  * @param  {Object} action 
+  * @return {Object}        
+  */
 export function playerList(state = initialStatePlayerList, action) {
     switch (action.type) {
         case INITIALIZE:
-            console.log('action val', action.val);
             if (!action.val) return state;
             let newState = Object.assign({}, state, {players: action.val.players});
             return newState;
@@ -89,11 +79,28 @@ export function playerList(state = initialStatePlayerList, action) {
             chrome.storage.sync.set({'players': toggleState});
             return toggleState;
 
+        case TOGGLE_INTERACTION:
+            togglePlayers = state.players.map(player => {
+                if (action.id === player.p) {
+                    player.toggleInteraction = player.toggleInteraction ? false: true;
+                }
+                return player;
+            });
+            toggleState = Object.assign({}, state, {players: togglePlayers});
+            chrome.storage.sync.set({'players': toggleState});
+            return toggleState;
+
         default:
             return state;
     }
 }
 
+/**
+ * Stores user options
+ * @param  {Object} state  - Holds user options
+ * @param  {Object} action 
+ * @return {Object}        
+ */
 export function options(state = {}, action) {
     switch (action.type) {
         default:
@@ -103,6 +110,12 @@ export function options(state = {}, action) {
 
 const playerIdInitialState = playerId.search_autocomp.search_autocomplete.queryResults.row;
 
+/**
+ * All registered baseball player
+ * @param  {Object} state  - all players
+ * @param  {Object} action 
+ * @return {Object}        
+ */
 function playerIds(state = playerIdInitialState, action) {
     switch (action.type) {
         default:
