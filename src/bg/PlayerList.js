@@ -165,8 +165,8 @@ class PlayerList {
     updatePlayerStats() {
         let allGames = this.data.data.games.game;
 
-        this.setFirstGameTime();
-        console.log('----- first game time', this.firstGameTime);
+        //this.setFirstGameTime();
+        //console.log('----- first game time', this.firstGameTime);
 
         // Loop through all the players stored
         let updatedPlayers = this.players.map(player => {

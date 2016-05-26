@@ -165,7 +165,7 @@ $toggle-fix: 3px;
                 width: $toggle-width / 2;
                 background-color: #F7F7F7;
                 box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.42);
-                transition: all 0.2s ease-in-out;
+                transition: all 0.1s ease-in-out;
             }
             &:before {
                 content: '';
@@ -176,7 +176,7 @@ $toggle-fix: 3px;
                 top: $toggle-height / 2 - $toggle-space / 2 + $toggle-fix;
                 background-color: #6D6D6D;
                 border-radius: $toggle-height / 2;
-                transition: all 0.2s ease-in-out;
+                transition: all 0.1s ease-in-out;
             }
         }
     }
