@@ -8,7 +8,7 @@ import { removePlayer,
        } from '../actions/actions';
 import classNames from 'classnames';
 
-class Player extends React.Component {
+export class Player extends React.Component {
     constructor(props) {
         super(props);
         this.openPlayerPage = this.openPlayerPage.bind(this);
@@ -82,28 +82,28 @@ class Player extends React.Component {
                         <p className='btn-name'>At Bat</p>
                         <p className='toggle-btn-container'>
                             <input type='checkbox' checked={this.props.playerObj.toggleAtBat} readOnly />
-                            <label onClick={this.props.toggleAtBat.bind(this, this.props.playerObj.p)}></label>
+                            <label className='label-at-bat' onClick={this.props.toggleAtBat.bind(this, this.props.playerObj.p)}></label>
                         </p>
                     </div>
                     <div className='toggle-checkbox-container'>
                         <p className='btn-name'>On Deck</p>
                         <p className='toggle-btn-container'>
                             <input type='checkbox' checked={this.props.playerObj.toggleOnDeck} readOnly />
-                            <label onClick={this.props.toggleOnDeck.bind(this, this.props.playerObj.p)}></label>
+                            <label className='label-on-deck' onClick={this.props.toggleOnDeck.bind(this, this.props.playerObj.p)}></label>
                         </p>
                     </div>
                     <div className='toggle-checkbox-container'>
                         <p className='btn-name'>In Hole</p>
                         <p className='toggle-btn-container'>
                             <input type='checkbox' checked={this.props.playerObj.toggleInHole} readOnly />
-                            <label onClick={this.props.toggleInHole.bind(this, this.props.playerObj.p)}></label>
+                            <label className='label-in-hole' onClick={this.props.toggleInHole.bind(this, this.props.playerObj.p)}></label>
                         </p>
                     </div>
                     <div className='toggle-checkbox-container'>
                         <p className='btn-name'>Persistent</p>
                         <p className='toggle-btn-container'>
                             <input type='checkbox' checked={this.props.playerObj.toggleInteraction} readOnly />
-                            <label onClick={this.props.toggleInteraction.bind(this, this.props.playerObj.p)}></label>
+                            <label className='label-interaction' onClick={this.props.toggleInteraction.bind(this, this.props.playerObj.p)}></label>
                         </p>
                     </div>
                 </div>
@@ -118,7 +118,7 @@ const mapStateToProps = (state, ownProps) => {
     return ownProps;
 };
 
-const mapDispatchToProps = (dispatch) => {
+export const mapDispatchToProps = (dispatch) => {
     return {
         removePlayerById: playerId => {
             dispatch(removePlayer(playerId));

@@ -72,17 +72,45 @@
 	//const SCORE_BOARD_JSON_URL = getTodayScoreBoardUrl();
 	var API_BASE = 'http://gd2.mlb.com/components/game/mlb/';
 
-	shouldUpdate();
-	chrome.alarms.create('shouldUpdate', { periodInMinutes: 30 });
+	/**
+	 * When chrome starts.
+	 * The alarms created by start up will replace the alarms
+	 * created by on install.
+	 */
+	chrome.runtime.onStartup.addListener(initialize);
 
-	//chrome.alarms.create('update', {periodInMinutes: 1});
-	chrome.storage.sync.get(['players', 'shouldUpdate'], update);
+	/**
+	 * When chrome extension is installed or reloaded.
+	 * This will replace alarms created by on start up if
+	 * it exists.
+	 */
+	chrome.runtime.onInstalled.addListener(initialize);
 
+	/**
+	 * Starts extension by getting checking if games are in progress
+	 * return
+	 */
+	function initialize() {
+	    console.log('start extension');
+	    var shouldUpdateTime = void 0;
+	    if (true) {
+	        shouldUpdateTime = 30;
+	    } else {
+	        shouldUpdateTime = 30;
+	    }
+	    shouldUpdate();
+	    chrome.alarms.create('shouldUpdate', { periodInMinutes: shouldUpdateTime });
+	    chrome.storage.sync.get(['players', 'shouldUpdate'], update);
+	}
+
+	// Might not need to update when extension starts
 	chrome.alarms.onAlarm.addListener(function (alarm) {
 	    if (alarm.name === 'shouldUpdate') {
+	        console.log('calling shouldupdate from alarm');
 	        shouldUpdate();
 	    }
 	    if (alarm.name === 'update') {
+	        console.log('calling update from alarm');
 	        chrome.storage.sync.get(['players', 'shouldUpdate'], update);
 	    }
 	});
@@ -91,7 +119,7 @@
 	    var url = parseNotificationId(id);
 	    chrome.tabs.create({ url: url });
 	    chrome.notifications.clear(id, function (wasCleared) {
-	        console.log('notification cleared and opened link to mlbtv');
+	        console.log('notification cleared and opened link to mlbtv', wasCleared);
 	    });
 	});
 
@@ -114,9 +142,8 @@
 	}
 
 	/**
-	 * setUpdateStatus
 	 * Stores shouldUpdate to chrome.storage.sync
-	 * @param {Object} data [array of games]
+	 * @param {Object} data - array of games
 	 */
 	function setUpdateStatus(data) {
 	    var allGames = data; // array of games
@@ -138,18 +165,28 @@
 	    // Start returns true if at least one game is scheduled.
 	    if (gameStartsInHour(allGames)) {
 	        console.log('At least ONE game starting within the hour');
-	        update();
+	        //chrome.storage.sync.get(['players', 'shouldUpdate'], update);
 	        chrome.alarms.create('update', { periodInMinutes: 1 });
 	        return;
 	    }
 	}
 
+	/**
+	 * Looks for all finished games
+	 * @param  {array} allGames - array of all games
+	 * @return {boolean}
+	 */
 	function allGamesFinal(allGames) {
 	    return allGames.every(function (game) {
-	        return game.status === 'Final' || game.status === 'Game Over';
+	        return game.status === 'Final' || game.status === 'Game Over' || game.status === 'Postponed';
 	    });
 	}
 
+	/**
+	 * Checks to see if there are any games coming up in the next hour.
+	 * @param  {array} allGames - array of all games.
+	 * @return {boolean}
+	 */
 	function gameStartsInHour(allGames) {
 	    return allGames.some(function (game) {
 	        var now = (0, _momentTimezone2.default)();
@@ -160,24 +197,29 @@
 	}
 
 	/**
-	 * [parseNotificationId description]
-	 * @param  {[type]} id [description]
-	 * @return {[type]}    [description]
+	 * Returns player Id of notification
+	 * @param  {string} id - notificatin id
+	 * @return {string}    - player id
 	 */
 	function parseNotificationId(id) {
 	    return id.split('|')[1];
 	}
 
+	/**
+	 * Returns notification id created by player id and mlb tv id
+	 * @param  {string} playerId - player id
+	 * @param  {string} mlbtv    - calender id
+	 * @return {string}          - string created by player and calender id
+	 */
 	function createNotificationId(playerId, mlbtv) {
 	    return playerId + '|' + mlbtv;
 	}
 
 	/**
-	 * getTodayScoreBoard
 	 * Five hours into tomorrow (ET) is still 'today', since the longest game ever played was 8 hours
 	 * and 25 minutes and latest games are usually played around 9 pm (ET).
-	 *
-	 * @returns {}
+	 * @param   {string} scoreboard - name of json
+	 * @returns {string}            - api URL
 	 */
 	function getTodayScoreBoardUrl() {
 	    var scoreboard = arguments.length <= 0 || arguments[0] === undefined ? 'master_scoreboard.json' : arguments[0];
@@ -188,17 +230,20 @@
 	}
 
 	/**
-	 * [update description]
-	 * @param  {[type]} items [description]
-	 * @return {[type]}       [description]
+	 * This is a callback function for chrome.storage.sync.get
+	 * @param  {Object} items - all objects defined from caller
+	 * @return {Object}       
 	 */
 	function update(items) {
 	    // If players.players is undefined, nothing is stored in storage.sync. Need to exit
 	    // and do nothing
 
-	    // No players found.  Ends execution.
-	    //if (!items.players || !items.shouldUpdate) {
-	    if (!items.players) {
+	    if (chrome.runtime.lastError) {
+	        console.error(chrome.runtime.lastError);
+	    }
+
+	    if (!items.hasOwnProperty('players')) {
+	        console.error('storage error');
 	        return;
 	    }
 
@@ -206,13 +251,6 @@
 	    fetchGameData(playerList);
 	}
 
-	/**
-	 * setGameTime
-	 *
-	 *
-	 * @param players
-	 * @returns {undefined}
-	 */
 	function fetchGameData(playerList) {
 	    // for XML use parseString from xml2js
 	    //const parseString = xml2js.parseString;
@@ -225,8 +263,14 @@
 	    }).then(function (data) {
 	        playerList.parseGameData(data);
 	        chrome.storage.sync.get('players', function (players) {
+	            if (chrome.runtime.lastError) {
+	                console.error(chrome.runtime.lastError);
+	            }
 	            var newPlayerList = Object.assign({}, players, { players: playerList.getPlayersArr() });
 	            chrome.storage.sync.set({ 'players': newPlayerList }, function () {
+	                if (chrome.runtime.lastError) {
+	                    console.error(chrome.runtime.lastError);
+	                }
 	                console.log('updated player time. player time set to storage');
 	            });
 	            notifyUser(playerList.notis);
@@ -237,6 +281,11 @@
 	    });
 	}
 
+	/**
+	 * Creates notification based on user options
+	 * @param  {array} notification - array of players that needs notification
+	 * @return {null}
+	 */
 	function notifyUser(notification) {
 	    notification.forEach(function (player) {
 	        var notiOpt = {
@@ -253,7 +302,7 @@
 	        };
 	        var notificationId = createNotificationId(player.p, player.mlbtv);
 	        chrome.notifications.create(notificationId, notiOpt, function (notiId) {
-	            console.log('created notification');
+	            console.log('created notification', notiId);
 	        });
 	    });
 	}

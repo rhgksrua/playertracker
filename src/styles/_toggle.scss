@@ -1,0 +1,69 @@
+// Toggle switches
+
+$toggle-width: 40px;
+$toggle-height: $toggle-width / 2;
+$toggle-space: $toggle-width * 0.26;
+$toggle-fix: 3px;
+
+.toggle-flex-container {
+    display: flex;
+    justify-content: space-around;
+}
+
+.toggle-checkbox-container {
+    position: relative;
+    display: inline-block;
+    width: 100px;
+    text-align: center;
+    margin-bottom: 6px;
+    .btn-name {
+        display: inline-block;
+        margin-right: 10px;
+    }
+    .toggle-btn-container {
+        display: inline;
+        margin-right: 10px;
+        input[type='checkbox'] {
+            display: none;
+            &:checked + label:after {
+                background-color: #009688;
+                left: $toggle-width / 2; // $toggle-width / 2
+            }
+            &:checked + label:before {
+                background-color: #6CBCB5;
+            }
+        }
+        label {
+            position: relative;
+            display: inline-block;
+            height: $toggle-height;
+            width: $toggle-width;
+            background-color: #FFF;
+            border-radius: $toggle-height;
+            border: none;
+            &:after {
+                content: '';
+                position: absolute;
+                border-radius: $toggle-height / 2;
+                left: 0;
+                top: 0 + $toggle-fix;
+                height: $toggle-height;
+                width: $toggle-width / 2;
+                background-color: #F7F7F7;
+                box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.42);
+                transition: all 0.1s ease-in-out;
+            }
+            &:before {
+                content: '';
+                position: absolute;
+                height: ($toggle-height + $toggle-space / 2) / 2;
+                width: $toggle-width - $toggle-space;
+                left: $toggle-space / 2;
+                top: $toggle-height / 2 - $toggle-space / 2 + $toggle-fix;
+                background-color: #6D6D6D;
+                border-radius: $toggle-height / 2;
+                transition: all 0.1s ease-in-out;
+            }
+        }
+    }
+}

@@ -23,37 +23,44 @@ const initialStatePlayerList = { gameTimeSet: false, players: []};
   * @return {Object}        
   */
 export function playerList(state = initialStatePlayerList, action) {
+    let newState,
+        addState,
+        filteredPlayers,
+        updatedState,
+        removedState,
+        togglePlayers,
+        toggleState;
     switch (action.type) {
         case INITIALIZE:
             if (!action.val) return state;
-            let newState = Object.assign({}, state, {players: action.val.players});
+            newState = Object.assign({}, state, {players: action.val.players});
             return newState;
 
         case ADD_PLAYER:
-            let addState = Object.assign({}, state, {players: state.players.concat(action.player)});
+            addState = Object.assign({}, state, {players: state.players.concat(action.player)});
             chrome.storage.sync.set({'players': addState});
             return addState;
 
         case REMOVE_PLAYER:
-            let filteredPlayers = state.players.filter(player => {
+            filteredPlayers = state.players.filter(player => {
                 return player.p !== action.playerId;
             });
-            let removedState = Object.assign({}, state, {players: filteredPlayers});
+            removedState = Object.assign({}, state, {players: filteredPlayers});
             chrome.storage.sync.set({'players': removedState});
             return removedState;
 
         case UPDATE_ON_CHANGE:
-            let updatedState = Object.assign({}, state, {players: action.players});
+            updatedState = Object.assign({}, state, {players: action.players});
             return updatedState;
 
         case TOGGLE_AT_BAT:
-            let togglePlayers = state.players.map(player => {
+            togglePlayers = state.players.map(player => {
                 if (action.id === player.p) {
                     player.toggleAtBat = player.toggleAtBat ? false : true;
                 }
                 return player;
             });
-            let toggleState = Object.assign({}, state, {players: togglePlayers});
+            toggleState = Object.assign({}, state, {players: togglePlayers});
             chrome.storage.sync.set({'players': toggleState});
             return toggleState;
 

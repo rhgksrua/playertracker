@@ -11,7 +11,7 @@ describe('actions', () => {
 		const expectedAction = {
 			type: actions.ADD_PLAYER,
 			player
-		}
+		};
 		expect(actions.addPlayer(player)).toEqual(expectedAction);
 	});
 
@@ -62,7 +62,7 @@ describe('actions', () => {
 					}
 				]
 			}
-		}
+		};
 		const expectedAction = {
 			type: actions.UPDATE_ON_CHANGE,
 			players	
@@ -83,8 +83,7 @@ describe('actions', () => {
 		const expectedAction = {
 			type: actions.INITIALIZE,
 			val
-		}
+		};
 		expect(actions.initialize(val)).toEqual(expectedAction);
-
 	});
 });

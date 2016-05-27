@@ -6,8 +6,7 @@ import { updateOnChanged, update, initializing } from '../actions/actions';
 import PlayersContainer from './PlayersContainer';
 import SearchSelect from './SearchSelect';
 
-
-class App extends React.Component {
+export class App extends React.Component {
     constructor(props) {
         super(props);
         // If interval needs to be cleared, use this.
@@ -43,6 +42,12 @@ class App extends React.Component {
         );
     }
 }
+
+/** @type {Object} PropTypes */
+App.propTypes = {
+    initialize: React.PropTypes.func,
+    storageUpdate: React.PropTypes.func
+};
 
 /*******************************************************************
  *

@@ -62,10 +62,6 @@
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-	var _reduxLogger = __webpack_require__(185);
-
-	var _reduxLogger2 = _interopRequireDefault(_reduxLogger);
-
 	var _reducers = __webpack_require__(186);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
@@ -95,12 +91,13 @@
 	// app
 	var middlewares = [_reduxThunk2.default];
 
+	// Development or Production
+
+
 	// react-select
-
-
 	if (true) {
-	  var _createLogger = __webpack_require__(185);
-	  var logger = _createLogger();
+	  var createLogger = __webpack_require__(185);
+	  var logger = createLogger();
 	  middlewares.push(logger);
 	}
 
@@ -21549,37 +21546,44 @@
 	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialStatePlayerList : arguments[0];
 	    var action = arguments[1];
 
+	    var newState = void 0,
+	        addState = void 0,
+	        filteredPlayers = void 0,
+	        updatedState = void 0,
+	        removedState = void 0,
+	        togglePlayers = void 0,
+	        toggleState = void 0;
 	    switch (action.type) {
 	        case _actions.INITIALIZE:
 	            if (!action.val) return state;
-	            var newState = Object.assign({}, state, { players: action.val.players });
+	            newState = Object.assign({}, state, { players: action.val.players });
 	            return newState;
 
 	        case _actions.ADD_PLAYER:
-	            var addState = Object.assign({}, state, { players: state.players.concat(action.player) });
+	            addState = Object.assign({}, state, { players: state.players.concat(action.player) });
 	            chrome.storage.sync.set({ 'players': addState });
 	            return addState;
 
 	        case _actions.REMOVE_PLAYER:
-	            var filteredPlayers = state.players.filter(function (player) {
+	            filteredPlayers = state.players.filter(function (player) {
 	                return player.p !== action.playerId;
 	            });
-	            var removedState = Object.assign({}, state, { players: filteredPlayers });
+	            removedState = Object.assign({}, state, { players: filteredPlayers });
 	            chrome.storage.sync.set({ 'players': removedState });
 	            return removedState;
 
 	        case _actions.UPDATE_ON_CHANGE:
-	            var updatedState = Object.assign({}, state, { players: action.players });
+	            updatedState = Object.assign({}, state, { players: action.players });
 	            return updatedState;
 
 	        case _actions.TOGGLE_AT_BAT:
-	            var togglePlayers = state.players.map(function (player) {
+	            togglePlayers = state.players.map(function (player) {
 	                if (action.id === player.p) {
 	                    player.toggleAtBat = player.toggleAtBat ? false : true;
 	                }
 	                return player;
 	            });
-	            var toggleState = Object.assign({}, state, { players: togglePlayers });
+	            toggleState = Object.assign({}, state, { players: togglePlayers });
 	            chrome.storage.sync.set({ 'players': toggleState });
 	            return toggleState;
 
@@ -21783,7 +21787,7 @@
 /* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
+	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
 	 * @overview es6-promise - a tiny implementation of Promises/A+.
 	 * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
 	 * @license   Licensed under MIT license
@@ -23340,6 +23344,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.App = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -23370,7 +23375,7 @@
 	// components
 
 
-	var App = function (_React$Component) {
+	var App = exports.App = function (_React$Component) {
 	    _inherits(App, _React$Component);
 
 	    function App(props) {
@@ -23433,6 +23438,14 @@
 	    return App;
 	}(_react2.default.Component);
 
+	/** @type {Object} PropTypes */
+
+
+	App.propTypes = {
+	    initialize: _react2.default.PropTypes.func,
+	    storageUpdate: _react2.default.PropTypes.func
+	};
+
 	/*******************************************************************
 	 *
 	 * Redux
@@ -23474,10 +23487,6 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
 
 	var _reactRedux = __webpack_require__(158);
 
@@ -23575,6 +23584,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.mapDispatchToProps = exports.Player = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -23598,7 +23608,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var Player = function (_React$Component) {
+	var Player = exports.Player = function (_React$Component) {
 	    _inherits(Player, _React$Component);
 
 	    function Player(props) {
@@ -23712,7 +23722,7 @@
 	                            'p',
 	                            { className: 'toggle-btn-container' },
 	                            _react2.default.createElement('input', { type: 'checkbox', checked: this.props.playerObj.toggleAtBat, readOnly: true }),
-	                            _react2.default.createElement('label', { onClick: this.props.toggleAtBat.bind(this, this.props.playerObj.p) })
+	                            _react2.default.createElement('label', { className: 'label-at-bat', onClick: this.props.toggleAtBat.bind(this, this.props.playerObj.p) })
 	                        )
 	                    ),
 	                    _react2.default.createElement(
@@ -23727,7 +23737,7 @@
 	                            'p',
 	                            { className: 'toggle-btn-container' },
 	                            _react2.default.createElement('input', { type: 'checkbox', checked: this.props.playerObj.toggleOnDeck, readOnly: true }),
-	                            _react2.default.createElement('label', { onClick: this.props.toggleOnDeck.bind(this, this.props.playerObj.p) })
+	                            _react2.default.createElement('label', { className: 'label-on-deck', onClick: this.props.toggleOnDeck.bind(this, this.props.playerObj.p) })
 	                        )
 	                    ),
 	                    _react2.default.createElement(
@@ -23742,7 +23752,7 @@
 	                            'p',
 	                            { className: 'toggle-btn-container' },
 	                            _react2.default.createElement('input', { type: 'checkbox', checked: this.props.playerObj.toggleInHole, readOnly: true }),
-	                            _react2.default.createElement('label', { onClick: this.props.toggleInHole.bind(this, this.props.playerObj.p) })
+	                            _react2.default.createElement('label', { className: 'label-in-hole', onClick: this.props.toggleInHole.bind(this, this.props.playerObj.p) })
 	                        )
 	                    ),
 	                    _react2.default.createElement(
@@ -23757,7 +23767,7 @@
 	                            'p',
 	                            { className: 'toggle-btn-container' },
 	                            _react2.default.createElement('input', { type: 'checkbox', checked: this.props.playerObj.toggleInteraction, readOnly: true }),
-	                            _react2.default.createElement('label', { onClick: this.props.toggleInteraction.bind(this, this.props.playerObj.p) })
+	                            _react2.default.createElement('label', { className: 'label-interaction', onClick: this.props.toggleInteraction.bind(this, this.props.playerObj.p) })
 	                        )
 	                    )
 	                ),
@@ -23777,7 +23787,7 @@
 	    return ownProps;
 	};
 
-	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	var mapDispatchToProps = exports.mapDispatchToProps = function mapDispatchToProps(dispatch) {
 	    return {
 	        removePlayerById: function removePlayerById(playerId) {
 	            dispatch((0, _actions.removePlayer)(playerId));
@@ -25612,7 +25622,7 @@
 
 
 	// module
-	exports.push([module.id, "/* http://meyerweb.com/eric/tools/css/reset/\r\n   v2.0 | 20110126\r\n   License: none (public domain)\r\n*/\nhtml, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {\n  margin: 0;\n  padding: 0;\n  border: 0;\n  font-size: 100%;\n  font: inherit;\n  vertical-align: baseline; }\n\n/* HTML5 display-role reset for older browsers */\narticle, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {\n  display: block; }\n\nbody {\n  line-height: 1; }\n\nol, ul {\n  list-style: none; }\n\nblockquote, q {\n  quotes: none; }\n\nblockquote:before, blockquote:after {\n  content: '';\n  content: none; }\n\nq:before, q:after {\n  content: '';\n  content: none; }\n\ntable {\n  border-collapse: collapse;\n  border-spacing: 0; }\n\nbody {\n  width: 400px;\n  background-color: #EBEBEB;\n  font-family: 'Roboto', sans-serif; }\n\nheader {\n  margin: 0 0 16px 0;\n  padding: 10px;\n  color: white;\n  background-color: #365E80;\n  box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.12); }\n  header .title {\n    font-size: 1.3em;\n    margin: 10px; }\n\n.search-container {\n  margin: 14px 5px; }\n\n.players-container {\n  margin-top: 10px; }\n  .players-container .player {\n    position: relative;\n    margin: 5px 5px 10px 5px;\n    background-color: #FFF;\n    padding: 10px 16px;\n    border-radius: 4px;\n    border: 0.5px solid rgba(0, 0, 0, 0.12);\n    box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.11); }\n    .players-container .player p {\n      padding: 10px 0; }\n    .players-container .player .name-container {\n      padding: 3px 0;\n      margin: 3px 0;\n      position: relative; }\n      .players-container .player .name-container .player-name {\n        display: inline-block;\n        text-decoration: none;\n        font-weight: bold;\n        color: #2196F3; }\n      .players-container .player .name-container .player-team {\n        display: inline-block;\n        font-size: 0.8em;\n        padding-left: 15px; }\n      .players-container .player .name-container .player-order-container {\n        display: inline-block;\n        width: 90px; }\n        .players-container .player .name-container .player-order-container .player-order {\n          padding: 7px;\n          background-color: #6D6D6D;\n          color: #FFF;\n          border-radius: 3px;\n          margin-right: 12px; }\n    .players-container .player .game-time {\n      margin-top: 10px; }\n    .players-container .player .game-status {\n      padding: 3px 0;\n      font-size: 0.9em;\n      color: #6B6B6B; }\n    .players-container .player .toggle-container {\n      padding: 10px 0; }\n      .players-container .player .toggle-container .toggle {\n        box-sizing: border-box;\n        height: 30px;\n        width: 114.28571px;\n        margin: 0 2px;\n        border: 2px solid rgba(255, 255, 255, 0.2);\n        border-radius: 3px;\n        color: #FFF;\n        background-color: #D32F2F;\n        cursor: pointer; }\n        .players-container .player .toggle-container .toggle:hover {\n          border: 2px solid rgba(0, 0, 0, 0.2); }\n      .players-container .player .toggle-container .toggle-active {\n        color: #000;\n        background-color: #69F0AE; }\n    .players-container .player .remove {\n      display: inline-block;\n      position: absolute;\n      color: #424242;\n      padding: 3px;\n      top: 4px;\n      right: 5px;\n      cursor: pointer; }\n      .players-container .player .remove:hover {\n        background-color: #EBEBEB; }\n\n.toggle-flex-container {\n  display: flex;\n  justify-content: space-around; }\n\n.toggle-checkbox-container {\n  position: relative;\n  display: inline-block;\n  width: 100px;\n  text-align: center;\n  margin-bottom: 6px; }\n  .toggle-checkbox-container .btn-name {\n    display: inline-block;\n    margin-right: 10px; }\n  .toggle-checkbox-container .toggle-btn-container {\n    display: inline;\n    margin-right: 10px; }\n    .toggle-checkbox-container .toggle-btn-container input[type='checkbox'] {\n      display: none; }\n      .toggle-checkbox-container .toggle-btn-container input[type='checkbox']:checked + label:after {\n        background-color: #009688;\n        left: 20px; }\n      .toggle-checkbox-container .toggle-btn-container input[type='checkbox']:checked + label:before {\n        background-color: #6CBCB5; }\n    .toggle-checkbox-container .toggle-btn-container label {\n      position: relative;\n      display: inline-block;\n      height: 20px;\n      width: 40px;\n      background-color: #FFF;\n      border-radius: 20px;\n      border: none; }\n      .toggle-checkbox-container .toggle-btn-container label:after {\n        content: '';\n        position: absolute;\n        border-radius: 10px;\n        left: 0;\n        top: 3px;\n        height: 20px;\n        width: 20px;\n        background-color: #F7F7F7;\n        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.42);\n        transition: all 0.1s ease-in-out; }\n      .toggle-checkbox-container .toggle-btn-container label:before {\n        content: '';\n        position: absolute;\n        height: 12.6px;\n        width: 29.6px;\n        left: 5.2px;\n        top: 7.8px;\n        background-color: #6D6D6D;\n        border-radius: 10px;\n        transition: all 0.1s ease-in-out; }\n\n.team {\n  display: inline-block;\n  width: 50px;\n  color: red; }\n", ""]);
+	exports.push([module.id, "/* http://meyerweb.com/eric/tools/css/reset/\r\n   v2.0 | 20110126\r\n   License: none (public domain)\r\n*/\nhtml, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {\n  margin: 0;\n  padding: 0;\n  border: 0;\n  font-size: 100%;\n  font: inherit;\n  vertical-align: baseline; }\n\n/* HTML5 display-role reset for older browsers */\narticle, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {\n  display: block; }\n\nbody {\n  line-height: 1; }\n\nol, ul {\n  list-style: none; }\n\nblockquote, q {\n  quotes: none; }\n\nblockquote:before, blockquote:after {\n  content: '';\n  content: none; }\n\nq:before, q:after {\n  content: '';\n  content: none; }\n\ntable {\n  border-collapse: collapse;\n  border-spacing: 0; }\n\n.toggle-flex-container {\n  display: flex;\n  justify-content: space-around; }\n\n.toggle-checkbox-container {\n  position: relative;\n  display: inline-block;\n  width: 100px;\n  text-align: center;\n  margin-bottom: 6px; }\n  .toggle-checkbox-container .btn-name {\n    display: inline-block;\n    margin-right: 10px; }\n  .toggle-checkbox-container .toggle-btn-container {\n    display: inline;\n    margin-right: 10px; }\n    .toggle-checkbox-container .toggle-btn-container input[type='checkbox'] {\n      display: none; }\n      .toggle-checkbox-container .toggle-btn-container input[type='checkbox']:checked + label:after {\n        background-color: #009688;\n        left: 20px; }\n      .toggle-checkbox-container .toggle-btn-container input[type='checkbox']:checked + label:before {\n        background-color: #6CBCB5; }\n    .toggle-checkbox-container .toggle-btn-container label {\n      position: relative;\n      display: inline-block;\n      height: 20px;\n      width: 40px;\n      background-color: #FFF;\n      border-radius: 20px;\n      border: none; }\n      .toggle-checkbox-container .toggle-btn-container label:after {\n        content: '';\n        position: absolute;\n        border-radius: 10px;\n        left: 0;\n        top: 3px;\n        height: 20px;\n        width: 20px;\n        background-color: #F7F7F7;\n        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.42);\n        transition: all 0.1s ease-in-out; }\n      .toggle-checkbox-container .toggle-btn-container label:before {\n        content: '';\n        position: absolute;\n        height: 12.6px;\n        width: 29.6px;\n        left: 5.2px;\n        top: 7.8px;\n        background-color: #6D6D6D;\n        border-radius: 10px;\n        transition: all 0.1s ease-in-out; }\n\nbody {\n  width: 400px;\n  background-color: #EBEBEB;\n  font-family: 'Roboto', sans-serif; }\n\nheader {\n  margin: 0 0 16px 0;\n  padding: 10px;\n  color: white;\n  background-color: #365E80;\n  box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.12); }\n  header .title {\n    font-size: 1.3em;\n    margin: 10px; }\n\n.search-container {\n  margin: 14px 5px; }\n\n.players-container {\n  margin-top: 10px; }\n  .players-container .player {\n    position: relative;\n    margin: 5px 5px 10px 5px;\n    background-color: #FFF;\n    padding: 10px 16px;\n    border-radius: 4px;\n    border: 0.5px solid rgba(0, 0, 0, 0.12);\n    box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.11); }\n    .players-container .player p {\n      padding: 10px 0; }\n    .players-container .player .name-container {\n      padding: 3px 0;\n      margin: 3px 0;\n      position: relative; }\n      .players-container .player .name-container .player-name {\n        display: inline-block;\n        text-decoration: none;\n        font-weight: bold;\n        color: #2196F3; }\n      .players-container .player .name-container .player-team {\n        display: inline-block;\n        font-size: 0.8em;\n        padding-left: 15px; }\n      .players-container .player .name-container .player-order-container {\n        display: inline-block;\n        width: 90px; }\n        .players-container .player .name-container .player-order-container .player-order {\n          padding: 7px;\n          background-color: #6D6D6D;\n          color: #FFF;\n          border-radius: 3px;\n          margin-right: 12px; }\n    .players-container .player .game-time {\n      margin-top: 10px; }\n    .players-container .player .game-status {\n      padding: 3px 0;\n      font-size: 0.9em;\n      color: #6B6B6B; }\n    .players-container .player .toggle-container {\n      padding: 10px 0; }\n      .players-container .player .toggle-container .toggle {\n        box-sizing: border-box;\n        height: 30px;\n        width: 114.28571px;\n        margin: 0 2px;\n        border: 2px solid rgba(255, 255, 255, 0.2);\n        border-radius: 3px;\n        color: #FFF;\n        background-color: #D32F2F;\n        cursor: pointer; }\n        .players-container .player .toggle-container .toggle:hover {\n          border: 2px solid rgba(0, 0, 0, 0.2); }\n      .players-container .player .toggle-container .toggle-active {\n        color: #000;\n        background-color: #69F0AE; }\n    .players-container .player .remove {\n      display: inline-block;\n      position: absolute;\n      color: #424242;\n      padding: 3px;\n      top: 4px;\n      right: 5px;\n      cursor: pointer; }\n      .players-container .player .remove:hover {\n        background-color: #EBEBEB; }\n\n.team {\n  display: inline-block;\n  width: 50px;\n  color: red; }\n", ""]);
 
 	// exports
 
