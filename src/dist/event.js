@@ -50,11 +50,11 @@
 
 	var _momentTimezone2 = _interopRequireDefault(_momentTimezone);
 
-	var _es6Promise = __webpack_require__(188);
+	var _es6Promise = __webpack_require__(187);
 
 	var _es6Promise2 = _interopRequireDefault(_es6Promise);
 
-	var _isomorphicFetch = __webpack_require__(193);
+	var _isomorphicFetch = __webpack_require__(192);
 
 	var _isomorphicFetch2 = _interopRequireDefault(_isomorphicFetch);
 
@@ -95,9 +95,11 @@
 	    var shouldUpdateTime = void 0;
 	    if (true) {
 	        shouldUpdateTime = 30;
+	        //chrome.alarms.create('log', {periodInMinutes: 0.2});
+	        //chrome.alarms.clear('log');
 	    } else {
-	        shouldUpdateTime = 30;
-	    }
+	            shouldUpdateTime = 30;
+	        }
 	    shouldUpdate();
 	    chrome.alarms.create('shouldUpdate', { periodInMinutes: shouldUpdateTime });
 	    chrome.storage.sync.get(['players', 'shouldUpdate'], update);
@@ -105,6 +107,7 @@
 
 	// Might not need to update when extension starts
 	chrome.alarms.onAlarm.addListener(function (alarm) {
+	    //console.log('Alarm name', alarm);
 	    if (alarm.name === 'shouldUpdate') {
 	        console.log('calling shouldupdate from alarm');
 	        shouldUpdate();
@@ -112,6 +115,16 @@
 	    if (alarm.name === 'update') {
 	        console.log('calling update from alarm');
 	        chrome.storage.sync.get(['players', 'shouldUpdate'], update);
+	    }
+	    if (alarm.name === 'log') {
+	        chrome.storage.sync.get('log', function (items) {
+	            //console.log('log item', items);
+	            if (items.hasOwnProperty('log')) {
+	                chrome.storage.sync.set({ 'log': items.log + 1 });
+	            } else {
+	                chrome.storage.sync.set({ 'log': 1 });
+	            }
+	        });
 	    }
 	});
 
@@ -169,6 +182,8 @@
 	        chrome.alarms.create('update', { periodInMinutes: 1 });
 	        return;
 	    }
+
+	    console.log('no games with in the next hourA');
 	}
 
 	/**
@@ -267,11 +282,12 @@
 	                console.error(chrome.runtime.lastError);
 	            }
 	            var newPlayerList = Object.assign({}, players, { players: playerList.getPlayersArr() });
+	            //console.table(newPlayerList.players);
 	            chrome.storage.sync.set({ 'players': newPlayerList }, function () {
 	                if (chrome.runtime.lastError) {
 	                    console.error(chrome.runtime.lastError);
 	                }
-	                console.log('updated player time. player time set to storage');
+	                console.log('PLAYER DATA UPDATED');
 	            });
 	            notifyUser(playerList.notis);
 	        });
@@ -298,6 +314,7 @@
 	                title: 'watch on mlb.tv'
 	            }],
 	            isClickable: true,
+	            priority: 2,
 	            requireInteraction: player.toggleInteraction
 	        };
 	        var notificationId = createNotificationId(player.p, player.mlbtv);
@@ -494,11 +511,10 @@
 /* 184 */,
 /* 185 */,
 /* 186 */,
-/* 187 */,
-/* 188 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
+	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
 	 * @overview es6-promise - a tiny implementation of Promises/A+.
 	 * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
 	 * @license   Licensed under MIT license
@@ -628,7 +644,7 @@
 	    function lib$es6$promise$asap$$attemptVertx() {
 	      try {
 	        var r = require;
-	        var vertx = __webpack_require__(191);
+	        var vertx = __webpack_require__(190);
 	        lib$es6$promise$asap$$vertxNext = vertx.runOnLoop || vertx.runOnContext;
 	        return lib$es6$promise$asap$$useVertxTimer();
 	      } catch(e) {
@@ -1446,7 +1462,7 @@
 	    };
 
 	    /* global define:true module:true window: true */
-	    if ("function" === 'function' && __webpack_require__(192)['amd']) {
+	    if ("function" === 'function' && __webpack_require__(191)['amd']) {
 	      !(__WEBPACK_AMD_DEFINE_RESULT__ = function() { return lib$es6$promise$umd$$ES6Promise; }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	    } else if (typeof module !== 'undefined' && module['exports']) {
 	      module['exports'] = lib$es6$promise$umd$$ES6Promise;
@@ -1458,10 +1474,10 @@
 	}).call(this);
 
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(189), (function() { return this; }()), __webpack_require__(190)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(188), (function() { return this; }()), __webpack_require__(189)(module)))
 
 /***/ },
-/* 189 */
+/* 188 */
 /***/ function(module, exports) {
 
 	// shim for using process in browser
@@ -1561,7 +1577,7 @@
 
 
 /***/ },
-/* 190 */
+/* 189 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -1577,32 +1593,32 @@
 
 
 /***/ },
-/* 191 */
+/* 190 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
 
 /***/ },
-/* 192 */
+/* 191 */
 /***/ function(module, exports) {
 
 	module.exports = function() { throw new Error("define cannot be used indirect"); };
 
 
 /***/ },
-/* 193 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// the whatwg-fetch polyfill installs the fetch() function
 	// on the global object (window or self)
 	//
 	// Return that as the export for use in Webpack, Browserify etc.
-	__webpack_require__(194);
+	__webpack_require__(193);
 	module.exports = self.fetch.bind(self);
 
 
 /***/ },
-/* 194 */
+/* 193 */
 /***/ function(module, exports) {
 
 	(function(self) {
@@ -2041,6 +2057,7 @@
 
 
 /***/ },
+/* 194 */,
 /* 195 */,
 /* 196 */,
 /* 197 */,
@@ -6719,7 +6736,7 @@
 	    return _moment;
 
 	}));
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(190)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(189)(module)))
 
 /***/ },
 /* 218 */

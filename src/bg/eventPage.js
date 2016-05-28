@@ -32,6 +32,8 @@ function initialize() {
     let shouldUpdateTime;
     if (process.env.NODE_ENV === 'development') {
         shouldUpdateTime = 30;
+        //chrome.alarms.create('log', {periodInMinutes: 0.2});
+        //chrome.alarms.clear('log');
     } else {
         shouldUpdateTime = 30;
     }
@@ -43,6 +45,7 @@ function initialize() {
 
 // Might not need to update when extension starts
 chrome.alarms.onAlarm.addListener(function(alarm){
+    //console.log('Alarm name', alarm);
     if (alarm.name === 'shouldUpdate') {
         console.log('calling shouldupdate from alarm');
         shouldUpdate();
@@ -50,6 +53,16 @@ chrome.alarms.onAlarm.addListener(function(alarm){
     if (alarm.name === 'update') {
         console.log('calling update from alarm');
         chrome.storage.sync.get(['players', 'shouldUpdate'], update);
+    }
+    if (alarm.name === 'log') {
+        chrome.storage.sync.get('log', items => {
+            //console.log('log item', items);
+            if (items.hasOwnProperty('log')) {
+                chrome.storage.sync.set({'log': items.log + 1});
+            } else {
+                chrome.storage.sync.set({'log': 1});
+            }
+        });
     }
 });
 
@@ -110,6 +123,8 @@ function setUpdateStatus(data) {
         chrome.alarms.create('update', {periodInMinutes: 1});
         return;
     }
+
+    console.log('no games with in the next hourA');
 }
 
 /**
@@ -210,11 +225,12 @@ function fetchGameData(playerList) {
                     console.error(chrome.runtime.lastError);
                 }
                 let newPlayerList = Object.assign({}, players, {players: playerList.getPlayersArr()});
+                //console.table(newPlayerList.players);
                 chrome.storage.sync.set({'players': newPlayerList}, function() {
                     if (chrome.runtime.lastError) {
                         console.error(chrome.runtime.lastError);
                     }
-                    console.log('updated player time. player time set to storage');
+                    console.log('PLAYER DATA UPDATED');
                 });
                 notifyUser(playerList.notis);
             });
@@ -244,6 +260,7 @@ function notifyUser(notification) {
                 }
             ],
             isClickable: true,
+            priority: 2,
             requireInteraction: player.toggleInteraction 
         };
         let notificationId = createNotificationId(player.p, player.mlbtv);

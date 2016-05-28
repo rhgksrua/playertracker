@@ -12,12 +12,18 @@ export class Player extends React.Component {
     constructor(props) {
         super(props);
         this.openPlayerPage = this.openPlayerPage.bind(this);
+        this.openMlbTv = this.openMlbTv.bind(this);
         this.state = {
             atBatChecked: this.props.playerObj.toggleAtBat
         };
     }
     openPlayerPage() {
         chrome.tabs.create({url: `http://mlb.mlb.com/team/player.jsp?player_id=${this.props.playerObj.p}`});
+    }
+    openMlbTv(url) {
+        if (this.props.playerObj.gameStatus === 'In Progress' && url) {
+            chrome.tabs.create({ url });
+        }
     }
     render() {
         let playerStyles = {
@@ -57,6 +63,11 @@ export class Player extends React.Component {
             'toggle-active': this.props.playerObj.toggleInHole
         });
 
+        let gameStatusClass = classNames({
+            'game-status': true,
+            'game-status-click': this.props.playerObj.gameStatus === 'In Progress'
+        });
+
         let validOrders = ['At Bat', 'In Hole', 'On Deck'];
 
 
@@ -75,7 +86,7 @@ export class Player extends React.Component {
                 <p className='game-time'>{this.props.playerObj.timeDate} ET</p>
                 }
                 {this.props.playerObj.gameStatus &&
-                <p className='game-status'>{this.props.playerObj.gameStatus}</p>
+                <p className={gameStatusClass} onClick={this.openMlbTv.bind(this, this.props.playerObj.mlbtv)}>{this.props.playerObj.gameStatus}</p>
                 }
                 <div className='toggle-flex-container'>
                     <div className='toggle-checkbox-container'>

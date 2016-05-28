@@ -47,7 +47,7 @@ export const updateOnChanged = (obj) => {
         type: UPDATE_ON_CHANGE,
         players: obj
     };
-}
+};
 
 /**
  * Initializes store from chrome.storage.sync.
@@ -59,16 +59,16 @@ export const initialize = (val) => {
     return {
         type: INITIALIZE,
         val
-    }
-}
+    };
+};
 
 export const initializing = () => {
     return (dispatch, getState) => {
         chrome.storage.sync.get('players', function(val) {
             dispatch(initialize(val.players));
         });
-    }
-}
+    };
+};
 
 export const toggleAtBatById = id => {
     return {
