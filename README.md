@@ -7,6 +7,8 @@ Uses mlb api.
 
 ## Extension Usage
 
+[Baseball Player Tracker on Chrome Webstore](https://chrome.google.com/webstore/detail/baseball-player-tracker/oghkpelnhlnbmfhdgmpncggbkdbmnndn)
+
 Add players and set notification preference.
 There are three perferences. At Bat, On Deck, and In Hole.
 Only at bat and on deck is turned on by default.
