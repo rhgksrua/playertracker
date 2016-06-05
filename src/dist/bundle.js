@@ -21386,6 +21386,16 @@
 	            toggleState = Object.assign({}, state, { players: togglePlayers });
 	            chrome.storage.sync.set({ 'players': toggleState });
 	            return toggleState;
+	        case _actions.TOGGLE_NOTIFY:
+	            togglePlayers = state.players.map(function (player) {
+	                if (action.id === player.p) {
+	                    player.toggleNotify = player.toggleNotify ? false : true;
+	                }
+	                return player;
+	            });
+	            toggleState = Object.assign({}, state, { players: togglePlayers });
+	            chrome.storage.sync.set({ 'players': toggleState });
+	            return toggleState;
 
 	        default:
 	            return state;
@@ -21443,7 +21453,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.toggleInteraction = exports.toggleInHoleById = exports.toggleOnDeckById = exports.toggleAtBatById = exports.initializing = exports.initialize = exports.updateOnChanged = exports.removePlayer = exports.addPlayer = exports.TOGGLE_INTERACTION = exports.TOGGLE_IN_HOLE = exports.TOGGLE_ON_DECK = exports.TOGGLE_AT_BAT = exports.UPDATE_ON_CHANGE = exports.INITIALIZE = exports.UPDATE = exports.REMOVE_PLAYER = exports.ADD_PLAYER = undefined;
+	exports.toggleNotify = exports.toggleInteraction = exports.toggleInHoleById = exports.toggleOnDeckById = exports.toggleAtBatById = exports.initializing = exports.initialize = exports.updateOnChanged = exports.removePlayer = exports.addPlayer = exports.TOGGLE_NOTIFY = exports.TOGGLE_INTERACTION = exports.TOGGLE_IN_HOLE = exports.TOGGLE_ON_DECK = exports.TOGGLE_AT_BAT = exports.UPDATE_ON_CHANGE = exports.INITIALIZE = exports.UPDATE = exports.REMOVE_PLAYER = exports.ADD_PLAYER = undefined;
 
 	var _es6Promise = __webpack_require__(187);
 
@@ -21465,6 +21475,7 @@
 	var TOGGLE_ON_DECK = exports.TOGGLE_ON_DECK = 'TOGGLE_ON_DECK';
 	var TOGGLE_IN_HOLE = exports.TOGGLE_IN_HOLE = 'TOGGLE_IN_HOLE';
 	var TOGGLE_INTERACTION = exports.TOGGLE_INTERACTION = 'TOGGLE_INTERACTION';
+	var TOGGLE_NOTIFY = exports.TOGGLE_NOTIFY = 'TOGGLE_NOTIFY';
 
 	/**
 	 * Add a player to playerList.
@@ -21476,6 +21487,7 @@
 	    player.toggleOnDeck = true;
 	    player.toggleInHole = false;
 	    player.toggleInteraction = false;
+	    player.toggleNotify = true;
 	    return {
 	        type: ADD_PLAYER,
 	        player: player
@@ -21550,11 +21562,18 @@
 	    };
 	};
 
+	var toggleNotify = exports.toggleNotify = function toggleNotify(id) {
+	    return {
+	        type: TOGGLE_NOTIFY,
+	        id: id
+	    };
+	};
+
 /***/ },
 /* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
+	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
 	 * @overview es6-promise - a tiny implementation of Promises/A+.
 	 * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
 	 * @license   Licensed under MIT license
@@ -23367,6 +23386,10 @@
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
+	var _ToggleButton = __webpack_require__(322);
+
+	var _ToggleButton2 = _interopRequireDefault(_ToggleButton);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -23490,66 +23513,26 @@
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'toggle-flex-container' },
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'toggle-checkbox-container' },
-	                        _react2.default.createElement(
-	                            'p',
-	                            { className: 'btn-name' },
-	                            'At Bat'
-	                        ),
-	                        _react2.default.createElement(
-	                            'p',
-	                            { className: 'toggle-btn-container' },
-	                            _react2.default.createElement('input', { type: 'checkbox', checked: this.props.playerObj.toggleAtBat, readOnly: true }),
-	                            _react2.default.createElement('label', { className: 'label-at-bat', onClick: this.props.toggleAtBat.bind(this, this.props.playerObj.p) })
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'toggle-checkbox-container' },
-	                        _react2.default.createElement(
-	                            'p',
-	                            { className: 'btn-name' },
-	                            'On Deck'
-	                        ),
-	                        _react2.default.createElement(
-	                            'p',
-	                            { className: 'toggle-btn-container' },
-	                            _react2.default.createElement('input', { type: 'checkbox', checked: this.props.playerObj.toggleOnDeck, readOnly: true }),
-	                            _react2.default.createElement('label', { className: 'label-on-deck', onClick: this.props.toggleOnDeck.bind(this, this.props.playerObj.p) })
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'toggle-checkbox-container' },
-	                        _react2.default.createElement(
-	                            'p',
-	                            { className: 'btn-name' },
-	                            'In Hole'
-	                        ),
-	                        _react2.default.createElement(
-	                            'p',
-	                            { className: 'toggle-btn-container' },
-	                            _react2.default.createElement('input', { type: 'checkbox', checked: this.props.playerObj.toggleInHole, readOnly: true }),
-	                            _react2.default.createElement('label', { className: 'label-in-hole', onClick: this.props.toggleInHole.bind(this, this.props.playerObj.p) })
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'toggle-checkbox-container' },
-	                        _react2.default.createElement(
-	                            'p',
-	                            { className: 'btn-name' },
-	                            'Persistent'
-	                        ),
-	                        _react2.default.createElement(
-	                            'p',
-	                            { className: 'toggle-btn-container' },
-	                            _react2.default.createElement('input', { type: 'checkbox', checked: this.props.playerObj.toggleInteraction, readOnly: true }),
-	                            _react2.default.createElement('label', { className: 'label-interaction', onClick: this.props.toggleInteraction.bind(this, this.props.playerObj.p) })
-	                        )
-	                    )
+	                    _react2.default.createElement(_ToggleButton2.default, {
+	                        buttonName: 'At Bat',
+	                        toggleChecked: this.props.playerObj.toggleAtBat,
+	                        toggleOnClick: this.props.toggleAtBat.bind(this, this.props.playerObj.p)
+	                    }),
+	                    _react2.default.createElement(_ToggleButton2.default, {
+	                        buttonName: 'On Deck',
+	                        toggleChecked: this.props.playerObj.toggleOnDeck,
+	                        toggleOnClick: this.props.toggleOnDeck.bind(this, this.props.playerObj.p)
+	                    }),
+	                    _react2.default.createElement(_ToggleButton2.default, {
+	                        buttonName: 'In Hole',
+	                        toggleChecked: this.props.playerObj.toggleInHole,
+	                        toggleOnClick: this.props.toggleInHole.bind(this, this.props.playerObj.p)
+	                    }),
+	                    _react2.default.createElement(_ToggleButton2.default, {
+	                        buttonName: 'Notify',
+	                        toggleChecked: this.props.playerObj.toggleNotify,
+	                        toggleOnClick: this.props.toggleNotify.bind(this, this.props.playerObj.p)
+	                    })
 	                ),
 	                _react2.default.createElement(
 	                    'span',
@@ -23583,6 +23566,9 @@
 	        },
 	        toggleInteraction: function toggleInteraction(id) {
 	            dispatch((0, _actions.toggleInteraction)(id));
+	        },
+	        toggleNotify: function toggleNotify(id) {
+	            dispatch((0, _actions.toggleNotify)(id));
 	        }
 	    };
 	};
@@ -25987,6 +25973,172 @@
 	}
 
 	module.exports = createLogger;
+
+/***/ },
+/* 215 */,
+/* 216 */,
+/* 217 */,
+/* 218 */,
+/* 219 */,
+/* 220 */,
+/* 221 */,
+/* 222 */,
+/* 223 */,
+/* 224 */,
+/* 225 */,
+/* 226 */,
+/* 227 */,
+/* 228 */,
+/* 229 */,
+/* 230 */,
+/* 231 */,
+/* 232 */,
+/* 233 */,
+/* 234 */,
+/* 235 */,
+/* 236 */,
+/* 237 */,
+/* 238 */,
+/* 239 */,
+/* 240 */,
+/* 241 */,
+/* 242 */,
+/* 243 */,
+/* 244 */,
+/* 245 */,
+/* 246 */,
+/* 247 */,
+/* 248 */,
+/* 249 */,
+/* 250 */,
+/* 251 */,
+/* 252 */,
+/* 253 */,
+/* 254 */,
+/* 255 */,
+/* 256 */,
+/* 257 */,
+/* 258 */,
+/* 259 */,
+/* 260 */,
+/* 261 */,
+/* 262 */,
+/* 263 */,
+/* 264 */,
+/* 265 */,
+/* 266 */,
+/* 267 */,
+/* 268 */,
+/* 269 */,
+/* 270 */,
+/* 271 */,
+/* 272 */,
+/* 273 */,
+/* 274 */,
+/* 275 */,
+/* 276 */,
+/* 277 */,
+/* 278 */,
+/* 279 */,
+/* 280 */,
+/* 281 */,
+/* 282 */,
+/* 283 */,
+/* 284 */,
+/* 285 */,
+/* 286 */,
+/* 287 */,
+/* 288 */,
+/* 289 */,
+/* 290 */,
+/* 291 */,
+/* 292 */,
+/* 293 */,
+/* 294 */,
+/* 295 */,
+/* 296 */,
+/* 297 */,
+/* 298 */,
+/* 299 */,
+/* 300 */,
+/* 301 */,
+/* 302 */,
+/* 303 */,
+/* 304 */,
+/* 305 */,
+/* 306 */,
+/* 307 */,
+/* 308 */,
+/* 309 */,
+/* 310 */,
+/* 311 */,
+/* 312 */,
+/* 313 */,
+/* 314 */,
+/* 315 */,
+/* 316 */,
+/* 317 */,
+/* 318 */,
+/* 319 */,
+/* 320 */,
+/* 321 */,
+/* 322 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var ToggleButton = function (_React$Component) {
+		_inherits(ToggleButton, _React$Component);
+
+		function ToggleButton(props) {
+			_classCallCheck(this, ToggleButton);
+
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(ToggleButton).call(this, props));
+		}
+
+		_createClass(ToggleButton, [{
+			key: 'render',
+			value: function render() {
+				return _react2.default.createElement(
+					'div',
+					{ className: 'toggle-checkbox-container' },
+					_react2.default.createElement(
+						'p',
+						{ className: 'btn-name' },
+						this.props.buttonName
+					),
+					_react2.default.createElement(
+						'p',
+						{ className: 'toggle-btn-container' },
+						_react2.default.createElement('input', { type: 'checkbox', checked: this.props.toggleChecked, readOnly: true }),
+						_react2.default.createElement('label', { onClick: this.props.toggleOnClick })
+					)
+				);
+			}
+		}]);
+
+		return ToggleButton;
+	}(_react2.default.Component);
+
+	exports.default = ToggleButton;
 
 /***/ }
 /******/ ]);

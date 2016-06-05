@@ -8,7 +8,8 @@ import { UPDATE_ON_CHANGE,
          TOGGLE_AT_BAT,
          TOGGLE_ON_DECK,
          TOGGLE_IN_HOLE,
-         TOGGLE_INTERACTION
+         TOGGLE_INTERACTION,
+         TOGGLE_NOTIFY
        } from '../actions/actions';
 
 import playerId from '../playerId';
@@ -90,6 +91,16 @@ export function playerList(state = initialStatePlayerList, action) {
             togglePlayers = state.players.map(player => {
                 if (action.id === player.p) {
                     player.toggleInteraction = player.toggleInteraction ? false: true;
+                }
+                return player;
+            });
+            toggleState = Object.assign({}, state, {players: togglePlayers});
+            chrome.storage.sync.set({'players': toggleState});
+            return toggleState;
+        case TOGGLE_NOTIFY:
+            togglePlayers = state.players.map(player => {
+                if (action.id === player.p) {
+                    player.toggleNotify = player.toggleNotify ? false : true;
                 }
                 return player;
             });

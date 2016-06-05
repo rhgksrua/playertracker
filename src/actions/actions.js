@@ -13,6 +13,7 @@ export const TOGGLE_AT_BAT = 'TOGGLE_AT_BAT';
 export const TOGGLE_ON_DECK = 'TOGGLE_ON_DECK';
 export const TOGGLE_IN_HOLE = 'TOGGLE_IN_HOLE';
 export const TOGGLE_INTERACTION = 'TOGGLE_INTERACTION';
+export const TOGGLE_NOTIFY = 'TOGGLE_NOTIFY';
 
 /**
  * Add a player to playerList.
@@ -24,6 +25,7 @@ export const addPlayer = (player) => {
     player.toggleOnDeck = true;
     player.toggleInHole = false;
     player.toggleInteraction = false;
+    player.toggleNotify = true;
     return {
         type: ADD_PLAYER,
         player
@@ -75,25 +77,32 @@ export const toggleAtBatById = id => {
         type: TOGGLE_AT_BAT,
         id
     };
-}
+};
 
 export const toggleOnDeckById = id => {
     return {
         type: TOGGLE_ON_DECK,
         id
     };
-}
+};
 
 export const toggleInHoleById = id => {
     return {
         type: TOGGLE_IN_HOLE,
         id
     };
-}
+};
 
 export const toggleInteraction = id => {
     return {
         type: TOGGLE_INTERACTION,
         id
     };
-}
+};
+
+export const toggleNotify = id => {
+    return {
+        type: TOGGLE_NOTIFY,
+        id
+    };
+};

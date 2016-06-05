@@ -258,7 +258,7 @@
 	    }
 
 	    if (!items.hasOwnProperty('players')) {
-	        console.error('storage error');
+	        console.warn('storage has no property named players');
 	        return;
 	    }
 
@@ -304,23 +304,25 @@
 	 */
 	function notifyUser(notification) {
 	    notification.forEach(function (player) {
-	        var notiOpt = {
-	            type: 'basic',
-	            iconUrl: 'http://mlb.mlb.com/images/players/assets/74_' + player.p + '.png',
-	            title: player.n,
-	            message: player.order + ', ' + player.outs + ' Outs',
-	            contextMessage: player.hits + ' for ' + player.ab,
-	            buttons: [{
-	                title: 'watch on mlb.tv'
-	            }],
-	            isClickable: true,
-	            priority: 2,
-	            requireInteraction: player.toggleInteraction
-	        };
-	        var notificationId = createNotificationId(player.p, player.mlbtv);
-	        chrome.notifications.create(notificationId, notiOpt, function (notiId) {
-	            console.log('created notification', notiId);
-	        });
+	        if (player.toggleNotify) {
+	            var notiOpt = {
+	                type: 'basic',
+	                iconUrl: 'http://mlb.mlb.com/images/players/assets/74_' + player.p + '.png',
+	                title: player.n,
+	                message: player.order + ', ' + player.outs + ' Outs',
+	                contextMessage: player.hits + ' for ' + player.ab,
+	                buttons: [{
+	                    title: 'watch on mlb.tv'
+	                }],
+	                isClickable: true,
+	                priority: 2,
+	                requireInteraction: player.toggleInteraction
+	            };
+	            var notificationId = createNotificationId(player.p, player.mlbtv);
+	            chrome.notifications.create(notificationId, notiOpt, function (notiId) {
+	                console.log('created notification', notiId);
+	            });
+	        }
 	    });
 	}
 
@@ -514,7 +516,7 @@
 /* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
+	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
 	 * @overview es6-promise - a tiny implementation of Promises/A+.
 	 * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
 	 * @license   Licensed under MIT license

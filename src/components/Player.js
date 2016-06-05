@@ -4,9 +4,11 @@ import { removePlayer,
          toggleAtBatById, 
          toggleOnDeckById, 
          toggleInHoleById, 
-         toggleInteraction 
+         toggleInteraction,
+         toggleNotify
        } from '../actions/actions';
 import classNames from 'classnames';
+import ToggleButton from './ToggleButton';
 
 export class Player extends React.Component {
     constructor(props) {
@@ -89,36 +91,27 @@ export class Player extends React.Component {
                 <p className={gameStatusClass} onClick={this.openMlbTv.bind(this, this.props.playerObj.mlbtv)}>{this.props.playerObj.gameStatus}</p>
                 }
                 <div className='toggle-flex-container'>
-                    <div className='toggle-checkbox-container'>
-                        <p className='btn-name'>At Bat</p>
-                        <p className='toggle-btn-container'>
-                            <input type='checkbox' checked={this.props.playerObj.toggleAtBat} readOnly />
-                            <label className='label-at-bat' onClick={this.props.toggleAtBat.bind(this, this.props.playerObj.p)}></label>
-                        </p>
-                    </div>
-                    <div className='toggle-checkbox-container'>
-                        <p className='btn-name'>On Deck</p>
-                        <p className='toggle-btn-container'>
-                            <input type='checkbox' checked={this.props.playerObj.toggleOnDeck} readOnly />
-                            <label className='label-on-deck' onClick={this.props.toggleOnDeck.bind(this, this.props.playerObj.p)}></label>
-                        </p>
-                    </div>
-                    <div className='toggle-checkbox-container'>
-                        <p className='btn-name'>In Hole</p>
-                        <p className='toggle-btn-container'>
-                            <input type='checkbox' checked={this.props.playerObj.toggleInHole} readOnly />
-                            <label className='label-in-hole' onClick={this.props.toggleInHole.bind(this, this.props.playerObj.p)}></label>
-                        </p>
-                    </div>
-                    <div className='toggle-checkbox-container'>
-                        <p className='btn-name'>Persistent</p>
-                        <p className='toggle-btn-container'>
-                            <input type='checkbox' checked={this.props.playerObj.toggleInteraction} readOnly />
-                            <label className='label-interaction' onClick={this.props.toggleInteraction.bind(this, this.props.playerObj.p)}></label>
-                        </p>
-                    </div>
+                    <ToggleButton
+                        buttonName='At Bat'
+                        toggleChecked={this.props.playerObj.toggleAtBat}
+                        toggleOnClick={this.props.toggleAtBat.bind(this, this.props.playerObj.p)}
+                    />
+                    <ToggleButton
+                        buttonName='On Deck'
+                        toggleChecked={this.props.playerObj.toggleOnDeck}
+                        toggleOnClick={this.props.toggleOnDeck.bind(this, this.props.playerObj.p)}
+                    />
+                    <ToggleButton 
+                        buttonName='In Hole' 
+                        toggleChecked={this.props.playerObj.toggleInHole} 
+                        toggleOnClick={this.props.toggleInHole.bind(this, this.props.playerObj.p)} 
+                    />
+                    <ToggleButton 
+                        buttonName='Notify' 
+                        toggleChecked={this.props.playerObj.toggleNotify} 
+                        toggleOnClick={this.props.toggleNotify.bind(this, this.props.playerObj.p)} 
+                    />
                 </div>
-
                 <span className='remove' onClick={this.props.removePlayerById.bind(this, this.props.playerObj.p)}>&#x2716;</span>
             </div>
         );
@@ -145,6 +138,9 @@ export const mapDispatchToProps = (dispatch) => {
         },
         toggleInteraction: id => {
             dispatch(toggleInteraction(id));
+        },
+        toggleNotify: id => {
+            dispatch(toggleNotify(id));
         }
     };
 };

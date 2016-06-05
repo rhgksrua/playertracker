@@ -199,7 +199,7 @@ function update(items) {
     }
 
     if (!items.hasOwnProperty('players')) {
-        console.error('storage error');
+        console.warn('storage has no property named players');
         return;
     }
 
@@ -248,25 +248,27 @@ function fetchGameData(playerList) {
  */
 function notifyUser(notification) {
     notification.forEach(player => {
-        let notiOpt = {
-            type: 'basic',
-            iconUrl: `http://mlb.mlb.com/images/players/assets/74_${player.p}.png`,
-            title: player.n,
-            message: `${player.order}, ${player.outs} Outs`,
-            contextMessage: `${player.hits} for ${player.ab}`,
-            buttons: [
-                {
-                    title: 'watch on mlb.tv'
-                }
-            ],
-            isClickable: true,
-            priority: 2,
-            requireInteraction: player.toggleInteraction 
-        };
-        let notificationId = createNotificationId(player.p, player.mlbtv);
-        chrome.notifications.create(notificationId, notiOpt, notiId => {
-            console.log('created notification', notiId);
-        });
+        if (player.toggleNotify) {
+            let notiOpt = {
+                type: 'basic',
+                iconUrl: `http://mlb.mlb.com/images/players/assets/74_${player.p}.png`,
+                title: player.n,
+                message: `${player.order}, ${player.outs} Outs`,
+                contextMessage: `${player.hits} for ${player.ab}`,
+                buttons: [
+                    {
+                        title: 'watch on mlb.tv'
+                    }
+                ],
+                isClickable: true,
+                priority: 2,
+                requireInteraction: player.toggleInteraction 
+            };
+            let notificationId = createNotificationId(player.p, player.mlbtv);
+            chrome.notifications.create(notificationId, notiOpt, notiId => {
+                console.log('created notification', notiId);
+            });
+        }
     });
 }
 

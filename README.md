@@ -12,8 +12,11 @@ Uses mlb api.
 Add players and set notification preference.
 There are three perferences. At Bat, On Deck, and In Hole.
 Only at bat and on deck is turned on by default.
-There is also a persistent toggle button.  When this is turned on, the notifications will not close until user manually closes or clicks to watch mlb.tv.
+The 'Notify' button toggles notification for each player.  Player status still gets updated in the browser action.
 Clicking on 'watch on mlb.tv' in the notification will open mlb.tv in a new tab.  To acutally watch player at bats on mlb.tv, user requires a paid subscription.
+
+* When chrome is playing a video in fullscreen mode, the notificatoin does not fire off.  The notification still shows after exiting fullscreen, but will be behind.
+
 
 ## Building the extension
 
