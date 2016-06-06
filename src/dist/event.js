@@ -163,14 +163,8 @@
 
 	    // Check if all games are finished.  Returns false if all done.
 	    if (allGamesFinal(allGames)) {
-	        chrome.alarms.clear('update', function (wasCleared) {
-	            console.log('All games are finished. No updates!!!!');
-	            if (!wasCleared) {
-	                console.log('failed to clear alarm');
-	                return;
-	            }
-	            console.log('alarms cleared');
-	        });
+	        clearUpdateAlarm();
+	        console.log('All games are finished. No updates!!!!');
 	        return;
 	    }
 
@@ -183,7 +177,18 @@
 	        return;
 	    }
 
+	    clearUpdateAlarm();
 	    console.log('no games with in the next hour');
+	}
+
+	function clearUpdateAlarm() {
+	    chrome.alarms.clear('update', function (wasCleared) {
+	        if (!wasCleared) {
+	            console.log('failed to clear alarm');
+	            return;
+	        }
+	        console.log('alarms cleared');
+	    });
 	}
 
 	/**
@@ -207,7 +212,7 @@
 	        var now = (0, _momentTimezone2.default)();
 	        var gameTime = (0, _momentTimezone2.default)(game.time_date + ' ' + game.ampm, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
 	        var compare = now.add(1, 'h').isAfter(gameTime);
-	        console.log('--- compare time', compare, now.format(), gameTime);
+	        //console.log('--- compare time', compare, now.format(), gameTime);
 	        return compare;
 	    });
 	}

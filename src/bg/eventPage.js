@@ -104,14 +104,8 @@ function setUpdateStatus(data) {
     
     // Check if all games are finished.  Returns false if all done.
     if (allGamesFinal(allGames)) {
-        chrome.alarms.clear('update', wasCleared => {
-            console.log('All games are finished. No updates!!!!');
-            if (!wasCleared) {
-                console.log('failed to clear alarm');
-                return;
-            }
-            console.log('alarms cleared');
-        });
+        clearUpdateAlarm();
+        console.log('All games are finished. No updates!!!!');
         return;
     }
 
@@ -124,7 +118,18 @@ function setUpdateStatus(data) {
         return;
     }
 
+    clearUpdateAlarm();
     console.log('no games with in the next hour');
+}
+
+function clearUpdateAlarm() {
+    chrome.alarms.clear('update', wasCleared => {
+        if (!wasCleared) {
+            console.log('failed to clear alarm');
+            return;
+        }
+        console.log('alarms cleared');
+    });
 }
 
 /**
@@ -150,7 +155,7 @@ function gameStartsInHour(allGames) {
         let now = moment();
         let gameTime = moment(`${game.time_date} ${game.ampm}`, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
         let compare = now.add(1, 'h').isAfter(gameTime);
-        console.log('--- compare time', compare, now.format(), gameTime);
+        //console.log('--- compare time', compare, now.format(), gameTime);
         return compare;
     });
 }
