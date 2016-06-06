@@ -12,6 +12,7 @@ class PlayerList {
      * Sets game time time for each player
      */
     setGameTime() {
+        this.clearPlayerTime();
         let newPlayers = this.players.map(player => {
             // player.t is team name.  Need to look for team name abbr in data.data.games[0]
             const games = this.data.data.games.game;
@@ -39,6 +40,12 @@ class PlayerList {
             return player;
         });
         this.players = newPlayers;
+    }
+
+    clearPlayerTime() {
+        this.players.forEach(player => {
+            delete player.timeDate;
+        });
     }
 
     parseGameData(data) {

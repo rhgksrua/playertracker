@@ -124,7 +124,7 @@ function setUpdateStatus(data) {
         return;
     }
 
-    console.log('no games with in the next hourA');
+    console.log('no games with in the next hour');
 }
 
 /**
@@ -150,6 +150,7 @@ function gameStartsInHour(allGames) {
         let now = moment();
         let gameTime = moment(`${game.time_date} ${game.ampm}`, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
         let compare = now.add(1, 'h').isAfter(gameTime);
+        console.log('--- compare time', compare, now.format(), gameTime);
         return compare;
     });
 }
