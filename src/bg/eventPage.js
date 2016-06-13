@@ -4,10 +4,12 @@ promise.polyfill();
 import fetch from 'isomorphic-fetch';
 import { getYearMonthDate } from '../lib/utils';
 import PlayerList from './PlayerList';
+import Logger from './Logger';
 
 //const SCORE_BOARD_JSON_URL = getTodayScoreBoardUrl();
 const API_BASE = 'http://gd2.mlb.com/components/game/mlb/';
 
+const log = Logger.createLog;
 
 /**
  * When chrome starts.
@@ -29,6 +31,7 @@ chrome.runtime.onInstalled.addListener(initialize);
  */
 function initialize() {
     console.log('start extension');
+    log('initialize. start extensions');
     let shouldUpdateTime;
     if (process.env.NODE_ENV === 'development') {
         shouldUpdateTime = 30;
@@ -48,25 +51,17 @@ chrome.alarms.onAlarm.addListener(function(alarm){
     //console.log('Alarm name', alarm);
     if (alarm.name === 'shouldUpdate') {
         console.log('calling shouldupdate from alarm');
+        log('calling shouldupdate');
         shouldUpdate();
     }
     if (alarm.name === 'update') {
         console.log('calling update from alarm');
+        log('game updates')
         chrome.storage.sync.get(['players', 'shouldUpdate'], update);
-    }
-    if (alarm.name === 'log') {
-        chrome.storage.sync.get('log', items => {
-            //console.log('log item', items);
-            if (items.hasOwnProperty('log')) {
-                chrome.storage.sync.set({'log': items.log + 1});
-            } else {
-                chrome.storage.sync.set({'log': 1});
-            }
-        });
     }
 });
 
-chrome.notifications.onButtonClicked.addListener(function(id, index) {
+chrome.notifications.onButtonClicked.addListener(function(id) {
     let url = parseNotificationId(id);
     chrome.tabs.create({ url: url });
     chrome.notifications.clear(id, function(wasCleared) {
@@ -106,6 +101,7 @@ function setUpdateStatus(data) {
     if (allGamesFinal(allGames)) {
         clearUpdateAlarm();
         console.log('All games are finished. No updates!!!!');
+        log('all games finished. no more updates today');
         return;
     }
 
@@ -113,15 +109,20 @@ function setUpdateStatus(data) {
     // Start returns true if at least one game is scheduled.
     if (gameStartsInHour(allGames)) {
         console.log('At least ONE game starting within the hour');
-        //chrome.storage.sync.get(['players', 'shouldUpdate'], update);
+        log('game starting within the hour');
         chrome.alarms.create('update', {periodInMinutes: 1});
         return;
     }
 
     clearUpdateAlarm();
+    log('no games in the next hour');
     console.log('no games with in the next hour');
 }
 
+/**
+ * Clears all chrome alarms api.
+ * @return {void}
+ */
 function clearUpdateAlarm() {
     chrome.alarms.clear('update', wasCleared => {
         if (!wasCleared) {
@@ -153,9 +154,17 @@ function allGamesFinal(allGames) {
 function gameStartsInHour(allGames) {
     return allGames.some((game) => {
         let now = moment();
-        let gameTime = moment(`${game.time_date} ${game.ampm}`, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
+        //let gameTime = moment(`${game.time_date} ${game.ampm}`, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
+        let gameTime = moment.tz(`${game.time_date} ${game.ampm}`, 'YYYY/MM/DD HH:mm a', 'America/New_York');
         let compare = now.add(1, 'h').isAfter(gameTime);
-        //console.log('--- compare time', compare, now.format(), gameTime);
+        //console.log('--- compare time', compare, now.format(), gameTime.format());
+        //console.log('---------------------');
+        //console.log(compare);
+        //console.log(now.format());
+        //console.log(now.subtract(2, 'h').format());
+        //console.log(gameTime.format());
+        //console.log('--------------------')
+
         return compare;
     });
 }
@@ -213,13 +222,14 @@ function update(items) {
     fetchGameData(playerList);
 }
 
+/**
+ * Fetchs JSON from mlb api
+ * @param  {array} playerList Array of all player objects
+ * @return {void}
+ */
 function fetchGameData(playerList) {
-    // for XML use parseString from xml2js
-    //const parseString = xml2js.parseString;
-    //const options = {};
     const options = {};
     let url = getTodayScoreBoardUrl();
-    //url = '/master.json';
     fetch(url, options)
         .then(data => {
             return data.json();
@@ -231,7 +241,6 @@ function fetchGameData(playerList) {
                     console.error(chrome.runtime.lastError);
                 }
                 let newPlayerList = Object.assign({}, players, {players: playerList.getPlayersArr()});
-                //console.table(newPlayerList.players);
                 chrome.storage.sync.set({'players': newPlayerList}, function() {
                     if (chrome.runtime.lastError) {
                         console.error(chrome.runtime.lastError);
@@ -267,7 +276,7 @@ function notifyUser(notification) {
                     }
                 ],
                 isClickable: true,
-                priority: 2,
+                priority: 1,
                 requireInteraction: player.toggleInteraction 
             };
             let notificationId = createNotificationId(player.p, player.mlbtv);

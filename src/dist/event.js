@@ -64,6 +64,10 @@
 
 	var _PlayerList2 = _interopRequireDefault(_PlayerList);
 
+	var _Logger = __webpack_require__(323);
+
+	var _Logger2 = _interopRequireDefault(_Logger);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	_es6Promise2.default.polyfill();
@@ -71,6 +75,8 @@
 
 	//const SCORE_BOARD_JSON_URL = getTodayScoreBoardUrl();
 	var API_BASE = 'http://gd2.mlb.com/components/game/mlb/';
+
+	var log = _Logger2.default.createLog;
 
 	/**
 	 * When chrome starts.
@@ -92,6 +98,7 @@
 	 */
 	function initialize() {
 	    console.log('start extension');
+	    log('initialize. start extensions');
 	    var shouldUpdateTime = void 0;
 	    if (true) {
 	        shouldUpdateTime = 30;
@@ -110,25 +117,17 @@
 	    //console.log('Alarm name', alarm);
 	    if (alarm.name === 'shouldUpdate') {
 	        console.log('calling shouldupdate from alarm');
+	        log('calling shouldupdate');
 	        shouldUpdate();
 	    }
 	    if (alarm.name === 'update') {
 	        console.log('calling update from alarm');
+	        log('game updates');
 	        chrome.storage.sync.get(['players', 'shouldUpdate'], update);
-	    }
-	    if (alarm.name === 'log') {
-	        chrome.storage.sync.get('log', function (items) {
-	            //console.log('log item', items);
-	            if (items.hasOwnProperty('log')) {
-	                chrome.storage.sync.set({ 'log': items.log + 1 });
-	            } else {
-	                chrome.storage.sync.set({ 'log': 1 });
-	            }
-	        });
 	    }
 	});
 
-	chrome.notifications.onButtonClicked.addListener(function (id, index) {
+	chrome.notifications.onButtonClicked.addListener(function (id) {
 	    var url = parseNotificationId(id);
 	    chrome.tabs.create({ url: url });
 	    chrome.notifications.clear(id, function (wasCleared) {
@@ -165,6 +164,7 @@
 	    if (allGamesFinal(allGames)) {
 	        clearUpdateAlarm();
 	        console.log('All games are finished. No updates!!!!');
+	        log('all games finished. no more updates today');
 	        return;
 	    }
 
@@ -172,12 +172,13 @@
 	    // Start returns true if at least one game is scheduled.
 	    if (gameStartsInHour(allGames)) {
 	        console.log('At least ONE game starting within the hour');
-	        //chrome.storage.sync.get(['players', 'shouldUpdate'], update);
+	        log('game starting within the hour');
 	        chrome.alarms.create('update', { periodInMinutes: 1 });
 	        return;
 	    }
 
 	    clearUpdateAlarm();
+	    log('no games in the next hour');
 	    console.log('no games with in the next hour');
 	}
 
@@ -210,9 +211,17 @@
 	function gameStartsInHour(allGames) {
 	    return allGames.some(function (game) {
 	        var now = (0, _momentTimezone2.default)();
-	        var gameTime = (0, _momentTimezone2.default)(game.time_date + ' ' + game.ampm, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
+	        //let gameTime = moment(`${game.time_date} ${game.ampm}`, 'YYYY/MM/DD HH:mm a').tz('America/New_York');
+	        var gameTime = _momentTimezone2.default.tz(game.time_date + ' ' + game.ampm, 'YYYY/MM/DD HH:mm a', 'America/New_York');
 	        var compare = now.add(1, 'h').isAfter(gameTime);
-	        //console.log('--- compare time', compare, now.format(), gameTime);
+	        //console.log('--- compare time', compare, now.format(), gameTime.format());
+	        //console.log('---------------------');
+	        //console.log(compare);
+	        //console.log(now.format());
+	        //console.log(now.subtract(2, 'h').format());
+	        //console.log(gameTime.format());
+	        //console.log('--------------------')
+
 	        return compare;
 	    });
 	}
@@ -522,7 +531,7 @@
 /* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
+	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
 	 * @overview es6-promise - a tiny implementation of Promises/A+.
 	 * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
 	 * @license   Licensed under MIT license
@@ -17394,6 +17403,45 @@
 	}();
 
 	exports.default = PlayerList;
+
+/***/ },
+/* 323 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var Logger = {
+		createLog: function createLog() {
+			var msg = arguments.length <= 0 || arguments[0] === undefined ? 'none' : arguments[0];
+
+			chrome.storage.local.get('logs', function (item) {
+				var store = void 0;
+				if (!item.logs) {
+					store = {
+						'logs': [{
+							time: new Date().toString(),
+							msg: msg
+						}]
+					};
+				} else {
+					store = {
+						'logs': item.logs.concat({
+							time: new Date().toString(),
+							msg: msg
+						})
+					};
+				}
+				chrome.storage.local.set(store);
+			});
+		},
+		getLog: function getLog() {}
+	};
+
+	exports.default = Logger;
 
 /***/ }
 /******/ ]);

@@ -1,5 +1,11 @@
 import moment from 'moment-timezone';
 
+/**
+ * Handles all the players added to extension.
+ *
+ * @class PlayerList
+ * @constructor
+ */
 class PlayerList {
     constructor(players) {
         this.players = players.players;
@@ -8,8 +14,7 @@ class PlayerList {
     }
 
     /**
-     * setGameTime
-     * Sets game time time for each player
+     * Set player time
      */
     setGameTime() {
         this.clearPlayerTime();
@@ -42,12 +47,21 @@ class PlayerList {
         this.players = newPlayers;
     }
 
+    /**
+     * Removes player game time
+     * @return {void}
+     */
     clearPlayerTime() {
         this.players.forEach(player => {
             delete player.timeDate;
         });
     }
 
+    /**
+     * Updates player data
+     * @param  {Object} data Object from JSON
+     * @return
+     */
     parseGameData(data) {
         if (!data) {
             return;
@@ -57,6 +71,7 @@ class PlayerList {
         this.updatePlayerStats();
     }
 
+   
     /**
      *  updatePlayerStats
      *  Updates players stats.
@@ -130,7 +145,6 @@ class PlayerList {
         this.players = updatedPlayers;
     }
     /**
-     * getCurrentOrder
      * Returns current order of player
      *
      * @returns {undefined}
@@ -169,14 +183,27 @@ class PlayerList {
         this.notification = this.notification.concat(player);
     }
 
+    /**
+     * returns notification
+     * @return {array} 
+     */
     get notis() {
         return this.notification;
     }
 
+    /**
+     * Returns all players
+     * @return {array} Array of player object
+     */
     getPlayersArr() {
         return this.players;
     }
 
+    /**
+     * Constructs mlb.tv url for player
+     * @param  {string} raw ID from url
+     * @return {string}
+     */
     parseMlbtv(raw) {
         let id = this.parseCalendarId(raw);
         let clickOrigin = '';
@@ -184,6 +211,11 @@ class PlayerList {
         return `http://m.mlb.com/tv/e${id}/?clickOrigin=${clickOrigin}&team=${team}`;
     }
     
+    /**
+     * Returns Id for each mlb.tv games
+     * @param  {string} raw calender_event ID
+     * @return {string}
+     */
     parseCalendarId(raw) {
         const re = /calendar_event_id:\'([\d\-]+)\'/;
         let results = re.exec(raw);
