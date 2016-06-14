@@ -28,49 +28,19 @@ export class Player extends React.Component {
         }
     }
     render() {
-        let playerStyles = {
-            position: 'relative',
-            backgroundColor: '#FFF',
-            padding: '4px 10px',
-            marginBottom: '10px',
-            boxShadow: '3px 5px 10px rgba(0, 0, 0, 0.12)'
-        };
-        if (this.props.playerObj.order === 'At Bat') {
-            playerStyles.backgroundColor = '#7CB342';
-        } else if (this.props.playerObj.order === 'On Deck') {
-            playerStyles.backgroundColor = '#FFEE58';
-        } else if (this.props.playerObj.order === 'In Hole') {
-            playerStyles.backgroundColor = '#BBDEFB';
-        } else {
-            playerStyles.backgroundColor = '#FFF';
-        }
-        const remove = {
-            position: 'absolute',
-            top: '0',
-            right: '0',
-            padding: '5px 10px',
-            backgroundColor: '#D81B60',
-            color: '#FFF'
-        };
-        let atBatClass = classNames({
-            'toggle': true,
-            'toggle-active': this.props.playerObj.toggleAtBat
-        });
-        let onDeckClass = classNames({
-            'toggle': true,
-            'toggle-active': this.props.playerObj.toggleOnDeck
-        });
-        let inHoleClass = classNames({
-            'toggle': true,
-            'toggle-active': this.props.playerObj.toggleInHole
-        });
 
         let gameStatusClass = classNames({
             'game-status': true,
             'game-status-click': this.props.playerObj.gameStatus === 'In Progress'
         });
 
-        let validOrders = ['At Bat', 'In Hole', 'On Deck'];
+
+        let orderClass = classNames({
+            'player-order': true,
+            'at-bat': this.props.playerObj.order === 'At Bat',
+            'in-hole': this.props.playerObj.order === 'In Hole',
+            'on-deck': this.props.playerObj.order === 'On Deck'
+        });
 
 
         return (
@@ -78,7 +48,7 @@ export class Player extends React.Component {
                 <div className='name-container'>
                     {this.props.playerObj.order &&
                     <p className='player-order-container'>
-                        <span className='player-order'>{this.props.playerObj.order}</span>
+                        <span className={orderClass}>{this.props.playerObj.order}</span>
                     </p>
                     }
                     <a className='player-name' href='#' onClick={this.openPlayerPage}>{this.props.playerObj.n}</a>
@@ -117,6 +87,15 @@ export class Player extends React.Component {
         );
     }
 }
+
+Player.propTypes = {
+    playerObj: React.PropTypes.object,
+    toggleInHole: React.PropTypes.func,
+    toggleAtBat: React.PropTypes.func,
+    toggleOnDeck: React.PropTypes.func,
+    removePlayerById: React.PropTypes.func,
+    toggleNotify: React.PropTypes.func
+};
 
 const mapStateToProps = (state, ownProps) => {
     return ownProps;

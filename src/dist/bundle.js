@@ -23429,49 +23429,18 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var playerStyles = {
-	                position: 'relative',
-	                backgroundColor: '#FFF',
-	                padding: '4px 10px',
-	                marginBottom: '10px',
-	                boxShadow: '3px 5px 10px rgba(0, 0, 0, 0.12)'
-	            };
-	            if (this.props.playerObj.order === 'At Bat') {
-	                playerStyles.backgroundColor = '#7CB342';
-	            } else if (this.props.playerObj.order === 'On Deck') {
-	                playerStyles.backgroundColor = '#FFEE58';
-	            } else if (this.props.playerObj.order === 'In Hole') {
-	                playerStyles.backgroundColor = '#BBDEFB';
-	            } else {
-	                playerStyles.backgroundColor = '#FFF';
-	            }
-	            var remove = {
-	                position: 'absolute',
-	                top: '0',
-	                right: '0',
-	                padding: '5px 10px',
-	                backgroundColor: '#D81B60',
-	                color: '#FFF'
-	            };
-	            var atBatClass = (0, _classnames2.default)({
-	                'toggle': true,
-	                'toggle-active': this.props.playerObj.toggleAtBat
-	            });
-	            var onDeckClass = (0, _classnames2.default)({
-	                'toggle': true,
-	                'toggle-active': this.props.playerObj.toggleOnDeck
-	            });
-	            var inHoleClass = (0, _classnames2.default)({
-	                'toggle': true,
-	                'toggle-active': this.props.playerObj.toggleInHole
-	            });
 
 	            var gameStatusClass = (0, _classnames2.default)({
 	                'game-status': true,
 	                'game-status-click': this.props.playerObj.gameStatus === 'In Progress'
 	            });
 
-	            var validOrders = ['At Bat', 'In Hole', 'On Deck'];
+	            var orderClass = (0, _classnames2.default)({
+	                'player-order': true,
+	                'at-bat': this.props.playerObj.order === 'At Bat',
+	                'in-hole': this.props.playerObj.order === 'In Hole',
+	                'on-deck': this.props.playerObj.order === 'On Deck'
+	            });
 
 	            return _react2.default.createElement(
 	                'div',
@@ -23484,7 +23453,7 @@
 	                        { className: 'player-order-container' },
 	                        _react2.default.createElement(
 	                            'span',
-	                            { className: 'player-order' },
+	                            { className: orderClass },
 	                            this.props.playerObj.order
 	                        )
 	                    ),
@@ -23545,6 +23514,15 @@
 
 	    return Player;
 	}(_react2.default.Component);
+
+	Player.propTypes = {
+	    playerObj: _react2.default.PropTypes.object,
+	    toggleInHole: _react2.default.PropTypes.func,
+	    toggleAtBat: _react2.default.PropTypes.func,
+	    toggleOnDeck: _react2.default.PropTypes.func,
+	    removePlayerById: _react2.default.PropTypes.func,
+	    toggleNotify: _react2.default.PropTypes.func
+	};
 
 	var mapStateToProps = function mapStateToProps(state, ownProps) {
 	    return ownProps;
