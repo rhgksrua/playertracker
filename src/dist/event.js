@@ -182,6 +182,10 @@
 	    console.log('no games with in the next hour');
 	}
 
+	/**
+	 * Clears all chrome alarms api.
+	 * @return {void}
+	 */
 	function clearUpdateAlarm() {
 	    chrome.alarms.clear('update', function (wasCleared) {
 	        if (!wasCleared) {
@@ -281,13 +285,14 @@
 	    fetchGameData(playerList);
 	}
 
+	/**
+	 * Fetchs JSON from mlb api
+	 * @param  {array} playerList Array of all player objects
+	 * @return {void}
+	 */
 	function fetchGameData(playerList) {
-	    // for XML use parseString from xml2js
-	    //const parseString = xml2js.parseString;
-	    //const options = {};
 	    var options = {};
 	    var url = getTodayScoreBoardUrl();
-	    //url = '/master.json';
 	    (0, _isomorphicFetch2.default)(url, options).then(function (data) {
 	        return data.json();
 	    }).then(function (data) {
@@ -297,7 +302,6 @@
 	                console.error(chrome.runtime.lastError);
 	            }
 	            var newPlayerList = Object.assign({}, players, { players: playerList.getPlayersArr() });
-	            //console.table(newPlayerList.players);
 	            chrome.storage.sync.set({ 'players': newPlayerList }, function () {
 	                if (chrome.runtime.lastError) {
 	                    console.error(chrome.runtime.lastError);
@@ -330,7 +334,7 @@
 	                    title: 'watch on mlb.tv'
 	                }],
 	                isClickable: true,
-	                priority: 2,
+	                priority: 1,
 	                requireInteraction: player.toggleInteraction
 	            };
 	            var notificationId = createNotificationId(player.p, player.mlbtv);
@@ -531,7 +535,7 @@
 /* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
+	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
 	 * @overview es6-promise - a tiny implementation of Promises/A+.
 	 * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
 	 * @license   Licensed under MIT license
@@ -17186,6 +17190,13 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+	/**
+	 * Handles all the players added to extension.
+	 *
+	 * @class PlayerList
+	 * @constructor
+	 */
+
 	var PlayerList = function () {
 	    function PlayerList(players) {
 	        _classCallCheck(this, PlayerList);
@@ -17196,8 +17207,7 @@
 	    }
 
 	    /**
-	     * setGameTime
-	     * Sets game time time for each player
+	     * Set player time
 	     */
 
 
@@ -17234,6 +17244,12 @@
 	            });
 	            this.players = newPlayers;
 	        }
+
+	        /**
+	         * Removes player game time
+	         * @return {void}
+	         */
+
 	    }, {
 	        key: 'clearPlayerTime',
 	        value: function clearPlayerTime() {
@@ -17241,6 +17257,13 @@
 	                delete player.timeDate;
 	            });
 	        }
+
+	        /**
+	         * Updates player data
+	         * @param  {Object} data Object from JSON
+	         * @return
+	         */
+
 	    }, {
 	        key: 'parseGameData',
 	        value: function parseGameData(data) {
@@ -17328,7 +17351,6 @@
 	            this.players = updatedPlayers;
 	        }
 	        /**
-	         * getCurrentOrder
 	         * Returns current order of player
 	         *
 	         * @returns {undefined}
@@ -17369,11 +17391,30 @@
 
 	            this.notification = this.notification.concat(player);
 	        }
+
+	        /**
+	         * returns notification
+	         * @return {array} 
+	         */
+
 	    }, {
 	        key: 'getPlayersArr',
+
+
+	        /**
+	         * Returns all players
+	         * @return {array} Array of player object
+	         */
 	        value: function getPlayersArr() {
 	            return this.players;
 	        }
+
+	        /**
+	         * Constructs mlb.tv url for player
+	         * @param  {string} raw ID from url
+	         * @return {string}
+	         */
+
 	    }, {
 	        key: 'parseMlbtv',
 	        value: function parseMlbtv(raw) {
@@ -17382,6 +17423,13 @@
 	            var team = '';
 	            return 'http://m.mlb.com/tv/e' + id + '/?clickOrigin=' + clickOrigin + '&team=' + team;
 	        }
+
+	        /**
+	         * Returns Id for each mlb.tv games
+	         * @param  {string} raw calender_event ID
+	         * @return {string}
+	         */
+
 	    }, {
 	        key: 'parseCalendarId',
 	        value: function parseCalendarId(raw) {
@@ -17406,7 +17454,7 @@
 
 /***/ },
 /* 323 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -17418,6 +17466,10 @@
 		createLog: function createLog() {
 			var msg = arguments.length <= 0 || arguments[0] === undefined ? 'none' : arguments[0];
 
+			if (false) {
+				console.log('production not logging');
+				return;
+			}
 			chrome.storage.local.get('logs', function (item) {
 				var store = void 0;
 				if (!item.logs) {
