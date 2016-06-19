@@ -17,4 +17,10 @@ class ToggleButton extends React.Component {
 	}
 }
 
+ToggleButton.propTypes = {
+	buttonName: React.PropTypes.func,
+	toggleChecked: React.PropTypes.func,
+	toggleOnClick: React.PropTypes.func
+};
+
 export default ToggleButton;

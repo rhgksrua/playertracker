@@ -32,6 +32,7 @@ run `webpack` or `webpack --watch`.
 ### Note on Usage
 
 * Notifications do not fire when playing a video in fullscreen.
+* The missed notification will still fire after fullscreen mode has exited, showing outdated information.
 
 ## Tests
 

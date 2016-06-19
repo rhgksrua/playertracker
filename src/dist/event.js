@@ -17285,8 +17285,6 @@
 
 	            var allGames = this.data.data.games.game;
 
-	            //this.setFirstGameTime();
-
 	            // Loop through all the players stored
 	            var updatedPlayers = this.players.map(function (player) {
 

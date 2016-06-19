@@ -56,7 +56,7 @@ chrome.alarms.onAlarm.addListener(function(alarm){
     }
     if (alarm.name === 'update') {
         console.log('calling update from alarm');
-        log('game updates')
+        log('game updates');
         chrome.storage.sync.get(['players', 'shouldUpdate'], update);
     }
 });

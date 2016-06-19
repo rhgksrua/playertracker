@@ -78,6 +78,14 @@ class Search extends React.Component {
     }
 }
 
+Search.propTypes = {
+
+    playerList: React.PropTypes.object,
+    addPlayerObj: React.PropTypes.func,
+    playerIds: React.PropTypes.array
+
+};
+
 const mapStateToProps = (state) => {
     const { playerIds, playerList } = state;
     return {
