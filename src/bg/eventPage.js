@@ -56,7 +56,7 @@ chrome.alarms.onAlarm.addListener(function(alarm){
     }
     if (alarm.name === 'update') {
         console.log('calling update from alarm');
-        log('game updates')
+        log('game updates');
         chrome.storage.sync.get(['players', 'shouldUpdate'], update);
     }
 });
@@ -263,27 +263,25 @@ function fetchGameData(playerList) {
  */
 function notifyUser(notification) {
     notification.forEach(player => {
-        if (player.toggleNotify) {
-            let notiOpt = {
-                type: 'basic',
-                iconUrl: `http://mlb.mlb.com/images/players/assets/74_${player.p}.png`,
-                title: player.n,
-                message: `${player.order}, ${player.outs} Outs`,
-                contextMessage: `${player.hits} for ${player.ab}`,
-                buttons: [
-                    {
-                        title: 'watch on mlb.tv'
-                    }
-                ],
-                isClickable: true,
-                priority: 1,
-                requireInteraction: player.toggleInteraction 
-            };
-            let notificationId = createNotificationId(player.p, player.mlbtv);
-            chrome.notifications.create(notificationId, notiOpt, notiId => {
-                console.log('created notification', notiId);
-            });
-        }
+        let notiOpt = {
+            type: 'basic',
+            iconUrl: `http://mlb.mlb.com/images/players/assets/74_${player.p}.png`,
+            title: player.n,
+            message: `${player.order}, ${player.outs} Outs`,
+            contextMessage: `${player.hits} for ${player.ab}`,
+            buttons: [
+                {
+                    title: 'watch on mlb.tv'
+                }
+            ],
+            isClickable: true,
+            priority: 1,
+            requireInteraction: player.toggleInteraction 
+        };
+        let notificationId = createNotificationId(player.p, player.mlbtv);
+        chrome.notifications.create(notificationId, notiOpt, notiId => {
+            console.log('created notification', notiId);
+        });
     });
 }
 

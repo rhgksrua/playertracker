@@ -21,27 +21,24 @@ class PlayerList {
         let newPlayers = this.players.map(player => {
             // player.t is team name.  Need to look for team name abbr in data.data.games[0]
             const games = this.data.data.games.game;
-            const gamesLen = games.length;
-            for (let i = 0; i < gamesLen; i++) {
-                let currentGame = games[i];
-                if (currentGame['home_name_abbrev'] === player.t ||
-                    currentGame['away_name_abbrev'] === player.t) {
-                    // player game is finished
-                    if (currentGame.status.status === 'Final') {
-                        player.timeDate = 'Final';
-                        break;
-                    }
 
-                    // game not finished or in progress
-                    player.timeDate = currentGame.time_date;
-                    break;
+            let playerGame = games.find(game => {
+                return game['home_name_abbrev'] === player.t ||
+                       game['away_name_abbrev'] === player.t;
+
+            });
+
+            if (playerGame) {
+                if (playerGame.status.status === 'Final' ||
+                    playerGame.status.status === 'Postponed') {
+                    player.timeDate = playerGame.status.status;
+                } else {
+                    player.timeDate = playerGame.time_date;
                 }
-            }
-
-            // Game not scheduled
-            if (!player.timeDate) {
+            } else {
                 player.timeDate = 'No Game';
             }
+
             return player;
         });
         this.players = newPlayers;
@@ -84,57 +81,41 @@ class PlayerList {
     updatePlayerStats() {
         let allGames = this.data.data.games.game;
 
-        //this.setFirstGameTime();
-
         // Loop through all the players stored
         let updatedPlayers = this.players.map(player => {
 
-            // Loop thru all the games available
-            for (let i = 0, len = allGames.length; i < len; i++) {
-                let currentGame = allGames[i];
-                if (currentGame.away_name_abbrev === player.t ||
-                    currentGame.home_name_abbrev === player.t) {
+            // save previous batting order to compare with new order
+            player.lastOrder = player.order;
 
-                    player.lastOrder = player.order;
+            // Find player game
+            let playerGame = allGames.find(game => {
+                return game.away_name_abbrev === player.t ||
+                       game.home_name_abbrev === player.t;
+            });
 
-                    // Game did not start or has ended
-                    if (currentGame.status.status !== 'In Progress') {
-                        player.order = 'Dugout';
-                        player.gameStatus = currentGame.status.status;
-                        continue;
-                    }
-
-                    // Set all required data for player
-
-                    let order = this.getCurrentOrder(player.p, currentGame);
+            if (playerGame) {
+                if (playerGame.status.status !== 'In Progress') {
+                    // Game found but not started or ended.
+                    player.order = 'Dugout';
+                    player.gameStatus = playerGame.status.status;
+                } else {
+                    // Game in progress
+                    let order = this.getCurrentOrder(player.p, playerGame);
                     player.order = order.order;
                     player.orderKey = order.orderKey;
-
-                    player.outs = currentGame.status.o;
-
-                    player.gameStatus = currentGame.status.status;
+                    player.outs = playerGame.status.o;
+                    player.gameStatus = playerGame.status.status;
                     player.lastUpdated = moment().format();
-
-                    player.mlbtv = this.parseMlbtv(currentGame.links.mlbtv);
-
-                    // Get today stat for player
+                    player.mlbtv = this.parseMlbtv(playerGame.links.mlbtv);
                     const validOrder = ['batter', 'inhole', 'ondeck'];
                     if (validOrder.indexOf(player.orderKey) >= 0) {
-                        player.hits = currentGame[player.orderKey].h;
-                        player.ab = currentGame[player.orderKey].ab;
+                        player.hits = playerGame[player.orderKey].h;
+                        player.ab = playerGame[player.orderKey].ab;
                     }
-
-                    break;
                 }
-            }
-
-            // Checks for newly added player or in Dugout
-            if (player.order === undefined || player.order === 'Dugout') {
+            } else {
+                // No games found for player
                 player.order = 'Dugout';
-            }
-
-            // No games found for the day
-            if (player.gameStatus === undefined) {
                 player.gameStatus = 'No Games';
             }
 
@@ -144,6 +125,7 @@ class PlayerList {
         });
         this.players = updatedPlayers;
     }
+
     /**
      * Returns current order of player
      *
@@ -179,6 +161,7 @@ class PlayerList {
         if (player.order === 'At Bat' && player.toggleAtBat === false) return;
         if (player.order === 'On Deck' && player.toggleOnDeck === false) return;
         if (player.order === 'In Hole' && player.toggleInHole === false) return;
+        if (player.toggleNotify === false) return;
 
         this.notification = this.notification.concat(player);
     }
